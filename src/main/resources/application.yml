@@ -1,6 +1,7 @@
 spring:
   application:
     name: scpi-invest-plus-api
+    version: 1.0.0
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
