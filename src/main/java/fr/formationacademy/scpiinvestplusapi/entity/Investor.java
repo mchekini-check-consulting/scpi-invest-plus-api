@@ -1,4 +1,4 @@
-package fr.formationacademy.scpiinvestplusapi.entiry;
+package fr.formationacademy.scpiinvestplusapi.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -25,5 +25,4 @@ public class Investor {
     private String phoneNumber;
     private String maritalStatus;
     private String numberOfChildren;
-
 }
