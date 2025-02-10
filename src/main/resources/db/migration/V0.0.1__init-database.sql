@@ -21,7 +21,7 @@ CREATE TABLE location
 CREATE TABLE sector
 (
     name              varchar,
-    sector_percentage integer,
+    sector_percentage float,
     scpi_id           integer,
     PRIMARY KEY (name, scpi_id)
 );
@@ -32,14 +32,14 @@ CREATE TABLE scpi
     name                 varchar,
     minimum_subscription integer,
     manager              varchar,
-    capitalization       numeric,
+    capitalization       BIGINT,
     subscription_fees    float,
     management_costs     float,
     enjoyment_delay      integer,
     iban                 varchar UNIQUE,
     bic                  varchar UNIQUE,
     scheduled_payment    bool,
-    cashback             numeric,
+    cashback             float,
     advertising          text
 );
 
