@@ -9,7 +9,7 @@ import fr.formationacademy.scpiinvestplusapi.dto.DetailsDTO;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 @Repository
 public interface ScpiRepository extends JpaRepository<Scpi, Integer>{
-    @Query("SELECT new fr.formationacademy.scpiinvestplusapi.dto.DetailsDTO(s.name, s.subscriptionFees, s.managementCosts, sy.sharePrice, sy.reconstitutionValue, s.enjoymentDelay, s.scheduledPayment, sy.distributionRate) " +
+    @Query("SELECT new fr.formationacademy.scpiinvestplusapi.dto.DetailsDTO(s.name, s.subscriptionFees, s.managementCosts, sy.sharePrice, sy.reconstitutionValue, s.enjoymentDelay, s.scheduledPayment, sy.distributionRate, s.minimumSubscription, s.cashback) " +
    " FROM Scpi s " +
    " LEFT JOIN StatYear sy ON s.id = sy.scpi.id " +
    " WHERE s.id = :scpid")
