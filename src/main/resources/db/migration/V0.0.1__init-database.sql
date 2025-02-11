@@ -39,6 +39,7 @@ CREATE TABLE scpi
     iban                 varchar UNIQUE,
     bic                  varchar UNIQUE,
     scheduled_payment    bool,
+    frequency_payment    varchar,
     cashback             float,
     advertising          text
 );
