@@ -6,6 +6,9 @@ import org.springframework.http.ResponseEntity;
 import fr.formationacademy.scpiinvestplusapi.dto.DetailsDTO;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.services.ScpiService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-
+@Tag(name = "Scpi", description = "API for Scpi ")
 @RequestMapping(path = "api/v1/application/Scpi")
 public class ScpiController {
     @Autowired
@@ -24,7 +27,14 @@ public class ScpiController {
     public ScpiController(ScpiService scpiService){
         this.scpiService = scpiService;
     }
-
+    @Operation(
+        summary = "Details of a specific SCPI",
+        description = "Get all the details from a given SCPI with a specific id as parameter.",
+        responses = {
+            @ApiResponse(responseCode = "200", description = "An Details object containing different inforamtion." , useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "500", description = "The products where not loaded succefully." , useReturnTypeSchema = true), 
+        }    
+    )
     @GetMapping("/details/{scpid}")
     public ResponseEntity<DetailsDTO> getMethodName(@PathVariable int scpid) {
         return ResponseEntity.ok( this.scpiService.gettAllDetails( scpid));
