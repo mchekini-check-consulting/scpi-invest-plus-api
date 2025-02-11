@@ -1,22 +1,11 @@
-package fr.formationacademy.scpiinvestplusapi.entiry;
+package fr.formationacademy.scpiinvestplusapi.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Entity
-public class Investor {
-
-    @Id
+public class InvestorDTO {
     private String email;
     private String lastName;
     private String firstName;
@@ -25,5 +14,4 @@ public class Investor {
     private String phoneNumber;
     private String maritalStatus;
     private String numberOfChildren;
-
 }
