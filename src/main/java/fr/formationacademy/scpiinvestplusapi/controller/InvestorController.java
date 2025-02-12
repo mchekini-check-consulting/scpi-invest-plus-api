@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/investors")
 @Tag(name = "Investor", description = "API pour la gestion des investisseurs")
 public class InvestorController {
