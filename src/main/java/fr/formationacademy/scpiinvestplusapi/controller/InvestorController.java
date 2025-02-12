@@ -20,7 +20,7 @@ public class InvestorController {
 
     private final InvestorService investorService;
 
-    @Autowired
+
     public InvestorController(InvestorService investorService) {
         this.investorService = investorService;
     }
@@ -31,7 +31,7 @@ public class InvestorController {
         Investor createdInvestor = investorService.createInvestor(investorDTO);
         return ResponseEntity.ok(createdInvestor);
     }
-    @Operation(summary = "Récupérer tous les investisseurs")
+    @Operation(summary = "Récupérer tous les investiasseurs")
     @GetMapping
     public ResponseEntity<List<InvestorDTO>> getAllInvestors() {
         try {
