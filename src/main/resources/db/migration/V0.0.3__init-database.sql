@@ -28,7 +28,7 @@ CREATE TABLE sector
 
 CREATE TABLE scpi
 (
-    id                   integer PRIMARY KEY,
+    id                   integer SERIAL PRIMARY KEY,
     name                 varchar,
     minimum_subscription integer,
     manager              varchar,
