@@ -1,4 +1,4 @@
-package fr.formationacademy.scpiinvestplusapi.entiry;
+package fr.formationacademy.scpiinvestplusapi.model.entiry;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
