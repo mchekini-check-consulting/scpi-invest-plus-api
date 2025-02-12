@@ -18,8 +18,7 @@ public class InvestorServiceImpl implements InvestorService {
 
     private final InvestorRepository investorRepository;
     private final InvestorMapper investorMapper;
-
-    @Autowired
+@
     public InvestorServiceImpl(InvestorRepository investorRepository, InvestorMapper investorMapper) {
         this.investorRepository = investorRepository;
         this.investorMapper = investorMapper;
