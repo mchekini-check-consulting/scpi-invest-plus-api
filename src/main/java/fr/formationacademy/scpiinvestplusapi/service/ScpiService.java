@@ -2,6 +2,7 @@ package fr.formationacademy.scpiinvestplusapi.service;
 
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiDTO;
 import fr.formationacademy.scpiinvestplusapi.dto.StatYearDTO;
+import fr.formationacademy.scpiinvestplusapi.entity.StatYear;
 
 import java.util.List;
 
@@ -19,9 +20,9 @@ public interface ScpiService {
 
     ScpiDTO saveOrUpdateScpi(ScpiDTO scpiDTO);
 
+    ScpiDTO getScpiDetailsById(Integer id);
 
     void deleteScpi(Integer id);
 
 
-    List<StatYearDTO> getStatYearsForScpi(Integer scpiId);
 }

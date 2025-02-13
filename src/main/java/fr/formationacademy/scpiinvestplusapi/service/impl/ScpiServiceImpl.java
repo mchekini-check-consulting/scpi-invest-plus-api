@@ -27,6 +27,7 @@ public class ScpiServiceImpl implements ScpiService {
         this.scpiMapper = scpiMapper;
     }
 
+
         /* public ScpiDTO gettAllDetails(int scpid){
 
        return this.scpiRepository.getScpiDetails(scpid);
@@ -35,7 +36,10 @@ public class ScpiServiceImpl implements ScpiService {
     @Override
     public ScpiDTO addScpi(ScpiDTO scpiDTO) {
         Scpi scpi = scpiMapper.toEntity(scpiDTO);
+        System.out.println("Before Save: " + scpi);
+
         Scpi savedScpi = scpiRepository.save(scpi);
+        System.out.println("After Save: " + savedScpi);
         return scpiMapper.toDTO(savedScpi);
     }
 
@@ -58,11 +62,13 @@ public class ScpiServiceImpl implements ScpiService {
     public void deleteScpi(Integer id) {
 
     }
-
     @Override
-    public List<StatYearDTO> getStatYearsForScpi(Integer scpiId) {
-        return null;
+    public ScpiDTO getScpiDetailsById(Integer id){
+        return scpiRepository.findById(id).map(scpiMapper::toDTO).orElse(null);
     }
+
+
+
 
 
 }
