@@ -5,8 +5,6 @@ import fr.formationacademy.scpiinvestplusapi.entity.Investor;
 import fr.formationacademy.scpiinvestplusapi.mapper.InvestorMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.InvestorRepository;
 import fr.formationacademy.scpiinvestplusapi.service.InvestorService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;  // Ajout de l'import pour ResponseEntity
 import org.springframework.stereotype.Service;
 
 import java.util.List;
