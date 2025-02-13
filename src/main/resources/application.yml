@@ -14,3 +14,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://keycloak.check-consulting.net/realms/master
+          jwk-set-uri: https://keycloak.check-consulting.net/realms/master/protocol/openid-connect/certs
