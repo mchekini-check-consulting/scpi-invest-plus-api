@@ -1,6 +1,7 @@
 package fr.formationacademy.scpiinvestplusapi.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import lombok.*;
 
@@ -14,22 +15,22 @@ import lombok.*;
 public class ScpiDTO implements Serializable{
 
     private Integer id;
-    private String scpi_name;
-    private Float subscription_fees;
-    private Float management_costs;
+    private String name;
+    private Integer minimumSubscription;
     private String manager;
     private Long capitalization;
+    private Float subscriptionFees;
+    private Float managementCosts;
+    private Integer enjoymentDelay;
     private String iban;
     private String bic;
-    private Float share_price;
-    private Float reconstitution_value;
-    private Integer enjoyment_delay;
-    private Boolean scheduled_payment;
-    private String frequency_payment;
-    private Float distribution_rate;
-    private Integer minimumSubscription;
+    private Boolean scheduledPayment;
+
+    private String frequencyPayment;
     private Float cashback;
     private String advertising;
+    private List<StatYearDTO> statYears;
+
 
 
 
