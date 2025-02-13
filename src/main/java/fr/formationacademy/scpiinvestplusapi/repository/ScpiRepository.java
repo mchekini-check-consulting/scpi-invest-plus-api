@@ -23,8 +23,6 @@ public interface ScpiRepository extends JpaRepository<Scpi, Integer>{
 //
 //    ScpiDTO getScpiDetails(@Param("scpid") Integer scpid);
 
-    Optional<Scpi> findById(Integer id);
-
 
 
 }
