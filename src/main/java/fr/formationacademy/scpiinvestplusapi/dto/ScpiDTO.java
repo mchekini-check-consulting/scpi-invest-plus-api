@@ -30,6 +30,8 @@ public class ScpiDTO implements Serializable{
     private Float cashback;
     private String advertising;
     private List<StatYearDTO> statYears;
+    private List<LocationDTO> locations;
+    private List<SectorDTO> sectors;
 
 
 
