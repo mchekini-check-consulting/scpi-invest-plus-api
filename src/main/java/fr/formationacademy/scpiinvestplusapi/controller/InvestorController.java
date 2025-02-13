@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/investors")
+@RequestMapping("api/v1/application/investors")
 @Tag(name = "Investor", description = "API pour la gestion des investisseurs")
 public class InvestorController {
 
@@ -41,6 +41,8 @@ public class InvestorController {
             return ResponseEntity.status(500).body(null);
         }
     }
+
+
 
     @Operation(summary = "Récupérer un investisseur par email")
     @GetMapping("/{email}")

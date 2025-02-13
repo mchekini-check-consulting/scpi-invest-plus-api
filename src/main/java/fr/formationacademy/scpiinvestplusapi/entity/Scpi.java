@@ -27,6 +27,7 @@ public class Scpi {
     private String iban;
     private String bic;
     private Boolean scheduledPayment;
+
     private String frequencyPayment;
     private Float cashback;
     private String advertising;
