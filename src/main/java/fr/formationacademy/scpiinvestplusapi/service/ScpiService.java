@@ -22,4 +22,8 @@ public class ScpiService {
         List<Scpi> scpis = scpiRepository.findAll();
         return scpiMapper.scpiToScpiDtoOut(scpis);
     }
+
+    public ScpiDtoOut getScpiDetailsById(Integer id) {
+        return scpiRepository.findById(id).map(scpiMapper::scpiToScpiDtoOut).orElse(null);
+    }
 }
