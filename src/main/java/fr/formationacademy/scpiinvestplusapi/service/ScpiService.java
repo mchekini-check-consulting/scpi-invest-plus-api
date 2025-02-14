@@ -22,4 +22,9 @@ public class ScpiService {
         List<Scpi> scpis = scpiRepository.findAll();
         return scpiMapper.scpiToScpiDtoOut(scpis);
     }
+
+    public List<ScpiDtoOut> searchScpis(String searchItem) {
+        List<Scpi> scpis = scpiRepository.searchScpisByName(searchItem);
+        return scpiMapper.scpiToScpiDtoOut(scpis);
+    }
 }
