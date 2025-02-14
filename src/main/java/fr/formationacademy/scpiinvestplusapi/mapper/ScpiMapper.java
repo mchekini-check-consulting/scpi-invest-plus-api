@@ -1,9 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.mapper;
 
-import fr.formationacademy.scpiinvestplusapi.dto.LocationDtoOut;
-import fr.formationacademy.scpiinvestplusapi.dto.ScpiDtoOut;
-import fr.formationacademy.scpiinvestplusapi.dto.SectorDtoOut;
-import fr.formationacademy.scpiinvestplusapi.dto.StatYearDtoOut;
+import fr.formationacademy.scpiinvestplusapi.dto.*;
 import fr.formationacademy.scpiinvestplusapi.entity.Location;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.entity.Sector;
@@ -22,9 +19,9 @@ public interface ScpiMapper {
     @Mapping(target = "location", source = "locations", qualifiedByName = "highestPercentageLocation")
     @Mapping(target = "sector", source = "sectors", qualifiedByName = "highestPercentageSector")
     ScpiDtoOut scpiToScpiDtoOut(Scpi scpi);
-
     List<ScpiDtoOut> scpiToScpiDtoOut(List<Scpi> scpis);
-
+    ScpiDTO toDTO(Scpi scpi);
+    Scpi toEntity(ScpiDTO scpiDTO);
     @Named("firstStatYear")
     default StatYearDtoOut getFirstStatYear(List<StatYear> statYears) {
         return (statYears != null && !statYears.isEmpty())
@@ -62,4 +59,5 @@ public interface ScpiMapper {
                 .orElse(null)
                 : null;
     }
+
 }

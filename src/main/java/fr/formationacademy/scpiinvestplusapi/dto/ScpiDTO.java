@@ -1,21 +1,18 @@
-package fr.formationacademy.scpiinvestplusapi.entity;
+package fr.formationacademy.scpiinvestplusapi.dto;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import java.io.Serializable;
 import java.util.List;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Scpi {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ScpiDTO implements Serializable {
+
     private Integer id;
     private String name;
     private Integer minimumSubscription;
@@ -27,17 +24,12 @@ public class Scpi {
     private String iban;
     private String bic;
     private Boolean scheduledPayment;
-
     private String frequencyPayment;
     private Float cashback;
     private String advertising;
+    private List<StatYearDTO> statYears;
+    private List<LocationDTO> locations;
+    private List<SectorDTO> sectors;
 
-    @OneToMany(mappedBy = "scpi",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<Location> locations;
 
-    @OneToMany(mappedBy = "scpi",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<Sector> sectors;
-
-    @OneToMany(mappedBy = "scpi",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<StatYear> statYears;
 }
