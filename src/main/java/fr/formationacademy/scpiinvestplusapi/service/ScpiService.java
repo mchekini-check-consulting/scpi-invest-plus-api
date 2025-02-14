@@ -1,28 +1,28 @@
 package fr.formationacademy.scpiinvestplusapi.service;
 
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiDTO;
-import fr.formationacademy.scpiinvestplusapi.dto.StatYearDTO;
-import fr.formationacademy.scpiinvestplusapi.entity.StatYear;
+import fr.formationacademy.scpiinvestplusapi.mapper.ScpiMapper;
+import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+@Service
+public class ScpiService {
 
-public interface ScpiService {
-
-
-    ScpiDTO addScpi(ScpiDTO scpiDTO);
-
-
-    ScpiDTO getScpiById(Integer id);
+    private final ScpiRepository scpiRepository;
 
 
-    List<ScpiDTO> findAllScpi();
+    private final ScpiMapper scpiMapper;
 
 
-    ScpiDTO saveOrUpdateScpi(ScpiDTO scpiDTO);
+    public ScpiService(ScpiRepository scpiRepository, ScpiMapper scpiMapper) {
+        this.scpiRepository = scpiRepository;
+        this.scpiMapper = scpiMapper;
+    }
 
-    ScpiDTO getScpiDetailsById(Integer id);
 
-    void deleteScpi(Integer id);
+    public ScpiDTO getScpiDetailsById(Integer id) {
+        return scpiRepository.findById(id).map(scpiMapper::toDTO).orElse(null);
+    }
 
 
 }
