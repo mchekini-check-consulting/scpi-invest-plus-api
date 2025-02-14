@@ -1,18 +1,17 @@
 package fr.formationacademy.scpiinvestplusapi.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.List;
 
-import lombok.*;
-
-/**
- * Class for converting the data gotten from the database for Scpi detail's
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ScpiDTO implements Serializable{
+public class ScpiDTO implements Serializable {
 
     private Integer id;
     private String name;
@@ -25,15 +24,12 @@ public class ScpiDTO implements Serializable{
     private String iban;
     private String bic;
     private Boolean scheduledPayment;
-
     private String frequencyPayment;
     private Float cashback;
     private String advertising;
     private List<StatYearDTO> statYears;
     private List<LocationDTO> locations;
     private List<SectorDTO> sectors;
-
-
 
 
 }
