@@ -5,6 +5,7 @@ import fr.formationacademy.scpiinvestplusapi.service.ScpiService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,10 +19,15 @@ public class ScpiResource {
     public ScpiResource(ScpiService scpiService) {
         this.scpiService = scpiService;
     }
-
+    
     @Operation(summary = "Récupérer la liste des SCPI", description = "Renvoie toutes les SCPI disponibles.")
     @GetMapping
     public ResponseEntity<List<ScpiDtoOut>> getScpi() {
         return ResponseEntity.ok(scpiService.getScpis());
+    }
+
+    @GetMapping("/details/{scpid}")
+    public ResponseEntity<ScpiDtoOut> getDetailsById(@PathVariable Integer scpid) {
+        return ResponseEntity.ok(scpiService.getScpiDetailsById(scpid));
     }
 }
