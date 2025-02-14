@@ -13,10 +13,12 @@ public class ScpiService {
     private final ScpiRepository scpiRepository;
     private final ScpiMapper scpiMapper;
 
-    public ScpiService(ScpiRepository scpiRepository, ScpiMapper scpiMapper) {
-        this.scpiRepository = scpiRepository;
-        this.scpiMapper = scpiMapper;
+
+
+    public ScpiDTO getScpiDetailsById(Integer id) {
+        return scpiRepository.findById(id).map(scpiMapper::toDTO).orElse(null);
     }
+
 
     public List<ScpiDtoOut> getScpis() {
         List<Scpi> scpis = scpiRepository.findAll();
