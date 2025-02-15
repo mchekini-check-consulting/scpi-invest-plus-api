@@ -1,48 +1,19 @@
 package fr.formationacademy.scpiinvestplusapi.config;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.info.Contact;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.info.License;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
-@OpenAPIDefinition(
-        info = @Info(
-                contact = @Contact(
-                        name = "Formation FullStack DevOps / Spi Invest Plus Api",
-                        email = "formationacademy@scpiinvestplus.fr",
-                        url = ""
-                ),
-                description = "OpenApi documentation",
-                title = "Projet Backend Spring Boot Pour Scpi Invest Plus APIs",
-                version = "1.0",
-                license = @License(
-                        name = "Licence name",
-                        url = ""
-                ),
-                termsOfService = "Terms of service"
-        ),
-        servers = {
-                @Server(
-                        description = "Local ENV",
-                        url = "http://localhost:8080/scpi"
-                )
-        }
-        // TODO : ADDING SECURITY TO SWAGGER
-        // security = @SecurityRequirement(name = "bearerAuth")
-)
-@SecurityScheme(
-        name = "bearerAuth",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT",
-        in = SecuritySchemeIn.HEADER
-)
+
 @Configuration
 public class SwaggerConfig {
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("scpi-invest-plus-api")
+                        .description("Documentation des API du project SCPI Invest Plus"));
+    }
 }

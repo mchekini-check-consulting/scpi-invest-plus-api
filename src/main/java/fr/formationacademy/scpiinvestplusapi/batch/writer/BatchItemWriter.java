@@ -1,8 +1,11 @@
 package fr.formationacademy.scpiinvestplusapi.batch.writer;
 
-import fr.formationacademy.scpiinvestplusapi.model.dto.BatchDataDto;
-import fr.formationacademy.scpiinvestplusapi.services.BatchService;
+import fr.formationacademy.scpiinvestplusapi.dto.BatchDataDto;
+
+import fr.formationacademy.scpiinvestplusapi.service.BatchService;
 import fr.formationacademy.scpiinvestplusapi.services.LocationService;
+import fr.formationacademy.scpiinvestplusapi.services.SectorService;
+import fr.formationacademy.scpiinvestplusapi.services.StatYearService;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
@@ -10,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 @Component
 @RequiredArgsConstructor
@@ -19,6 +20,8 @@ public class BatchItemWriter implements ItemWriter<BatchDataDto> {
 
     private final BatchService batchService;
     private final LocationService locationService;
+    private final SectorService sectorService;
+    private final StatYearService statYearService;
 
     @Transactional
     @Override
@@ -27,7 +30,7 @@ public class BatchItemWriter implements ItemWriter<BatchDataDto> {
 
         List<BatchDataDto> batchDataList = items.getItems().stream()
                 .map(item -> (BatchDataDto) item)
-                .collect(Collectors.toList());
+                .toList();
 
         batchService.saveOrUpdateBatchData(batchDataList);
 
@@ -35,6 +38,13 @@ public class BatchItemWriter implements ItemWriter<BatchDataDto> {
             if (batchData.getLocations() != null) {
                 locationService.saveLocations(batchData.getLocations());
             }
+            if (batchData.getSectors() != null) {
+                sectorService.saveSectors(batchData.getSectors());
+            }
+            if (batchData.getStatYears() != null) {
+                statYearService.saveStatYears(batchData.getStatYears());
+            }
         });
+
     }
 }

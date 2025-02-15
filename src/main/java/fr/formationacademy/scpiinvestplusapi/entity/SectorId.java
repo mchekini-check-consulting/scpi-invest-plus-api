@@ -1,5 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,9 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class SectorId implements java.io.Serializable {
-    private Integer scpiId;
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "scpi_id")
+    private Integer scpiId;
 }

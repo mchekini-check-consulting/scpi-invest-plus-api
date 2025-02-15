@@ -1,14 +1,13 @@
 package fr.formationacademy.scpiinvestplusapi.config;
 
-
+import fr.formationacademy.scpiinvestplusapi.batch.listener.BatchJobListener;
 import fr.formationacademy.scpiinvestplusapi.batch.processor.ScpiItemProcessor;
 import fr.formationacademy.scpiinvestplusapi.batch.reader.ScpiItemReader;
-import fr.formationacademy.scpiinvestplusapi.model.dto.BatchDataDto;
-import fr.formationacademy.scpiinvestplusapi.model.dto.requests.ScpiDto;
-
-import fr.formationacademy.scpiinvestplusapi.model.entiry.Scpi;
-import fr.formationacademy.scpiinvestplusapi.repositories.ScpiRepository;
-import fr.formationacademy.scpiinvestplusapi.services.BatchService;
+import fr.formationacademy.scpiinvestplusapi.dto.BatchDataDto;
+import fr.formationacademy.scpiinvestplusapi.dto.ScpiDto;
+import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
+import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
+import fr.formationacademy.scpiinvestplusapi.service.BatchService;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -38,17 +37,18 @@ import org.slf4j.LoggerFactory;
 
 
 @Configuration
-@RequiredArgsConstructor
 @EnableBatchProcessing
 @EnableScheduling
+@RequiredArgsConstructor
 public class BatchConfig {
 
     private static final Logger log = LoggerFactory.getLogger(BatchConfig.class);
 
-
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final EntityManagerFactory entityManagerFactory;
+    private final BatchService batchService;
+    private final BatchJobListener batchJobListener;
 
     @Bean
     public CompositeItemProcessor<ScpiDto, Scpi> processor(ScpiItemProcessor scpiItemProcessor, BatchService batchService, ScpiRepository scpiRepository) {
@@ -61,11 +61,8 @@ public class BatchConfig {
 
         ItemProcessor<Scpi, Scpi> filterProcessor = scpi -> {
             if (scpi == null || scpi.getId() == null) {
-                // Si l'objet SCPI ou son ID est null, on le passe directement
                 return scpi;
             }
-
-            // Vérifier si scpi existe déjà en base
             Optional<Scpi> existingScpiOpt = scpiRepository.findById(scpi.getId());
 
             if (existingScpiOpt.isPresent()) {
@@ -116,12 +113,10 @@ public class BatchConfig {
     @Bean
     public Job importScpiJob(Step step1) {
         return new JobBuilder("importScpiJob", jobRepository)
+                .listener(batchJobListener)
                 .incrementer(new RunIdIncrementer())
                 .start(step1)
                 .build();
     }
-
-
-
 
 }

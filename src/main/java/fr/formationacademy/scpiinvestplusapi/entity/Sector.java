@@ -1,10 +1,7 @@
 package fr.formationacademy.scpiinvestplusapi.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
@@ -18,6 +15,7 @@ public class Sector {
 
     @ManyToOne
     @MapsId("scpiId")
-    @JoinColumn(name = "scpi_id")
+    @JoinColumn(name = "scpi_id", nullable = false)
+    @ToString.Exclude
     private Scpi scpi;
 }

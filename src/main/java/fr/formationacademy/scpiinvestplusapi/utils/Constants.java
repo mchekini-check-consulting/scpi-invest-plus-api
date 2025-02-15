@@ -14,4 +14,7 @@ public interface Constants {
     String INVALID_IBAN = "Invalid IBAN format";
     String INVALID_BIC = "Invalid BIC format";
     String INVALID_NUMBER = "Must be a number";
+
+    //ROOTS
+    String APP_ROOT = "/api/v1/";
 }

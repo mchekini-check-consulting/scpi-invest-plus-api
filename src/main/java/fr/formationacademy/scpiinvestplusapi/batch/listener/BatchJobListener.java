@@ -1,23 +1,50 @@
 package fr.formationacademy.scpiinvestplusapi.batch.listener;
 
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.BatchStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
 public class BatchJobListener implements JobExecutionListener {
 
+    private final Map<Long, Long> jobStartTimes = new ConcurrentHashMap<>();
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
-        log.info("Batch job {} started", jobExecution.getJobInstance().getJobName());
+        long startTime = System.currentTimeMillis();
+        jobStartTimes.put(jobExecution.getId(), startTime);
+
+        log.info("Batch job '{}' started at {} with parameters: {}",
+                jobExecution.getJobInstance().getJobName(),
+                jobExecution.getStartTime(),
+                jobExecution.getJobParameters());
     }
 
     @Override
     public void afterJob(JobExecution jobExecution) {
-        log.info("Batch job {} finished with status: {}", jobExecution.getJobInstance().getJobName(), jobExecution.getStatus());
+        long endTime = System.currentTimeMillis();
+        Long startTime = jobStartTimes.remove(jobExecution.getId());
+
+        if (startTime != null) {
+            long duration = endTime - startTime;
+            log.info("Batch job '{}' finished with status: {} (Duration: {} ms)",
+                    jobExecution.getJobInstance().getJobName(),
+                    jobExecution.getStatus(),
+                    duration);
+        } else {
+            log.warn("Batch job '{}' finished, but start time was not recorded!",
+                    jobExecution.getJobInstance().getJobName());
+        }
+
+        if (jobExecution.getStatus() == BatchStatus.FAILED) {
+            log.error("Batch job '{}' failed! Errors:", jobExecution.getJobInstance().getJobName());
+            jobExecution.getAllFailureExceptions().forEach(ex -> log.error("Exception: ", ex));
+        }
     }
 }
-

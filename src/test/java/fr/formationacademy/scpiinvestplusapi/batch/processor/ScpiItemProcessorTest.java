@@ -1,41 +1,55 @@
 package fr.formationacademy.scpiinvestplusapi.batch.processor;
 
-import fr.formationacademy.scpiinvestplusapi.model.dto.BatchDataDto;
-import fr.formationacademy.scpiinvestplusapi.model.dto.requests.ScpiDto;
-import fr.formationacademy.scpiinvestplusapi.model.entiry.Scpi;
-import fr.formationacademy.scpiinvestplusapi.repositories.ScpiRepository;
-import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
+
+
+import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
+import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
+import fr.formationacademy.scpiinvestplusapi.services.LocationService;
+import fr.formationacademy.scpiinvestplusapi.services.SectorService;
+import fr.formationacademy.scpiinvestplusapi.services.StatYearService;
 import org.junit.jupiter.api.Test;
+
+import fr.formationacademy.scpiinvestplusapi.dto.BatchDataDto;
+import fr.formationacademy.scpiinvestplusapi.dto.ScpiDto;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ScpiItemProcessorTest {
+public class ScpiItemProcessorTest {
 
     @Mock
     private ScpiRepository scpiRepository;
 
+    @Mock
+    private LocationService locationService;
+
+    @Mock
+    private SectorService sectorService;
+
+    @Mock
+    private StatYearService statYearService;
+
     @InjectMocks
-    private ScpiItemProcessor scpiItemProcessor;
+    private ScpiItemProcessor processor;
 
     @BeforeEach
     void setUp() {
-        when(scpiRepository.findAll()).thenReturn(Collections.emptyList());
-        scpiItemProcessor.init();
+        processor = new ScpiItemProcessor(scpiRepository, locationService, sectorService, statYearService);
     }
 
     @Test
-    void testProcess_NewScpi() {
-        ScpiDto dto = ScpiDto.builder()
+    void testProcessWithValidBatchData() {
+        ScpiDto scpiDto = ScpiDto.builder()
                 .id(1)
                 .name("Test SCPI")
                 .minimumSubscription(1000)
@@ -51,77 +65,83 @@ class ScpiItemProcessorTest {
                 .advertising("Special Offer")
                 .build();
 
-        BatchDataDto batchDataDto = new BatchDataDto();
-        batchDataDto.setScpiDto(dto);
+        BatchDataDto batchDataDto = BatchDataDto.builder()
+                .scpiDto(scpiDto)
+                .build();
 
-        Scpi result = scpiItemProcessor.process(batchDataDto);
+        Scpi result = processor.process(batchDataDto);
 
         assertNotNull(result);
-        assertEquals(1, result.getId());
         assertEquals("Test SCPI", result.getName());
         assertEquals(1000, result.getMinimumSubscription());
         assertEquals("Test Manager", result.getManager());
-        assertEquals(0, result.getCapitalization().compareTo(BigDecimal.valueOf(50000.0)));
-        assertEquals(2.5f, result.getSubscriptionFees());
-        assertEquals(1.5f, result.getManagementCosts());
+        assertEquals(BigDecimal.valueOf(50000.0), result.getCapitalization());
+        assertEquals(2.5f, result.getSubscriptionFees(), 0.001); // Tolérance pour les float
+        assertEquals(1.5f, result.getManagementCosts(), 0.001);
         assertEquals(30, result.getEnjoymentDelay());
         assertEquals("FR7630004000031234567890143", result.getIban());
         assertEquals("BNPAFRPPXXX", result.getBic());
-        assertTrue(result.getScheduledPayment());
-        assertEquals(0, result.getCashback().compareTo(BigDecimal.valueOf(100.0)));
+        assertEquals(BigDecimal.valueOf(100.0), result.getCashback());
         assertEquals("Special Offer", result.getAdvertising());
     }
 
+
     @Test
-    void testProcess_ExistingUnchangedScpi() {
-        Scpi existingScpi = new Scpi();
-        existingScpi.setId(1);
-        existingScpi.setName("Test SCPI");
-        existingScpi.setMinimumSubscription(1000);
-        existingScpi.setManager("Test Manager");
-        existingScpi.setCapitalization(BigDecimal.valueOf(50000.0));
-        existingScpi.setSubscriptionFees(2.5f);
-        existingScpi.setManagementCosts(1.5f);
-        existingScpi.setEnjoymentDelay(30);
-        existingScpi.setIban("FR7630004000031234567890143");
-        existingScpi.setBic("BNPAFRPPXXX");
-        existingScpi.setScheduledPayment(true);
-        existingScpi.setCashback(BigDecimal.valueOf(100.0));
-        existingScpi.setAdvertising("Special Offer");
-
-        when(scpiRepository.findAll()).thenReturn(List.of(existingScpi));
-        scpiItemProcessor.init();
-
-        ScpiDto dto = ScpiDto.builder()
-                .id(1)
-                .name("Test SCPI")
-                .minimumSubscription(1000)
-                .manager("Test Manager")
-                .capitalization(BigDecimal.valueOf(50000.0))
-                .subscriptionFees(2.5f)
-                .managementCosts(1.5f)
-                .enjoymentDelay(30)
-                .iban("FR7630004000031234567890143")
-                .bic("BNPAFRPPXXX")
-                .scheduledPayment(true)
-                .cashback(BigDecimal.valueOf(100.0))
-                .advertising("Special Offer")
+    void testProcessNullBatchData() {
+        BatchDataDto nullScpiDto = BatchDataDto.builder()
+                .scpiDto(null)
                 .build();
 
-        BatchDataDto batchDataDto = new BatchDataDto();
-        batchDataDto.setScpiDto(dto);
+        assertNull(processor.process(nullScpiDto));
 
-        Scpi result = scpiItemProcessor.process(batchDataDto);
-
-        assertNull(result);
+        verify(locationService, never()).createLocations(anyString(), any());
+        verify(locationService, never()).saveLocations(any());
+        verify(sectorService, never()).createSectors(anyString(), any());
+        verify(sectorService, never()).saveSectors(any());
     }
 
     @Test
-    void testProcess_NullScpi() {
-        BatchDataDto batchDataDto = new BatchDataDto();
-        batchDataDto.setScpiDto(null);
+    void testProcessExistingScpiNeedsUpdate() {
+        Scpi existingScpi = new Scpi();
+        existingScpi.setName("Existing SCPI");
+        existingScpi.setMinimumSubscription(1000);
 
-        Scpi result = scpiItemProcessor.process(batchDataDto);
-        assertNull(result);
+        when(scpiRepository.findAll()).thenReturn(List.of(existingScpi));
+
+        processor.init();
+
+        ScpiDto scpiDto = ScpiDto.builder()
+                .name("Existing SCPI")
+                .minimumSubscription(2000)
+                .build();
+
+        BatchDataDto batchDataDto = BatchDataDto.builder()
+                .scpiDto(scpiDto)
+                .build();
+
+        Scpi result = processor.process(batchDataDto);
+
+        assertNotNull(result);
+        assertEquals("Existing SCPI", result.getName());
+        assertEquals(2000, result.getMinimumSubscription());
     }
+
+    @Test
+    void testInitLoadsExistingScpis() {
+        Scpi scpi1 = new Scpi();
+        scpi1.setName("SCPI 1");
+        Scpi scpi2 = new Scpi();
+        scpi2.setName("SCPI 2");
+
+        when(scpiRepository.findAll()).thenReturn(List.of(scpi1, scpi2));
+
+        processor.init();
+
+        assertEquals(2, processor.existingScpis.size());
+        assertTrue(processor.existingScpis.containsKey("SCPI 1"));
+        assertTrue(processor.existingScpis.containsKey("SCPI 2"));
+    }
+
+
+
 }

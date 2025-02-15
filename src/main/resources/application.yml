@@ -3,27 +3,27 @@ spring:
     name: scpi-invest-plus-api
     version: 1.0.0
   datasource:
-    url: jdbc:postgresql://scpi-invest-db:5432/postgres
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: admin
     driver-class-name: org.postgresql.Driver
   jpa:
     database: postgresql
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    locations: classpath:db/migration
 
   spring:
     batch:
       jdbc:
         initialize-schema: always
+
+    flyway:
+      baseline-on-migrate: true
+
+
 
 
 

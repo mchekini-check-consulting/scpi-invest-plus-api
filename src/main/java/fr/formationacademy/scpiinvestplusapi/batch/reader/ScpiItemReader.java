@@ -1,7 +1,7 @@
 package fr.formationacademy.scpiinvestplusapi.batch.reader;
 
-import fr.formationacademy.scpiinvestplusapi.model.dto.requests.ScpiDto;
-import fr.formationacademy.scpiinvestplusapi.model.enums.ScpiField;
+import fr.formationacademy.scpiinvestplusapi.dto.ScpiDto;
+import fr.formationacademy.scpiinvestplusapi.enums.ScpiField;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.context.annotation.Bean;

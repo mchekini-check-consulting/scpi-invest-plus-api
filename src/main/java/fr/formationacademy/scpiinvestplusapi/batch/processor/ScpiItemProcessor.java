@@ -1,10 +1,16 @@
 package fr.formationacademy.scpiinvestplusapi.batch.processor;
 
-import fr.formationacademy.scpiinvestplusapi.model.dto.BatchDataDto;
-import fr.formationacademy.scpiinvestplusapi.model.dto.requests.ScpiDto;
-import fr.formationacademy.scpiinvestplusapi.model.entiry.*;
-import fr.formationacademy.scpiinvestplusapi.repositories.ScpiRepository;
+import fr.formationacademy.scpiinvestplusapi.dto.BatchDataDto;
+import fr.formationacademy.scpiinvestplusapi.dto.ScpiDto;
+import fr.formationacademy.scpiinvestplusapi.entity.Location;
+import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
+
+import fr.formationacademy.scpiinvestplusapi.entity.Sector;
+import fr.formationacademy.scpiinvestplusapi.entity.StatYear;
+import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
 import fr.formationacademy.scpiinvestplusapi.services.LocationService;
+import fr.formationacademy.scpiinvestplusapi.services.SectorService;
+import fr.formationacademy.scpiinvestplusapi.services.StatYearService;
 import io.micrometer.common.lang.NonNull;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +19,6 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +27,11 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
 
     private final ScpiRepository scpiRepository;
     private final LocationService locationService;
-    private final Map<String, Scpi> existingScpis = new HashMap<>();
+    private final SectorService sectorService;
+    private final StatYearService statYearService;
+
+
+    public final Map<String, Scpi> existingScpis = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -51,17 +59,23 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
         }
 
         Scpi scpi = createOrUpdateScpi(dto, existingScpi);
-        List<Location> locations = locationService.createLocations(dto.getLocation(), scpi);
+
+        List<Location> locations = locationService.createLocations(dto.getLocations(), scpi);
         locationService.saveLocations(locations);
         scpi.setLocations(locations);
 
-        scpi.setSectors(batchDataDto.getSectors() != null ? new ArrayList<>(batchDataDto.getSectors()) : new ArrayList<>());
-        scpi.setStatYears(createStatYears(batchDataDto.getStatYears(), scpi));
+        List<Sector> sectors = sectorService.createSectors(dto.getSectors(), scpi);
+        sectorService.saveSectors(sectors);
+        scpi.setSectors(sectors);
+
+        List<StatYear> statYears = statYearService.createStatYears(dto.getStatYears(), scpi);
+        statYearService.saveStatYears(statYears);
+        scpi.setStatYears(statYears);
 
         return scpi;
     }
 
-    private Scpi createOrUpdateScpi(ScpiDto dto, Scpi existingScpi) {
+    public Scpi createOrUpdateScpi(ScpiDto dto, Scpi existingScpi) {
         Scpi scpi = (existingScpi != null) ? existingScpi : new Scpi();
         scpi.setName(dto.getName());
         scpi.setMinimumSubscription(dto.getMinimumSubscription());
@@ -75,27 +89,21 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
         scpi.setScheduledPayment(dto.getScheduledPayment());
         scpi.setCashback(dto.getCashback());
         scpi.setAdvertising(dto.getAdvertising());
+
+        List<Location> locations = locationService.createLocations(dto.getLocations(), scpi);
+        scpi.setLocations(locations);
+
+        List<Sector> sectors = sectorService.createSectors(dto.getSectors(), scpi);
+        scpi.setSectors(sectors);
+
+        List<StatYear> statYears = statYearService.createStatYears(dto.getStatYears(), scpi);
+        scpi.setStatYears(statYears);
+
         return scpi;
     }
 
-    private List<StatYear> createStatYears(List<StatYear> statYearsDto, Scpi scpi) {
-        if (statYearsDto == null || statYearsDto.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return statYearsDto.stream()
-                .map(statYear -> {
-                    StatYear newStatYear = new StatYear();
-                    newStatYear.setId(new StatYearKey(2024, null));
-                    newStatYear.setDistributionRate(statYear.getDistributionRate());
-                    newStatYear.setSharePrice(statYear.getSharePrice());
-                    newStatYear.setReconstitutionValue(statYear.getReconstitutionValue());
-                    newStatYear.setScpi(scpi);
-                    return newStatYear;
-                })
-                .collect(Collectors.toList());
-    }
 
-    private boolean isSame(Scpi existing, ScpiDto dto) {
+    public boolean isSame(Scpi existing, ScpiDto dto) {
         return Objects.equals(existing.getMinimumSubscription(), dto.getMinimumSubscription())
                 && Objects.equals(existing.getCapitalization(), dto.getCapitalization())
                 && Objects.equals(existing.getManager(), dto.getManager())
@@ -106,7 +114,10 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
                 && Objects.equals(existing.getBic(), dto.getBic())
                 && Objects.equals(existing.getScheduledPayment(), dto.getScheduledPayment())
                 && Objects.equals(existing.getCashback(), dto.getCashback())
-                && Objects.equals(existing.getAdvertising(), dto.getAdvertising());
+                && Objects.equals(existing.getAdvertising(), dto.getAdvertising())
+                && Objects.equals(existing.getLocations(), dto.getLocations())
+                && Objects.equals(existing.getStatYears(), dto.getStatYears())
+                && Objects.equals(existing.getSectors(), dto.getSectors());
     }
 }
 

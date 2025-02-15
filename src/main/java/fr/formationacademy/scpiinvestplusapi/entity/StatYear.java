@@ -13,10 +13,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class StatYear {
     @EmbeddedId
-    private StatYeraId yearStat;
+    private StatYearId yearStat;
     private Float distributionRate;
     private Float sharePrice;
     private Float reconstitutionValue;
+
     @ManyToOne
     @MapsId("scpiId")
     @JoinColumn(name = "scpi_id", nullable = false)
