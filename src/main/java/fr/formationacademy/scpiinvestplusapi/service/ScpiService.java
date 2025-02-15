@@ -1,5 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.service;
 
+import fr.formationacademy.scpiinvestplusapi.dto.ScpiDTO;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiDtoOut;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.mapper.ScpiMapper;
@@ -22,4 +23,10 @@ public class ScpiService {
         List<Scpi> scpis = scpiRepository.findAll();
         return scpiMapper.scpiToScpiDtoOut(scpis);
     }
+    public ScpiDTO getScpiDetailsById(Integer id) {
+        return scpiRepository.findById(id).map(scpiMapper::toDTO).orElse(null);
+    }
+
+
+
 }

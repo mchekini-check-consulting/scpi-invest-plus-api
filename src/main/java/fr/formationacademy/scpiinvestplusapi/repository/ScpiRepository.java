@@ -7,3 +7,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ScpiRepository  extends JpaRepository<Scpi, Integer> {
 }
+
+
+
+
+
+    
+
