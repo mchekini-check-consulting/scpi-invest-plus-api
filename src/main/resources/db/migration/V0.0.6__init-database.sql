@@ -1,4 +1,4 @@
-CREATE TABLE investor
+CREATE TABLE IF NOT EXISTS investor
 (
     last_name          varchar,
     first_name         varchar,
@@ -10,7 +10,7 @@ CREATE TABLE investor
     number_of_children varchar
 );
 
-CREATE TABLE location
+CREATE TABLE IF NOT EXISTS  location
 (
     country            varchar,
     country_percentage float,
@@ -18,7 +18,7 @@ CREATE TABLE location
     PRIMARY KEY (country, scpi_id)
 );
 
-CREATE TABLE sector
+CREATE TABLE IF NOT EXISTS  sector
 (
     name              varchar,
     sector_percentage float,
@@ -26,7 +26,7 @@ CREATE TABLE sector
     PRIMARY KEY (name, scpi_id)
 );
 
-CREATE TABLE scpi
+CREATE TABLE IF NOT EXISTS  scpi
 (
     id                   SERIAL PRIMARY KEY,
     name                 varchar,
@@ -43,7 +43,7 @@ CREATE TABLE scpi
     advertising          text
 );
 
-CREATE TABLE stat_year
+CREATE TABLE IF NOT EXISTS  stat_year
 (
     year_stat            integer,
     distribution_rate    float,

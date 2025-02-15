@@ -16,4 +16,8 @@ public class SwaggerConfig {
                         .title("scpi-invest-plus-api")
                         .description("Documentation des API du project SCPI Invest Plus"));
     }
+
+
+
+
 }
