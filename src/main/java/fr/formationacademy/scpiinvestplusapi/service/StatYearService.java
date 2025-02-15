@@ -1,4 +1,4 @@
-package fr.formationacademy.scpiinvestplusapi.services;
+package fr.formationacademy.scpiinvestplusapi.service;
 
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.entity.StatYear;

@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
-import fr.formationacademy.scpiinvestplusapi.services.LocationService;
-import fr.formationacademy.scpiinvestplusapi.services.SectorService;
-import fr.formationacademy.scpiinvestplusapi.services.StatYearService;
+import fr.formationacademy.scpiinvestplusapi.service.LocationService;
+import fr.formationacademy.scpiinvestplusapi.service.SectorService;
+import fr.formationacademy.scpiinvestplusapi.service.StatYearService;
 import org.junit.jupiter.api.Test;
 
 import fr.formationacademy.scpiinvestplusapi.dto.BatchDataDto;

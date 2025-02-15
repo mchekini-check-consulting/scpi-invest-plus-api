@@ -3,9 +3,9 @@ package fr.formationacademy.scpiinvestplusapi.batch.writer;
 import fr.formationacademy.scpiinvestplusapi.dto.BatchDataDto;
 
 import fr.formationacademy.scpiinvestplusapi.service.BatchService;
-import fr.formationacademy.scpiinvestplusapi.services.LocationService;
-import fr.formationacademy.scpiinvestplusapi.services.SectorService;
-import fr.formationacademy.scpiinvestplusapi.services.StatYearService;
+import fr.formationacademy.scpiinvestplusapi.service.LocationService;
+import fr.formationacademy.scpiinvestplusapi.service.SectorService;
+import fr.formationacademy.scpiinvestplusapi.service.StatYearService;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;

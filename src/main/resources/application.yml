@@ -1,33 +1,23 @@
+
 spring:
   application:
     name: scpi-invest-plus-api
     version: 1.0.0
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://scpi-invest-db:5432/postgres
     username: postgres
-    password: admin
+    password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     database: postgresql
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-
-  spring:
-    batch:
-      jdbc:
-        initialize-schema: always
-
-    flyway:
-      baseline-on-migrate: true
-
-
-
-
-
-
-
-
-
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://keycloak.check-consulting.net/realms/master
+          jwk-set-uri: https://keycloak.check-consulting.net/realms/master/protocol/openid-connect/certs
