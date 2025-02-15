@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 public class ScpiItemReaderTest {
 
     @Test
-    public void test_read_valid_csv_file() throws Exception {
+    public void testReadValidCsvFile() throws Exception {
         ScpiItemReader reader = new ScpiItemReader();
         FlatFileItemReader<ScpiDto> itemReader = reader.reader();
 
@@ -48,7 +48,7 @@ public class ScpiItemReaderTest {
 
 
     @Test
-    public void test_map_all_csv_columns_to_scpi_dto_fields() throws Exception {
+    public void testMapAllCsvColumnsToScpiDtoFields() throws Exception {
         FlatFileItemReader<ScpiDto> reader = new ScpiItemReader().reader();
 
         try {
@@ -78,7 +78,7 @@ public class ScpiItemReaderTest {
     }
 
     @Test
-    public void test_skip_header_row_of_csv_file() throws Exception {
+    public void testSkipHeaderRowOfCsvFile() throws Exception {
         FlatFileItemReader<ScpiDto> reader = new ScpiItemReader().reader();
         reader.open(new ExecutionContext());
         ScpiDto firstRecord = reader.read();
