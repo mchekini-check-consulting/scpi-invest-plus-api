@@ -27,15 +27,16 @@ public class Scpi {
     private String iban;
     private String bic;
     private Boolean scheduledPayment;
+    private String frequencyPayment;
     private Float cashback;
     private String advertising;
 
-    @OneToMany(mappedBy = "scpi",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Location> locations;
 
-    @OneToMany(mappedBy = "scpi",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Sector> sectors;
 
-    @OneToMany(mappedBy = "scpi",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StatYear> statYears;
 }

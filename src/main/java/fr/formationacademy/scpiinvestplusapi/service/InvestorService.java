@@ -5,7 +5,6 @@ import fr.formationacademy.scpiinvestplusapi.entity.Investor;
 import fr.formationacademy.scpiinvestplusapi.mapper.InvestorMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.InvestorRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
