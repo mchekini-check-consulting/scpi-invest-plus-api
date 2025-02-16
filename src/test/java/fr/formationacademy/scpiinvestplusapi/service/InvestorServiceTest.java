@@ -23,7 +23,6 @@ class InvestorServiceTest {
 
     @Mock
     private InvestorRepository investorRepository;
-
     @Mock
     private InvestorMapper investorMapper;
 
@@ -34,7 +33,6 @@ class InvestorServiceTest {
 
     @BeforeEach
     void setUp() {
-        // Initialisation de l'objet InvestorDTO avant chaque test
         investorDTO = new InvestorDTO();
         investorDTO.setEmail("test@example.com");
         investorDTO.setFirstName("John");
@@ -91,12 +89,12 @@ class InvestorServiceTest {
 
         List<InvestorDTO> expectedDTOs = List.of(investorDTO1, investorDTO2);
 
-        // 2. Simulation du comportement des mocks
+
         when(investorRepository.findAll()).thenReturn(investors);
         when(investorMapper.toDTO(investor1)).thenReturn(investorDTO1);
         when(investorMapper.toDTO(investor2)).thenReturn(investorDTO2);
 
-        // 3. Exécution de la méthode à tester
+
         List<InvestorDTO> result = investorService.getAllInvestors();
 
 
@@ -149,7 +147,7 @@ class InvestorServiceTest {
 
         assertFalse(result.isPresent());
 
-        // la méthode doit etre appelée 1 fois
+
         verify(investorRepository, times(1)).findById(email);
     }
 
