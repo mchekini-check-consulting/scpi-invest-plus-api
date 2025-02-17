@@ -14,9 +14,9 @@ public class ScpiRequestFieldSetMapper implements FieldSetMapper<ScpiDto> {
     public ScpiDto mapFieldSet(FieldSet fieldSet) {
         return ScpiDto.builder()
                 .name(fieldSet.readString(ScpiField.NOM.getColumnName()))
-                .distributedRate(fieldSet.readFloat(ScpiField.TAUX_DISTRIBUTION.getColumnName()))
-                .sharePrice(fieldSet.readFloat(ScpiField.PRIX_DE_LA_PART.getColumnName()))
-                .reconstitutionValue(fieldSet.readFloat(ScpiField.VALEUR_DE_RECONSTITUTION.getColumnName()))
+                .distributedRate(fieldSet.readString(ScpiField.TAUX_DISTRIBUTION.getColumnName()))
+                .sharePrice(fieldSet.readString(ScpiField.PRIX_DE_LA_PART.getColumnName()))
+                .reconstitutionValue(fieldSet.readString(ScpiField.VALEUR_DE_RECONSTITUTION.getColumnName()))
                 .minimumSubscription(fieldSet.readInt(ScpiField.MINIMUM_SOUSCRIPTION.getColumnName()))
                 .manager(fieldSet.readString(ScpiField.GERANT.getColumnName()))
                 .capitalization(fieldSet.readLong(ScpiField.CAPITALISATION.getColumnName()))

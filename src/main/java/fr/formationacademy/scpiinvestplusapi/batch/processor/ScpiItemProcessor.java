@@ -66,8 +66,6 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
         }
 
         Scpi scpi = createOrUpdateScpi(dto, existingScpi);
-
-        // Actualiser le cache à chaque fois
         refreshCache();
 
         List<Location> locations = locationService.createLocations(dto.getLocations(), scpi);

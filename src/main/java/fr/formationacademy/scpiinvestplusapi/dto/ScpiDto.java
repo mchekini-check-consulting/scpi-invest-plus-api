@@ -1,7 +1,10 @@
 package fr.formationacademy.scpiinvestplusapi.dto;
 
+import fr.formationacademy.scpiinvestplusapi.entity.StatYear;
 import jakarta.validation.constraints.*;
 import lombok.*;
+
+import java.util.List;
 
 import static fr.formationacademy.scpiinvestplusapi.utils.Constants.*;
 
@@ -15,15 +18,6 @@ public class ScpiDto {
 
     @NotBlank(message = "Name is required")
     private String name;
-
-    @DecimalMin(value = "0.0", message = "Distributed rate must be non-negative")
-    private Float distributedRate;
-
-    @DecimalMin(value = "0.0", message = "Share price must be non-negative")
-    private Float sharePrice;
-
-    @DecimalMin(value = "0.0", message = "Reconstitution value must be non-negative")
-    private Float reconstitutionValue;
 
     @Min(value = 0, message = "Minimum subscription must be positive")
     private Integer minimumSubscription;
@@ -57,10 +51,14 @@ public class ScpiDto {
     private Float cashback;
 
     private String advertising;
+   // J'ai besoin de les traiter comme une chaine ici
+    private String distributedRate;
+    private String sharePrice;
+    private String reconstitutionValue;
 
     private String locations;
     private String sectors;
     private Integer statYear;
 
-    //private List<StatYear> statYears;
+    private List<StatYear> statYears;
 }
