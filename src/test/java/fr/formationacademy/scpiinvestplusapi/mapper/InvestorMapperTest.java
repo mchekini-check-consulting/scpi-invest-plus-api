@@ -1,7 +1,5 @@
 package fr.formationacademy.scpiinvestplusapi.mapper;
 
-
-
 import fr.formationacademy.scpiinvestplusapi.dto.InvestorDTO;
 import fr.formationacademy.scpiinvestplusapi.entity.Investor;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +20,6 @@ class InvestorMapperTest {
     void setUp() {
 
         investorMapper = Mappers.getMapper(InvestorMapper.class);
-
 
         investor = new Investor();
         investor.setEmail("test@example.com");
@@ -50,7 +47,6 @@ class InvestorMapperTest {
     void testToDTO() {
 
         InvestorDTO resultDTO = investorMapper.toDTO(investor);
-
 
         assertNotNull(resultDTO);
         assertEquals(investor.getEmail(), resultDTO.getEmail());

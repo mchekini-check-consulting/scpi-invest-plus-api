@@ -5,6 +5,7 @@ import fr.formationacademy.scpiinvestplusapi.entity.*;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ScpiMapperTest {
     private final ScpiMapper mapper = Mappers.getMapper(ScpiMapper.class);
-
 
     @Test
     void itShouldMapCorrectlyFromScpiToScpiDto() {
@@ -45,26 +45,26 @@ class ScpiMapperTest {
                 ))
                 .sectors(List.of(
                         Sector.builder()
-                                .id(new SectorId(1, "Real Estate"))
+                                .id(new SectorId(1,"Real Estate" ))
                                 .sectorPercentage(50.0f)
                                 .scpi(null)
                                 .build(),
                         Sector.builder()
-                                .id(new SectorId(1, "Technology"))
+                                .id(new SectorId(1,"Technology"))
                                 .sectorPercentage(25.0f)
                                 .scpi(null)
                                 .build()
                 ))
                 .statYears(List.of(
                         StatYear.builder()
-                                .yearStat(new StatYeraId(2023, 1))
+                                .yearStat(new StatYearId(2023, 1))
                                 .distributionRate(4.5f)
                                 .sharePrice(200.0f)
                                 .reconstitutionValue(210.0f)
                                 .scpi(null)
                                 .build(),
                         StatYear.builder()
-                                .yearStat(new StatYeraId(2022, 1))
+                                .yearStat(new StatYearId(2022, 1))
                                 .distributionRate(4.3f)
                                 .sharePrice(195.0f)
                                 .reconstitutionValue(205.0f)

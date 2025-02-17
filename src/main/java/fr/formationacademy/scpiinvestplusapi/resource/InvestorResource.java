@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static fr.formationacademy.scpiinvestplusapi.utils.Constants.APP_ROOT;
+
 @RestController
-@RequestMapping("/api/v1/investors")
+@RequestMapping(APP_ROOT + "investors")
 @Tag(name = "Investor", description = "API pour la gestion des investisseurs")
 public class InvestorResource {
 

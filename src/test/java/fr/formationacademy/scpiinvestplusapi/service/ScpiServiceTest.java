@@ -58,8 +58,8 @@ class ScpiServiceTest {
                                 Sector.builder().id(new SectorId(1, "Stade")).sectorPercentage(10.0f).scpi(null).build()
                         ))
                         .statYears(List.of(
-                                StatYear.builder().yearStat(new StatYeraId(2021, 1)).distributionRate(4.0f).sharePrice(110.0f).reconstitutionValue(230_000_000.0f).scpi(null).build(),
-                                StatYear.builder().yearStat(new StatYeraId(2022, 1)).distributionRate(4.2f).sharePrice(115.0f).reconstitutionValue(240_000_000.0f).scpi(null).build()
+                                StatYear.builder().yearStat(new StatYearId(2021, 1)).distributionRate(4.0f).sharePrice(110.0f).reconstitutionValue(230_000_000.0f).scpi(null).build(),
+                                StatYear.builder().yearStat(new StatYearId(2022, 1)).distributionRate(4.2f).sharePrice(115.0f).reconstitutionValue(240_000_000.0f).scpi(null).build()
                         ))
                         .build()
         );

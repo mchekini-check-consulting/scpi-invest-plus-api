@@ -1,4 +1,4 @@
-package fr.formationacademy.scpiinvestplusapi.config;
+package fr.formationacademy.scpiinvestplusapi.configuration;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
