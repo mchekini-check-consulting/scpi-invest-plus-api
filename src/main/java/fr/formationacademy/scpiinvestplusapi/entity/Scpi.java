@@ -1,5 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.entity;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,10 +14,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(name = "scpi", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class Scpi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String name;
     private Integer minimumSubscription;
     private String manager;
@@ -24,18 +27,23 @@ public class Scpi {
     private Float subscriptionFees;
     private Float managementCosts;
     private Integer enjoymentDelay;
+
+    @Column(unique = true)
     private String iban;
+
     private String bic;
+
     private Boolean scheduledPayment;
+    private String frequencyPayment;
     private Float cashback;
     private String advertising;
 
-    @OneToMany(mappedBy = "scpi",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Location> locations;
 
-    @OneToMany(mappedBy = "scpi",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Sector> sectors;
 
-    @OneToMany(mappedBy = "scpi",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StatYear> statYears;
 }

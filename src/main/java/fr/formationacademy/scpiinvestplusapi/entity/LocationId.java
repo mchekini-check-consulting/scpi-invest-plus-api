@@ -6,12 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class LocationId implements java.io.Serializable {
+public class LocationId implements Serializable {
     private Integer scpiId;
     private String country;
 }

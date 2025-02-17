@@ -17,13 +17,18 @@ public class ApplicationResource {
     private String applicationVersion;
 
 
-    @GetMapping
+    @GetMapping("/details")
     public ApplicationDetails getApplicationDetails() {
 
         return ApplicationDetails.builder()
                 .name(applicationName)
                 .version(applicationVersion)
                 .build();
+    }
+
+    @GetMapping("/private")
+    public String PrivateEndpoint(){
+        return "Ceci est un Endpoint Privé";
     }
 
 
