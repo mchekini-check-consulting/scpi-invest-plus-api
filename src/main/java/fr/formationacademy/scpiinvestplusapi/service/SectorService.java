@@ -70,7 +70,7 @@ public class SectorService{
                 log.warn("Pourcentage invalide pour {}: {}%", name, percentage);
                 return Optional.empty();
             }
-            return Optional.of(new Sector(new SectorId(name, scpi.getId()), percentage, scpi));
+            return Optional.of(new Sector(new SectorId(scpi.getId(),name), percentage, scpi));
         } catch (NumberFormatException e) {
             log.error("Erreur de parsing pour le secteur: {}", percentageStr, e);
             return Optional.empty();

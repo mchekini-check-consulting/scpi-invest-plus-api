@@ -6,9 +6,6 @@ import fr.formationacademy.scpiinvestplusapi.entity.StatYearId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface StatYearRepository extends JpaRepository<StatYear, StatYearId> {
-    List<StatYear> findByScpiId(Integer id);
 }

@@ -30,7 +30,6 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
     private final SectorService sectorService;
     private final StatYearService statYearService;
 
-
     public final Map<String, Scpi> existingScpis = new HashMap<>();
 
     @PostConstruct
@@ -40,6 +39,14 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
         scpis.forEach(scpi -> existingScpis.put(scpi.getName(), scpi));
         log.info("Nombre de SCPIs existantes chargées: {}", existingScpis.size());
     }
+
+    public void refreshCache() {
+        log.info("Rechargement du cache des SCPIs...");
+        List<Scpi> scpis = scpiRepository.findAll();
+        scpis.forEach(scpi -> existingScpis.put(scpi.getName(), scpi));
+        log.info("Cache des SCPIs rechargé: {}", existingScpis.size());
+    }
+
 
     @Override
     public Scpi process(@NonNull BatchDataDto batchDataDto) {
@@ -55,10 +62,13 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
 
         if (existingScpi != null && isSame(existingScpi, dto)) {
             log.info("SCPI '{}' déjà existante et inchangée, ignorée.", dto.getName());
-            return null;
+            return existingScpi;
         }
 
         Scpi scpi = createOrUpdateScpi(dto, existingScpi);
+
+        // Actualiser le cache à chaque fois
+        refreshCache();
 
         List<Location> locations = locationService.createLocations(dto.getLocations(), scpi);
         locationService.saveLocations(locations);
@@ -99,6 +109,8 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
 
         List<StatYear> statYears = statYearService.createStatYears(dto, scpi);
         scpi.setStatYears(statYears);
+
+        existingScpis.put(scpi.getName(), scpi);
 
         return scpi;
     }

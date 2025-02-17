@@ -17,14 +17,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class StatYearService {
     private final StatYearRepository statYearRepository;
     private final EntityMapper statYearMapper;
-
 
     public  List<StatYear> createStatYears(ScpiDto dto, Scpi scpi) {
         if (dto.getDistributedRate() == null) {

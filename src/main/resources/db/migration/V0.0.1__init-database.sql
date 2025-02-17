@@ -114,5 +114,3 @@ CREATE TABLE IF NOT EXISTS stat_year
     PRIMARY KEY (year_stat, scpi_id),
     FOREIGN KEY (scpi_id) REFERENCES scpi (id) ON DELETE CASCADE
 );
-
-

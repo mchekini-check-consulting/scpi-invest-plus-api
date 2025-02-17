@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class ScpiMapperTest {
     private final ScpiMapper mapper = Mappers.getMapper(ScpiMapper.class);
 
-
     @Test
     void itShouldMapCorrectlyFromScpiToScpiDto() {
         // Given
@@ -23,14 +22,14 @@ class ScpiMapperTest {
                 .name("SCPI Alpha")
                 .minimumSubscription(5000)
                 .manager("Manager A")
-                .capitalization(BigDecimal.valueOf(50000.0))
+                .capitalization(1_000_000_000L)
                 .subscriptionFees(2.5f)
                 .managementCosts(1.2f)
                 .enjoymentDelay(3)
                 .iban("FR7630001007941234567890185")
                 .bic("BICCODEXXX")
                 .scheduledPayment(true)
-                .cashback(BigDecimal.valueOf(100.0))
+                .cashback(1.20f)
                 .advertising("Advertising A")
                 .locations(List.of(
                         Location.builder()
@@ -46,12 +45,12 @@ class ScpiMapperTest {
                 ))
                 .sectors(List.of(
                         Sector.builder()
-                                .id(new SectorId("Real Estate",1 ))
+                                .id(new SectorId(1,"Real Estate" ))
                                 .sectorPercentage(50.0f)
                                 .scpi(null)
                                 .build(),
                         Sector.builder()
-                                .id(new SectorId("Technology",1))
+                                .id(new SectorId(1,"Technology"))
                                 .sectorPercentage(25.0f)
                                 .scpi(null)
                                 .build()

@@ -2,8 +2,6 @@ package fr.formationacademy.scpiinvestplusapi.dto;
 
 import com.opencsv.bean.CsvBindByName;
 import lombok.Data;
-import java.math.BigDecimal;
-
 
 @Data
 public class BatchRequest {

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-
 @Repository
 public interface SectorRepository extends JpaRepository<Sector, SectorId> {
     @Query("SELECT s FROM Sector s WHERE s.id.scpiId = :scpiId")

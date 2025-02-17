@@ -35,7 +35,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 @Configuration
 @EnableBatchProcessing
 @EnableScheduling
@@ -47,7 +46,6 @@ public class BatchConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final EntityManagerFactory entityManagerFactory;
-    private final BatchService batchService;
     private final BatchJobListener batchJobListener;
 
     @Bean
@@ -79,8 +77,6 @@ public class BatchConfig {
         return compositeProcessor;
     }
 
-
-
     @Bean
     public ItemWriter<Scpi> writer(ScpiRepository scpiRepository) {
         return items -> {
@@ -97,7 +93,6 @@ public class BatchConfig {
         };
     }
 
-
     @Bean
     public Step step1(ScpiItemReader scpiItemReader,
                       @Qualifier("processor") ItemProcessor<ScpiDto, Scpi> processor,
@@ -107,6 +102,9 @@ public class BatchConfig {
                 .reader(scpiItemReader.reader())
                 .processor(processor)
                 .writer(writer)
+                .faultTolerant()
+                .skip(Exception.class)
+                .skipLimit(10)
                 .build();
     }
 

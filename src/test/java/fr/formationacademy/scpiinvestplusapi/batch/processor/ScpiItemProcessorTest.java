@@ -2,7 +2,6 @@ package fr.formationacademy.scpiinvestplusapi.batch.processor;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
 import fr.formationacademy.scpiinvestplusapi.service.LocationService;
@@ -18,8 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -54,14 +51,14 @@ public class ScpiItemProcessorTest {
                 .name("Test SCPI")
                 .minimumSubscription(1000)
                 .manager("Test Manager")
-                .capitalization(BigDecimal.valueOf(50000.0))
+                .capitalization(50000L)
                 .subscriptionFees(2.5f)
                 .managementCosts(1.5f)
                 .enjoymentDelay(30)
                 .iban("FR7630004000031234567890143")
                 .bic("BNPAFRPPXXX")
                 .scheduledPayment(true)
-                .cashback(BigDecimal.valueOf(100.0))
+                .cashback(1000.0f)
                 .advertising("Special Offer")
                 .build();
 
@@ -75,13 +72,13 @@ public class ScpiItemProcessorTest {
         assertEquals("Test SCPI", result.getName());
         assertEquals(1000, result.getMinimumSubscription());
         assertEquals("Test Manager", result.getManager());
-        assertEquals(BigDecimal.valueOf(50000.0), result.getCapitalization());
-        assertEquals(2.5f, result.getSubscriptionFees(), 0.001); // Tolérance pour les float
+        assertEquals(50000L, result.getCapitalization(), "Capitalization incorrecte");
+        assertEquals(2.5f, result.getSubscriptionFees(), 0.001);
         assertEquals(1.5f, result.getManagementCosts(), 0.001);
         assertEquals(30, result.getEnjoymentDelay());
         assertEquals("FR7630004000031234567890143", result.getIban());
         assertEquals("BNPAFRPPXXX", result.getBic());
-        assertEquals(BigDecimal.valueOf(100.0), result.getCashback());
+        assertEquals(1000L, result.getCashback());
         assertEquals("Special Offer", result.getAdvertising());
     }
 
@@ -141,7 +138,5 @@ public class ScpiItemProcessorTest {
         assertTrue(processor.existingScpis.containsKey("SCPI 1"));
         assertTrue(processor.existingScpis.containsKey("SCPI 2"));
     }
-
-
 
 }

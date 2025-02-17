@@ -35,8 +35,6 @@ public interface EntityMapper {
         );
     }
 
-
-
     default List<SectorRequest> toRequestSectorList(List<Sector> sectors) {
         return sectors.stream()
                 .map(this::toRequest)

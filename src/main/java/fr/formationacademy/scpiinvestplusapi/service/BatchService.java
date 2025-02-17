@@ -1,8 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.service;
 
-import fr.formationacademy.scpiinvestplusapi.batch.processor.ScpiItemProcessor;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
-import fr.formationacademy.scpiinvestplusapi.mapper.EntityMapper;
 import fr.formationacademy.scpiinvestplusapi.dto.BatchDataDto;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiDto;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
@@ -24,8 +22,7 @@ import java.util.stream.Collectors;
 public class BatchService {
 
     private final ScpiRepository scpiRepository;
-    private final EntityMapper entityMapper;
-    private final ScpiItemProcessor processor;
+
 
     @Transactional
     public void saveOrUpdateBatchData(List<BatchDataDto> batchDataList) {
@@ -39,6 +36,20 @@ public class BatchService {
         Map<String, Scpi> existingScpis = getExistingScpis(batchDataList);
         List<Scpi> scpisToInsert = new ArrayList<>();
         List<Scpi> scpisToUpdate = new ArrayList<>();
+
+        // Séparer les SCPIs à insérer et à mettre à jour
+        for (BatchDataDto batchData : batchDataList) {
+            Scpi scpi = batchData.getScpi();
+            Scpi existingScpi = existingScpis.get(scpi.getName());
+            if (existingScpi != null) {
+                // Si la SCPI existe et a été modifiée, la mettre à jour
+                if (!isSame(scpi, existingScpi)) {
+                    scpisToUpdate.add(scpi);
+                }
+            } else {
+                scpisToInsert.add(scpi);
+            }
+        }
 
         saveEntities(scpiRepository, scpisToInsert, "New SCPIs");
         saveEntities(scpiRepository, scpisToUpdate, "Updated SCPIs");
@@ -73,4 +84,23 @@ public class BatchService {
                 .statYears(new ArrayList<>())
                 .build();
     }
+
+    public boolean isSame(Scpi existing, Scpi scpi) {
+        return Objects.equals(existing.getMinimumSubscription(), scpi.getMinimumSubscription())
+                && Objects.equals(existing.getCapitalization(), scpi.getCapitalization())
+                && Objects.equals(existing.getManager(), scpi.getManager())
+                && Objects.equals(existing.getSubscriptionFees(), scpi.getSubscriptionFees())
+                && Objects.equals(existing.getManagementCosts(), scpi.getManagementCosts())
+                && Objects.equals(existing.getEnjoymentDelay(), scpi.getEnjoymentDelay())
+                && Objects.equals(existing.getIban(), scpi.getIban())
+                && Objects.equals(existing.getBic(), scpi.getBic())
+                && Objects.equals(existing.getScheduledPayment(), scpi.getScheduledPayment())
+                && Objects.equals(existing.getFrequencyPayment(), scpi.getFrequencyPayment())
+                && Objects.equals(existing.getCashback(), scpi.getCashback())
+                && Objects.equals(existing.getAdvertising(), scpi.getAdvertising())
+                && Objects.equals(existing.getLocations(), scpi.getLocations())
+                && Objects.equals(existing.getStatYears(), scpi.getStatYears())
+                && Objects.equals(existing.getSectors(), scpi.getSectors());
+    }
+
 }
