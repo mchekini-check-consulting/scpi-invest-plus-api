@@ -32,6 +32,7 @@ public interface ScpiRepository extends JpaRepository<Scpi, Integer> {
             )\s
               """)
     List<Scpi> searchScpi(String searchTerm, List<String> location, List<String> sector, double minimumSubscription,double distributionRate, Boolean subscriptionFees);
+
     @Query("SELECT s FROM Scpi s WHERE s.name IN :names")
     Set<Scpi> findByNameIn(@Param("names") List<String> names);
 
