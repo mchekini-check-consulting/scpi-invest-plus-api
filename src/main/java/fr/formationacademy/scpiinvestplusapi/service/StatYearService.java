@@ -96,12 +96,6 @@ public class StatYearService {
                 && statYear.getDistributionRate() != null
                 && statYear.getDistributionRate() >= 0;
     }
-    public boolean statYearExists(Integer yearStat, Integer scpiId) {
-        Scpi scpi = scpiRepository.findById(scpiId)
-                .orElseThrow(() -> new RuntimeException("SCPI non trouvée"));
-
-        return statYearRepository.existsByYearStatAndScpi(new StatYearId(yearStat, scpiId), scpi);
-    }
 
     private boolean statYearExists(StatYearId yearStatId) {
         return statYearRepository.existsByYearStat(yearStatId);

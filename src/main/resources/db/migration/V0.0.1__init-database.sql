@@ -1,116 +1,63 @@
-CREATE TABLE IF NOT EXISTS investor
+CREATE TABLE investor
 (
-    last_name          VARCHAR,
-    first_name         VARCHAR,
-    date_of_birth      DATE,
-    email              TEXT PRIMARY KEY,
-    annual_income      INTEGER,
-    phone_number       VARCHAR(10),
-    marital_status     VARCHAR,
-    number_of_children VARCHAR
+    last_name          varchar,
+    first_name         varchar,
+    date_of_birth      date,
+    email              text PRIMARY KEY,
+    annual_income      integer,
+    phone_number       varchar(10),
+    marital_status     varchar,
+    number_of_children varchar
 );
 
-CREATE TABLE IF NOT EXISTS scpi
+CREATE TABLE location
 (
-    id                   SERIAL PRIMARY KEY,
-    name                 VARCHAR,
-    minimum_subscription INTEGER,
-    manager              VARCHAR,
+    country            varchar,
+    country_percentage float,
+    scpi_id            integer,
+    PRIMARY KEY (country, scpi_id)
+);
+
+CREATE TABLE sector
+(
+    name              varchar,
+    sector_percentage float,
+    scpi_id           integer,
+    PRIMARY KEY (name, scpi_id)
+);
+
+CREATE TABLE scpi
+(
+    id                   integer PRIMARY KEY,
+    name                 varchar,
+    minimum_subscription integer,
+    manager              varchar,
     capitalization       BIGINT,
-    subscription_fees    FLOAT,
-    management_costs     FLOAT,
-    enjoyment_delay      INTEGER,
-    iban                 VARCHAR UNIQUE,
-    bic                  VARCHAR,
-    scheduled_payment    BOOLEAN,
-    frequency_payment    VARCHAR,
-    cashback             FLOAT,
-    advertising          TEXT
+    subscription_fees    float,
+    management_costs     float,
+    enjoyment_delay      integer,
+    iban                 varchar UNIQUE,
+    bic                  varchar UNIQUE,
+    scheduled_payment    bool,
+    cashback             float,
+    advertising          text
 );
 
-CREATE TABLE IF NOT EXISTS location
+CREATE TABLE stat_year
 (
-    country            VARCHAR,
-    country_percentage FLOAT,
-    scpi_id            INTEGER,
-    PRIMARY KEY (country, scpi_id),
-    FOREIGN KEY (scpi_id) REFERENCES scpi (id) ON DELETE CASCADE
+    year_stat            integer,
+    distribution_rate    float,
+    share_price          float,
+    reconstitution_value float,
+    scpi_id              integer,
+    PRIMARY KEY (year_stat, scpi_id)
 );
 
-CREATE TABLE IF NOT EXISTS sector
-(
-    name               VARCHAR,
-    sector_percentage  FLOAT,
-    scpi_id            INTEGER,
-    PRIMARY KEY (name, scpi_id),
-    FOREIGN KEY (scpi_id) REFERENCES scpi (id) ON DELETE CASCADE
-);
+ALTER TABLE location
+    ADD FOREIGN KEY (scpi_id) REFERENCES scpi (id) ON DELETE CASCADE;
 
-CREATE TABLE IF NOT EXISTS stat_year
-(
-    year_stat            INTEGER,
-    distribution_rate    FLOAT,
-    share_price          FLOAT,
-    reconstitution_value FLOAT,
-    scpi_id              INTEGER,
-    PRIMARY KEY (year_stat, scpi_id),
-    FOREIGN KEY (scpi_id) REFERENCES scpi (id) ON DELETE CASCADE
-);
+ALTER TABLE sector
+    ADD FOREIGN KEY (scpi_id) REFERENCES scpi (id) ON DELETE CASCADE;
 
-CREATE TABLE IF NOT EXISTS investor
-(
-    last_name          VARCHAR,
-    first_name         VARCHAR,
-    date_of_birth      DATE,
-    email              TEXT PRIMARY KEY,
-    annual_income      INTEGER,
-    phone_number       VARCHAR(10),
-    marital_status     VARCHAR,
-    number_of_children VARCHAR
-);
-
-CREATE TABLE IF NOT EXISTS scpi
-(
-    id                   SERIAL PRIMARY KEY,
-    name                 VARCHAR,
-    minimum_subscription INTEGER,
-    manager              VARCHAR,
-    capitalization       BIGINT,
-    subscription_fees    FLOAT,
-    management_costs     FLOAT,
-    enjoyment_delay      INTEGER,
-    iban                 VARCHAR UNIQUE,
-    bic                  VARCHAR,
-    scheduled_payment    BOOLEAN,
-    cashback             NUMERIC,
-    advertising          TEXT
-);
-
-CREATE TABLE IF NOT EXISTS location
-(
-    country            VARCHAR,
-    country_percentage FLOAT,
-    scpi_id            INTEGER,
-    PRIMARY KEY (country, scpi_id),
-    FOREIGN KEY (scpi_id) REFERENCES scpi (id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS sector
-(
-    name               VARCHAR,
-    sector_percentage  FLOAT,
-    scpi_id            INTEGER,
-    PRIMARY KEY (name, scpi_id),
-    FOREIGN KEY (scpi_id) REFERENCES scpi (id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS stat_year
-(
-    year_stat            INTEGER,
-    distribution_rate    FLOAT,
-    share_price          FLOAT,
-    reconstitution_value FLOAT,
-    scpi_id              INTEGER,
-    PRIMARY KEY (year_stat, scpi_id),
-    FOREIGN KEY (scpi_id) REFERENCES scpi (id) ON DELETE CASCADE
-);
+ALTER TABLE stat_year
+    ADD FOREIGN KEY (scpi_id) REFERENCES scpi (id) ON DELETE CASCADE;

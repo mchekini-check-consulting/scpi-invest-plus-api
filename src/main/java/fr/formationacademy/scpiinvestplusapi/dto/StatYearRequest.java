@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 public class StatYearRequest {
 
-    @Min(value = 1900, message = "Year must be realistic")
+    @Min(value = 1700, message = "Year must be realistic")
     private Integer yearStat;
 
     @PositiveOrZero(message = "Distribution rate must be non-negative")

@@ -1,5 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,6 +18,6 @@ public class Location {
     @ManyToOne
     @MapsId("scpiId")
     @JoinColumn(name = "scpi_id",nullable = false)
-    @ToString.Exclude
+    @JsonIgnore
     private Scpi scpi;
 }

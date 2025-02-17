@@ -82,7 +82,6 @@ public class ScpiItemProcessorTest {
         assertEquals("Special Offer", result.getAdvertising());
     }
 
-
     @Test
     void testProcessNullBatchData() {
         BatchDataDto nullScpiDto = BatchDataDto.builder()

@@ -47,7 +47,6 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
         log.info("Cache des SCPIs rechargé: {}", existingScpis.size());
     }
 
-
     @Override
     public Scpi process(@NonNull BatchDataDto batchDataDto) {
         log.info("Processing BatchDataDto: {}", batchDataDto);

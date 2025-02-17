@@ -24,7 +24,7 @@ public class ScpiItemReaderTest {
             assertNotNull(firstItem, "Le premier élément lu ne doit pas être null");
             assertAll("Vérification des valeurs du premier élément du fichier CSV",
                     () -> assertEquals("Transitions Europe", firstItem.getName(), "Nom incorrect"),
-                    () -> assertEquals(5000, firstItem.getMinimumSubscription(), "MinimumSubscription incorrect"),
+                    () -> assertEquals(5000999, firstItem.getMinimumSubscription(), "MinimumSubscription incorrect"),
                     () -> assertEquals("Arkea REIM", firstItem.getManager(), "Manager incorrect"),
                     () ->assertEquals(289_000_000L, firstItem.getCapitalization(), "Capitalization incorrecte"),
                     () -> assertEquals(10.0f, firstItem.getSubscriptionFees(), 0.01, "SubscriptionFees incorrect"),
@@ -47,7 +47,6 @@ public class ScpiItemReaderTest {
         }
     }
 
-
     @Test
     public void testMapAllCsvColumnsToScpiDtoFields() throws Exception {
         FlatFileItemReader<ScpiDto> reader = new ScpiItemReader().reader();
@@ -59,7 +58,7 @@ public class ScpiItemReaderTest {
             assertNotNull(scpiDto, "Le DTO lu ne doit pas être null");
             assertAll("Vérification des champs du ScpiDto",
                     () -> assertEquals("Transitions Europe", scpiDto.getName(), "Nom incorrect"),
-                    () -> assertEquals(5000, scpiDto.getMinimumSubscription(), "MinimumSubscription incorrect"),
+                    () -> assertEquals(5000999, scpiDto.getMinimumSubscription(), "MinimumSubscription incorrect"),
                     () -> assertEquals("Arkea REIM", scpiDto.getManager(), "Manager incorrect"),
                     () -> assertEquals(289_000_000L, scpiDto.getCapitalization(), "Capitalization incorrecte"), // Capitalization est un Long
                     () -> assertEquals(10.0f, scpiDto.getSubscriptionFees(), 0.01, "SubscriptionFees incorrect"), // Comparaison Float avec delta
