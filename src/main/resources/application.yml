@@ -8,12 +8,6 @@ spring:
     password: postgres
     driver-class-name: org.postgresql.Driver
 
-  batch:
-    jdbc:
-      initialize-schema: always
-    job:
-      enabled: false
-
   jpa:
     database: postgresql
     hibernate:
