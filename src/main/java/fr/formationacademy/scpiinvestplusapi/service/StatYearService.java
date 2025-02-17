@@ -4,6 +4,7 @@ import fr.formationacademy.scpiinvestplusapi.dto.ScpiDto;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.entity.StatYear;
 import fr.formationacademy.scpiinvestplusapi.entity.StatYearId;
+import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
 import fr.formationacademy.scpiinvestplusapi.repository.StatYearRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class StatYearService {
 
     private final StatYearRepository statYearRepository;
+    private final ScpiRepository scpiRepository;
 
     public List<StatYear> createStatYears(ScpiDto scpiDto, Scpi scpi) {
         List<StatYear> statYears = new ArrayList<>();
@@ -39,7 +41,11 @@ public class StatYearService {
 
         for (int i = 0; i < maxLength; i++) {
             int year = currentYear - i;
-
+            StatYearId yearStatId = new StatYearId(year, scpi.getId());
+            if (statYearExists(yearStatId)) {
+                log.warn("StatYear déjà existant pour yearStat={} et scpiId={}", year, scpi.getId());
+                continue;
+            }
             float taux = (i < tauxDistributionArray.length) ? Float.parseFloat(tauxDistributionArray[i].trim()) : 0f;
             float reconstitution = (i < reconstitutionArray.length) ? Float.parseFloat(reconstitutionArray[i].trim()) : 0f;
             float sharePrice = (i < sharePriceArray.length) ? Float.parseFloat(sharePriceArray[i].trim()) : 0f;
@@ -48,21 +54,17 @@ public class StatYearService {
                 log.warn("Taux de distribution invalide pour l'année {}: {}%", year, taux);
                 continue;
             }
-
             StatYear statYearObj = StatYear.builder()
-                    .yearStat(new StatYearId(year, scpi.getId()))
+                    .yearStat(yearStatId)
                     .distributionRate(taux)
                     .reconstitutionValue(reconstitution)
                     .sharePrice(sharePrice)
                     .scpi(scpi)
                     .build();
-
             statYears.add(statYearObj);
         }
-
         return statYears;
     }
-
 
     public void saveStatYears(List<StatYear> statYears) {
         if (CollectionUtils.isEmpty(statYears)) {
@@ -93,6 +95,16 @@ public class StatYearService {
                 && statYear.getYearStat().getScpiId() != null
                 && statYear.getDistributionRate() != null
                 && statYear.getDistributionRate() >= 0;
+    }
+    public boolean statYearExists(Integer yearStat, Integer scpiId) {
+        Scpi scpi = scpiRepository.findById(scpiId)
+                .orElseThrow(() -> new RuntimeException("SCPI non trouvée"));
+
+        return statYearRepository.existsByYearStatAndScpi(new StatYearId(yearStat, scpiId), scpi);
+    }
+
+    private boolean statYearExists(StatYearId yearStatId) {
+        return statYearRepository.existsByYearStat(yearStatId);
     }
 
 }

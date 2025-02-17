@@ -36,13 +36,10 @@ public class BatchService {
         Map<String, Scpi> existingScpis = getExistingScpis(batchDataList);
         List<Scpi> scpisToInsert = new ArrayList<>();
         List<Scpi> scpisToUpdate = new ArrayList<>();
-
-        // Séparer les SCPIs à insérer et à mettre à jour
         for (BatchDataDto batchData : batchDataList) {
             Scpi scpi = batchData.getScpi();
             Scpi existingScpi = existingScpis.get(scpi.getName());
             if (existingScpi != null) {
-                // Si la SCPI existe et a été modifiée, la mettre à jour
                 if (!isSame(scpi, existingScpi)) {
                     scpisToUpdate.add(scpi);
                 }

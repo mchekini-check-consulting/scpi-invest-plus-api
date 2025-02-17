@@ -3,7 +3,8 @@ package fr.formationacademy.scpiinvestplusapi.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
