@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,7 +23,7 @@ public class Scpi {
     private String name;
     private Integer minimumSubscription;
     private String manager;
-    private BigDecimal capitalization;
+    private Long capitalization;
     private Float subscriptionFees;
     private Float managementCosts;
     private Integer enjoymentDelay;
@@ -36,15 +34,16 @@ public class Scpi {
     private String bic;
 
     private Boolean scheduledPayment;
-    private BigDecimal cashback;
+    private String frequencyPayment;
+    private Float cashback;
     private String advertising;
 
-    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StatYear> statYears = new ArrayList<>();
+    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Location> locations;
 
-    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Sector> sectors = new ArrayList<>();
+    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Sector> sectors;
 
-    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Location> locations = new ArrayList<>();
+    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<StatYear> statYears;
 }

@@ -26,7 +26,7 @@ public class BatchRequest {
     private Float prixPart;
 
     @CsvBindByName(column = "capitalisation")
-    private BigDecimal capitalisation;
+    private Long capitalisation;
 
     @CsvBindByName(column = "Gérant")
     private String gerant;
@@ -40,7 +40,7 @@ public class BatchRequest {
     @CsvBindByName(column = "delai_jouissance/mois")
     private Integer delaiJouissance;
 
-    @CsvBindByName(column = "fréquence_loyers")
+    @CsvBindByName(column = "frequence_loyers")
     private String frequenceLoyers;
 
     @CsvBindByName(column = "valeur_reconstitution")

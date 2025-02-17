@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class ScpiItemReader {
 
-
     @Bean
     public FlatFileItemReader<ScpiDto> reader() {
         return new FlatFileItemReaderBuilder<ScpiDto>()

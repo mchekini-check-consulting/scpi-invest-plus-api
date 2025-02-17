@@ -68,7 +68,7 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
         sectorService.saveSectors(sectors);
         scpi.setSectors(sectors);
 
-        List<StatYear> statYears = statYearService.createStatYears(dto.getStatYears(), scpi);
+        List<StatYear> statYears = statYearService.createStatYears(dto, scpi);
         statYearService.saveStatYears(statYears);
         scpi.setStatYears(statYears);
 
@@ -87,6 +87,7 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
         scpi.setIban(dto.getIban());
         scpi.setBic(dto.getBic());
         scpi.setScheduledPayment(dto.getScheduledPayment());
+        scpi.setFrequencyPayment(dto.getFrequencyPayment());
         scpi.setCashback(dto.getCashback());
         scpi.setAdvertising(dto.getAdvertising());
 
@@ -96,12 +97,11 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
         List<Sector> sectors = sectorService.createSectors(dto.getSectors(), scpi);
         scpi.setSectors(sectors);
 
-        List<StatYear> statYears = statYearService.createStatYears(dto.getStatYears(), scpi);
+        List<StatYear> statYears = statYearService.createStatYears(dto, scpi);
         scpi.setStatYears(statYears);
 
         return scpi;
     }
-
 
     public boolean isSame(Scpi existing, ScpiDto dto) {
         return Objects.equals(existing.getMinimumSubscription(), dto.getMinimumSubscription())
@@ -113,10 +113,11 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
                 && Objects.equals(existing.getIban(), dto.getIban())
                 && Objects.equals(existing.getBic(), dto.getBic())
                 && Objects.equals(existing.getScheduledPayment(), dto.getScheduledPayment())
+                && Objects.equals(existing.getFrequencyPayment(), dto.getFrequencyPayment())
                 && Objects.equals(existing.getCashback(), dto.getCashback())
                 && Objects.equals(existing.getAdvertising(), dto.getAdvertising())
                 && Objects.equals(existing.getLocations(), dto.getLocations())
-                && Objects.equals(existing.getStatYears(), dto.getStatYears())
+                && Objects.equals(existing.getStatYears(), dto.getStatYear())
                 && Objects.equals(existing.getSectors(), dto.getSectors());
     }
 }

@@ -1,11 +1,7 @@
 package fr.formationacademy.scpiinvestplusapi.dto;
 
-import fr.formationacademy.scpiinvestplusapi.entity.StatYear;
 import jakarta.validation.constraints.*;
 import lombok.*;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 import static fr.formationacademy.scpiinvestplusapi.utils.Constants.*;
 
@@ -20,6 +16,15 @@ public class ScpiDto {
     @NotBlank(message = "Name is required")
     private String name;
 
+    @DecimalMin(value = "0.0", message = "Distributed rate must be non-negative")
+    private Float distributedRate;
+
+    @DecimalMin(value = "0.0", message = "Share price must be non-negative")
+    private Float sharePrice;
+
+    @DecimalMin(value = "0.0", message = "Reconstitution value must be non-negative")
+    private Float reconstitutionValue;
+
     @Min(value = 0, message = "Minimum subscription must be positive")
     private Integer minimumSubscription;
 
@@ -27,7 +32,7 @@ public class ScpiDto {
     private String manager;
 
     @PositiveOrZero(message = "Capitalization must be non-negative")
-    private BigDecimal capitalization;
+    private Long capitalization;
 
     @DecimalMin(value = "0.0", inclusive = true, message = "Subscription fees must be non-negative")
     private Float subscriptionFees;
@@ -46,14 +51,16 @@ public class ScpiDto {
 
     private Boolean scheduledPayment;
 
+    private String frequencyPayment;
+
     @PositiveOrZero(message = "Cashback must be non-negative")
-    private BigDecimal cashback;
+    private Float cashback;
 
     private String advertising;
 
     private String locations;
     private String sectors;
-    //private String statYears;
+    private Integer statYear;
 
-    private List<StatYear> statYears;
+    //private List<StatYear> statYears;
 }
