@@ -5,6 +5,7 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -18,13 +19,16 @@ import java.time.format.DateTimeFormatter;
 @Component
 @RequiredArgsConstructor
 @EnableScheduling
-public class BatchJobScheduler {
+public class BatchJobScheduler implements CommandLineRunner {
 
     private final JobLauncher jobLauncher;
     private final Job scpiJob;
 
-    @Scheduled(cron = "0 */1 * * * ?") // supp en prod
-    //@Scheduled(cron = "0 0 2 * * ?")
+    @Override
+    public void run(String... args) throws Exception {
+        runJob();
+    }
+
     public void runJob() {
         try {
             JobParameters jobParameters = new JobParametersBuilder()
@@ -43,4 +47,6 @@ public class BatchJobScheduler {
     private String getCurrentTime() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
+
+
 }

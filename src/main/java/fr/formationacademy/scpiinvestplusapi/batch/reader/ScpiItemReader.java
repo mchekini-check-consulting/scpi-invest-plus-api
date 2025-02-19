@@ -16,7 +16,7 @@ public class ScpiItemReader {
         return new FlatFileItemReaderBuilder<ScpiDto>()
                 .name("scpiRequestItemReader")
                 //TODO : Utiliser une directory externe // POUR LE TEST ON A MIS Ressource
-                .resource(new ClassPathResource("scpi_corrected.csv"))
+                .resource(new ClassPathResource("scpi.csv"))
                 .linesToSkip(1)
                 .delimited()
                 .delimiter(",")
