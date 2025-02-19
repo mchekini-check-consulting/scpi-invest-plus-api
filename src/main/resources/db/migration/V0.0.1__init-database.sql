@@ -28,7 +28,7 @@ CREATE TABLE sector
 
 CREATE TABLE scpi
 (
-    id                   integer PRIMARY KEY,
+    id                   SERIAL PRIMARY KEY,
     name                 varchar,
     minimum_subscription integer,
     manager              varchar,
@@ -37,10 +37,11 @@ CREATE TABLE scpi
     management_costs     float,
     enjoyment_delay      integer,
     iban                 varchar UNIQUE,
-    bic                  varchar UNIQUE,
+    bic                  varchar,
     scheduled_payment    bool,
     cashback             float,
-    advertising          text
+    advertising          text,
+    frequency_payment    varchar
 );
 
 CREATE TABLE stat_year
