@@ -7,7 +7,7 @@ node("ci-node"){
     }
 
     stage("Unit tests"){
-        sh "chmod 777 mvnw && ./mvnw test"
+        sh "chmod 777 mvnw && ./mvnw clean test"
     }
 
     stage("Quality Analyses"){
