@@ -71,7 +71,6 @@ class InvestorServiceTest {
 
     @Test
     void testGetAllInvestors() {
-        // 1. Préparation des données de test
         Investor investor1 = new Investor();
         investor1.setEmail("investor1@example.com");
 
@@ -135,19 +134,10 @@ class InvestorServiceTest {
 
     @Test
     void testGetInvestorByEmail_WhenInvestorDoesNotExist() {
-
         String email = "nonexistent@example.com";
-
-
         when(investorRepository.findById(email)).thenReturn(Optional.empty());
-
-
         Optional<Investor> result = investorService.getInvestorByEmail(email);
-
-
         assertFalse(result.isPresent());
-
-
         verify(investorRepository, times(1)).findById(email);
     }
 

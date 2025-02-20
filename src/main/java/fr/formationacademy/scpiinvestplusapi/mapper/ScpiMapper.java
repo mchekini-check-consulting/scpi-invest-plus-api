@@ -8,7 +8,6 @@ import fr.formationacademy.scpiinvestplusapi.entity.StatYear;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-
 import java.util.Comparator;
 import java.util.List;
 
@@ -32,16 +31,16 @@ public interface ScpiMapper {
                 .build()
                 : null;
     }
-
     @Named("highestPercentageLocation")
     default LocationDtoOut getHighestPercentageLocation(List<Location> locations) {
         return (locations != null && !locations.isEmpty())
                 ? locations.stream()
-                .max(Comparator.comparing(Location::getCountryPercentage))
+                .filter(loc -> loc.getCountryPercentage() != null) // Filtrer les valeurs nulles
+                .max(Comparator.comparing(Location::getCountryPercentage)) // Comparaison directe
                 .map(item -> LocationDtoOut
                         .builder()
                         .id(item.getId())
-                        .countryPercentage(item.getCountryPercentage())
+                        .countryPercentage(item.getCountryPercentage()) // Pas besoin de conversion
                         .build())
                 .orElse(null)
                 : null;

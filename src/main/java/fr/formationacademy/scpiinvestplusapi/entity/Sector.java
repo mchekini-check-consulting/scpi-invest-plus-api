@@ -3,6 +3,8 @@ package fr.formationacademy.scpiinvestplusapi.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -12,7 +14,7 @@ import lombok.*;
 public class Sector {
     @EmbeddedId
     private SectorId id;
-    private Float sectorPercentage;
+    private BigDecimal sectorPercentage;
 
     @ManyToOne
     @MapsId("scpiId")

@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+
 @Component
 public class ScpiItemReader {
 
@@ -15,8 +17,8 @@ public class ScpiItemReader {
     public FlatFileItemReader<ScpiDto> reader() {
         return new FlatFileItemReaderBuilder<ScpiDto>()
                 .name("scpiRequestItemReader")
-                //TODO : Utiliser une directory externe // POUR LE TEST ON A MIS Ressource
                 .resource(new ClassPathResource("scpi.csv"))
+                .encoding(StandardCharsets.UTF_8.name())
                 .linesToSkip(1)
                 .delimited()
                 .delimiter(",")

@@ -6,13 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
 public class StatYearDtoOut {
     private StatYearId yearStat;
-    private Float distributionRate;
-    private Float sharePrice;
-    private Float reconstitutionValue;
+    private BigDecimal distributionRate;
+    private BigDecimal sharePrice;
+    private BigDecimal reconstitutionValue;
 }
