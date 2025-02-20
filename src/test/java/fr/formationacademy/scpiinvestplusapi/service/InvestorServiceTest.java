@@ -44,31 +44,63 @@ class InvestorServiceTest {
         investorDTO.setNumberOfChildren("0");
     }
 
+
     @Test
-    void testCreateInvestor() {
+    void testCreateOrUpdateInvestor_WhenInvestorExists() {
+        // Arrange
+        String email = "test@example.com";
+        Investor existingInvestor = new Investor();
+        existingInvestor.setEmail(email);
+        existingInvestor.setFirstName("OldFirstName");
+        existingInvestor.setLastName("OldLastName");
 
-        Investor investor = new Investor();
-        investor.setEmail(investorDTO.getEmail());
-        when(investorMapper.toEntity(investorDTO)).thenReturn(investor);
+        Investor updatedInvestor = new Investor();
+        updatedInvestor.setEmail(email);
+        updatedInvestor.setFirstName("NewFirstName");
+        updatedInvestor.setLastName("NewLastName");
 
+        when(investorRepository.findById(email)).thenReturn(Optional.of(existingInvestor));
+        when(investorMapper.toEntity(investorDTO)).thenReturn(updatedInvestor);
+        when(investorRepository.save(updatedInvestor)).thenReturn(updatedInvestor);
 
-        when(investorRepository.save(investor)).thenReturn(investor);
+        // Act
+        Investor result = investorService.createOrUpdateInvestor(email, investorDTO);
 
+        // Assert
+        assertNotNull(result);
+        assertEquals(email, result.getEmail());
+        assertEquals("NewFirstName", result.getFirstName());
+        assertEquals("NewLastName", result.getLastName());
 
-        Investor createdInvestor = investorService.createInvestor(investorDTO);
-
-
-        verify(investorMapper).toEntity(investorDTO);
-
-
-        verify(investorRepository).save(investor);
-
-
-        assertNotNull(createdInvestor);
-
-        assertEquals("test@example.com", createdInvestor.getEmail());
+        verify(investorRepository, times(1)).findById(email);
+        verify(investorMapper, times(1)).toEntity(investorDTO);
+        verify(investorRepository, times(1)).save(updatedInvestor);
     }
 
+    @Test
+    void testCreateOrUpdateInvestor_WhenInvestorDoesNotExist() {
+        String email = "new@example.com";
+        Investor newInvestor = new Investor();
+        newInvestor.setEmail(email);
+        newInvestor.setFirstName("John");
+        newInvestor.setLastName("Doe");
+
+        when(investorRepository.findById(email)).thenReturn(Optional.empty());
+        when(investorMapper.toEntity(investorDTO)).thenReturn(newInvestor);
+        when(investorRepository.save(newInvestor)).thenReturn(newInvestor);
+
+        Investor result = investorService.createOrUpdateInvestor(email, investorDTO);
+
+
+        assertNotNull(result);
+        assertEquals(email, result.getEmail());
+        assertEquals("John", result.getFirstName());
+        assertEquals("Doe", result.getLastName());
+
+        verify(investorRepository, times(1)).findById(email);
+        verify(investorMapper, times(1)).toEntity(investorDTO);
+        verify(investorRepository, times(1)).save(newInvestor);
+    }
     @Test
     void testGetAllInvestors() {
         Investor investor1 = new Investor();
