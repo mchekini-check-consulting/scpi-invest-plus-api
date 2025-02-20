@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -65,17 +66,18 @@ public class SectorService{
 
     private Optional<Sector> parseSector(String name, String percentageStr, Scpi scpi) {
         try {
-            float percentage = Float.parseFloat(percentageStr);
-            if (percentage < 0 || percentage > 100) {
+            BigDecimal percentage = new BigDecimal(percentageStr);
+            if (percentage.compareTo(BigDecimal.ZERO) < 0 || percentage.compareTo(BigDecimal.valueOf(100)) > 0) {
                 log.warn("Pourcentage invalide pour {}: {}%", name, percentage);
                 return Optional.empty();
             }
-            return Optional.of(new Sector(new SectorId(scpi.getId(),name), percentage, scpi));
+            return Optional.of(new Sector(new SectorId(scpi.getId(), name), percentage, scpi));
         } catch (NumberFormatException e) {
             log.error("Erreur de parsing pour le secteur: {}", percentageStr, e);
             return Optional.empty();
         }
     }
+
 
     public void saveSectors(List<Sector> sectors) {
         if (sectors == null || sectors.isEmpty()) {
@@ -107,7 +109,7 @@ public class SectorService{
             return false;
         }
 
-        if (sector.getSectorPercentage() == null || sector.getSectorPercentage() < 0 || sector.getSectorPercentage() > 100) {
+        if (sector.getSectorPercentage() == null || sector.getSectorPercentage().compareTo(BigDecimal.ZERO) < 0 || sector.getSectorPercentage().compareTo(BigDecimal.valueOf(100)) > 0) {
             log.warn("Secteur invalide : pourcentage incorrect {}", sector);
             return false;
         }
@@ -120,12 +122,13 @@ public class SectorService{
             return false;
         }
 
-        Map<String, Float> existingMap = existingSectors.stream()
+        Map<String, BigDecimal> existingMap = existingSectors.stream()
                 .collect(Collectors.toMap(sector -> sector.getId().getName(), Sector::getSectorPercentage));
 
         return newSectorRequests.stream().allMatch(dto ->
                 existingMap.containsKey(dto.getName()) &&
-                        existingMap.get(dto.getName()).equals(dto.getSectorPercentage())
+                        existingMap.get(dto.getName()).compareTo(dto.getSectorPercentage()) == 0
         );
     }
+
 }

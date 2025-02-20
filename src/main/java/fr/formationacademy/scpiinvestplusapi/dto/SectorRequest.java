@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +19,7 @@ public class SectorRequest {
     private String name;
 
     @PositiveOrZero(message = "Sector percentage must be non-negative")
-    private Float sectorPercentage;
+    private BigDecimal sectorPercentage;
 
     @NotNull(message = "SCPI ID is required")
     private Integer scpiId;

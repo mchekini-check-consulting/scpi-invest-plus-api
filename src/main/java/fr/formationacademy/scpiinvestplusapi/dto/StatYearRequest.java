@@ -3,6 +3,8 @@ package fr.formationacademy.scpiinvestplusapi.dto;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,13 +15,13 @@ public class StatYearRequest {
     private Integer yearStat;
 
     @PositiveOrZero(message = "Distribution rate must be non-negative")
-    private Float distributionRate;
+    private BigDecimal distributionRate;
 
     @PositiveOrZero(message = "Share price must be non-negative")
-    private Float sharePrice;
+    private BigDecimal sharePrice;
 
     @PositiveOrZero(message = "Reconstitution value must be non-negative")
-    private Float reconstitutionValue;
+    private BigDecimal reconstitutionValue;
 
     @NotNull(message = "SCPI ID is required")
     private Integer scpiId;

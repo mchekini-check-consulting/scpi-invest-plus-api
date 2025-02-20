@@ -6,11 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
 public class LocationDtoOut {
     private LocationId id;
-    private Float countryPercentage;
+    private BigDecimal countryPercentage;
 }

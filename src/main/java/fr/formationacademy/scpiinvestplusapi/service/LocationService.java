@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -62,17 +64,18 @@ public class LocationService {
 
     private Optional<Location> parseLocation(String country, String percentageStr, Scpi scpi) {
         try {
-            float percentage = Float.parseFloat(percentageStr);
-            if (percentage < 0 || percentage > 100) {
+            BigDecimal percentage = new BigDecimal(percentageStr).setScale(1, RoundingMode.HALF_UP);
+            if (percentage.compareTo(BigDecimal.ZERO) < 0 || percentage.compareTo(BigDecimal.valueOf(100)) > 0) {
                 log.warn("Pourcentage invalide pour {}: {}%", country, percentage);
                 return Optional.empty();
             }
-            return Optional.of(new Location(new LocationId(scpi.getId(),country), percentage, scpi));
+            return Optional.of(new Location(new LocationId(scpi.getId(), country), percentage, scpi));
         } catch (NumberFormatException e) {
             log.error("Erreur de parsing pour la localisation: {}", percentageStr, e);
             return Optional.empty();
         }
     }
+
 
     public void saveLocations(List<Location> locations) {
         if (locations == null || locations.isEmpty()) {
@@ -104,7 +107,9 @@ public class LocationService {
             return false;
         }
 
-        if (location.getCountryPercentage() == null || location.getCountryPercentage() < 0 || location.getCountryPercentage() > 100) {
+        if (location.getCountryPercentage() == null
+                || location.getCountryPercentage().compareTo(BigDecimal.ZERO) < 0
+                || location.getCountryPercentage().compareTo(BigDecimal.valueOf(100)) > 0) {
             log.warn("Localisation invalide : pourcentage incorrect {}", location);
             return false;
         }
@@ -117,14 +122,15 @@ public class LocationService {
             return false;
         }
 
-        Map<String, Float> existingMap = existingLocations.stream()
+        Map<String, BigDecimal> existingMap = existingLocations.stream()
                 .collect(Collectors.toMap(loc -> loc.getId().getCountry(), Location::getCountryPercentage));
 
         return newLocationRequests.stream().allMatch(dto ->
                 existingMap.containsKey(dto.getCountry()) &&
-                        existingMap.get(dto.getCountry()).equals(dto.getCountryPercentage())
+                        existingMap.get(dto.getCountry()).compareTo(dto.getCountryPercentage()) == 0
         );
     }
+
 
 }
 

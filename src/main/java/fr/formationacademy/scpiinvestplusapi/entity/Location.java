@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter
 @Setter
@@ -13,7 +15,7 @@ import lombok.*;
 public class Location {
     @EmbeddedId
     private LocationId id;
-    private Float countryPercentage;
+    private BigDecimal countryPercentage;
 
     @ManyToOne
     @MapsId("scpiId")

@@ -21,7 +21,6 @@ public enum ScpiField {
     CASHBACK("cashback"),
     VERSEMENT_PROGRAMME("versement_programme"),
     PUBLICITE("publicite"),
-    PRIX_DE_LA_PART("prix_part"),
     VALEUR_DE_RECONSTITUTION("valeur_reconstitution");
 
     private final String columnName;
