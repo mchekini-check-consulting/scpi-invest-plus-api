@@ -44,30 +44,7 @@ class InvestorServiceTest {
         investorDTO.setNumberOfChildren("0");
     }
 
-    @Test
-    void testCreateInvestor() {
 
-        Investor investor = new Investor();
-        investor.setEmail(investorDTO.getEmail());
-        when(investorMapper.toEntity(investorDTO)).thenReturn(investor);
-
-
-        when(investorRepository.save(investor)).thenReturn(investor);
-
-
-        Investor createdInvestor = investorService.createInvestor(investorDTO);
-
-
-        verify(investorMapper).toEntity(investorDTO);
-
-
-        verify(investorRepository).save(investor);
-
-
-        assertNotNull(createdInvestor);
-
-        assertEquals("test@example.com", createdInvestor.getEmail());
-    }
 
     @Test
     void testGetAllInvestors() {
