@@ -23,7 +23,6 @@ public class BatchService {
 
     private final ScpiRepository scpiRepository;
 
-
     @Transactional
     public void saveOrUpdateBatchData(List<BatchDataDto> batchDataList) {
         if (batchDataList == null || batchDataList.isEmpty()) {
