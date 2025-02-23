@@ -46,7 +46,6 @@ public class BatchService {
                 scpisToInsert.add(scpi);
             }
         }
-
         saveEntities(scpiRepository, scpisToInsert, "New SCPIs");
         saveEntities(scpiRepository, scpisToUpdate, "Updated SCPIs");
     }
