@@ -59,9 +59,9 @@ public class StatYearService {
 
             StatYear statYearObj = StatYear.builder()
                     .yearStat(yearStatId)
-                    .distributionRate(taux != null ? taux : BigDecimal.ZERO)
-                    .reconstitutionValue(reconstitution != null ? reconstitution : BigDecimal.ZERO)
-                    .sharePrice(sharePrice != null ? sharePrice : BigDecimal.ZERO)
+                    .distributionRate(taux)
+                    .reconstitutionValue(reconstitution)
+                    .sharePrice(sharePrice)
                     .scpi(scpi)
                     .build();
 
@@ -114,7 +114,6 @@ public class StatYearService {
                 && statYear.getDistributionRate() != null
                 && statYear.getDistributionRate().compareTo(BigDecimal.ZERO) >= 0;
     }
-
 
     private boolean statYearExists(StatYearId yearStatId) {
         return statYearRepository.existsByYearStat(yearStatId);

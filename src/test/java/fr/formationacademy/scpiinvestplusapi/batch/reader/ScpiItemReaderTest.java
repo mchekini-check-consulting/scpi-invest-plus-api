@@ -28,7 +28,7 @@ public class ScpiItemReaderTest {
                     () -> assertEquals("Transitions Europe", firstItem.getName(), "Nom incorrect"),
                     () -> assertEquals(5000, firstItem.getMinimumSubscription(), "MinimumSubscription incorrect"),
                     () -> assertEquals("Arkea REIM", firstItem.getManager(), "Manager incorrect"),
-                    () ->assertEquals(289_000_000L, firstItem.getCapitalization(), "Capitalization incorrecte"),
+                    () -> assertEquals(289_000_000L, firstItem.getCapitalization(), "Capitalization incorrecte"),
                     () -> assertEquals(BigDecimal.valueOf(10), firstItem.getSubscriptionFees(), "SubscriptionFees incorrect"),
                     () -> assertEquals(BigDecimal.valueOf(10), firstItem.getManagementCosts(), "ManagementCosts incorrect"),
                     () -> assertEquals("FR76 12345 67890 12345678901 12", firstItem.getIban(), "IBAN incorrect"),
