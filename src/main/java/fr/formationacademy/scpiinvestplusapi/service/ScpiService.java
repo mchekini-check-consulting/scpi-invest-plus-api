@@ -24,15 +24,19 @@ public class ScpiService {
         return scpiMapper.scpiToScpiDtoOut(scpis);
     }
     public List<ScpiDtoOut> getScpiWithFilter(SearchScpiDto searchScpiDto) {
+        String searchTerm = (searchScpiDto.getSearchTerm() != null && !searchScpiDto.getSearchTerm().trim().isEmpty())
+                ? searchScpiDto.getSearchTerm().trim()
+                : null;
         double minimumSubscription = (searchScpiDto.getMinimumSubscription() != null)
-                ? searchScpiDto.getMinimumSubscription() : 0.0;
+                ? searchScpiDto.getMinimumSubscription().doubleValue()
+                : 0.0;
         double distributionRate = (searchScpiDto.getDistributionRate() != null)
-                ? searchScpiDto.getDistributionRate() : 0.0;
-        Boolean subscriptionFees = (searchScpiDto.getSubscriptionFees() != null)
-                ? searchScpiDto.getSubscriptionFees() : false;
+                ? searchScpiDto.getDistributionRate().doubleValue()
+                : 0.0;
+        Boolean subscriptionFees = searchScpiDto.getSubscriptionFees();
 
         List<Scpi> scpis = scpiRepository.searchScpi(
-                searchScpiDto.getSearchTerm(),
+                searchTerm,
                 searchScpiDto.getLocations(),
                 searchScpiDto.getSectors(),
                 minimumSubscription,
