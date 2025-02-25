@@ -17,6 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -52,8 +54,8 @@ public class ScpiItemProcessorTest {
                 .minimumSubscription(1000)
                 .manager("Test Manager")
                 .capitalization(50000L)
-                .subscriptionFees(2.5f)
-                .managementCosts(1.5f)
+                .subscriptionFees(BigDecimal.valueOf(2.5))
+                .managementCosts(BigDecimal.valueOf(1.5))
                 .enjoymentDelay(30)
                 .iban("FR7630004000031234567890143")
                 .bic("BNPAFRPPXXX")
@@ -73,8 +75,8 @@ public class ScpiItemProcessorTest {
         assertEquals(1000, result.getMinimumSubscription());
         assertEquals("Test Manager", result.getManager());
         assertEquals(50000L, result.getCapitalization(), "Capitalization incorrecte");
-        assertEquals(2.5f, result.getSubscriptionFees(), 0.001);
-        assertEquals(1.5f, result.getManagementCosts(), 0.001);
+        assertEquals(BigDecimal.valueOf(2.5), result.getSubscriptionFees());
+        assertEquals(BigDecimal.valueOf(1.5), result.getManagementCosts());
         assertEquals(30, result.getEnjoymentDelay());
         assertEquals("FR7630004000031234567890143", result.getIban());
         assertEquals("BNPAFRPPXXX", result.getBic());

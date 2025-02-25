@@ -19,18 +19,18 @@ public class InvestorResource {
 
     private final InvestorService investorService;
 
-
     public InvestorResource(InvestorService investorService) {
         this.investorService = investorService;
     }
 
-    @Operation(summary = "Créer un investisseur")
-    @PostMapping
-    public ResponseEntity<Investor> createInvestor(@RequestBody InvestorDTO investorDTO) {
-        Investor createdInvestor = investorService.createInvestor(investorDTO);
-        return ResponseEntity.ok(createdInvestor);
+    @Operation(summary = "Créer ou mettre à jour un investisseur")
+    @PostMapping("/{email}")
+    public ResponseEntity<Investor> createOrUpdateInvestor(@PathVariable String email, @RequestBody InvestorDTO investorDTO) {
+        Investor investor = investorService.createOrUpdateInvestor(email, investorDTO);
+        return ResponseEntity.ok(investor);
     }
-    @Operation(summary = "Récupérer tous les investiasseurs")
+
+    @Operation(summary = "Récupérer tous les investisseurs")
     @GetMapping
     public ResponseEntity<List<InvestorDTO>> getAllInvestors() {
         try {
@@ -46,14 +46,4 @@ public class InvestorResource {
         return investorService.getInvestorByEmail(email).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
-
-    @Operation(summary = "Mettre à jour un investisseur")
-    @PatchMapping("/{email}")
-    public ResponseEntity<Investor> updateInvestor(@PathVariable String email, @RequestBody InvestorDTO investorDTO) {
-        Investor updatedInvestor = investorService.updateInvestor(email, investorDTO);
-        return ResponseEntity.ok(updatedInvestor);
-    }
-
-
 }

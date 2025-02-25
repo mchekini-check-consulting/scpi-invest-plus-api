@@ -1,5 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.repository;
 
+
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,22 +16,23 @@ import static fr.formationacademy.scpiinvestplusapi.utils.Constants.IBAN_PATTERN
 import static fr.formationacademy.scpiinvestplusapi.utils.Constants.INVALID_IBAN;
 
 @Repository
-public interface ScpiRepository extends JpaRepository<Scpi, Integer> {
+public interface
+ScpiRepository extends JpaRepository<Scpi, Integer> {
     @Query("""
     SELECT s FROM Scpi s
-    join Location loc on s.id = loc.id.scpiId\s
-    join Sector sec on s.id = sec.id.scpiId\s
+    join Location loc on s.id = loc.id.scpiId
+    join Sector sec on s.id = sec.id.scpiId
     join StatYear sy on s.id = sy.yearStat.scpiId 
-    WHERE (:searchTerm IS NULL OR s.name ILIKE %:searchTerm%)
-    AND ( :location IS NULL OR loc.id.country IN :location )
-    AND (:minimumSubscription = 0 OR s.minimumSubscription >= :minimumSubscription)
-    And (:sector IS NULL OR sec.id.name IN :sector )
+    WHERE (:searchTerm IS NULL OR s.name ILIKE (%:searchTerm%))
+    AND (:location IS NULL OR loc.id.country IN :location OR loc.id.country IS NULL)
+    AND (:minimumSubscription IS NULL OR s.minimumSubscription >= :minimumSubscription)
+    AND (:sector IS NULL OR sec.id.name IN :sector OR sec.id.name IS NULL)
     AND (:distributionRate IS NULL OR COALESCE(sy.distributionRate, 0) >= :distributionRate)
-    AND ( :subscriptionFees IS NULL OR
-            (:subscriptionFees = TRUE AND (s.subscriptionFees > 0 OR s.subscriptionFees IS NULL)) OR
-            (:subscriptionFees = FALSE AND (s.subscriptionFees = 0 OR s.subscriptionFees IS NULL))
-            )\s
-              """)
+    AND (:subscriptionFees IS NULL OR
+         (:subscriptionFees = TRUE AND (s.subscriptionFees > 0 OR s.subscriptionFees IS NULL)) OR
+         (:subscriptionFees = FALSE AND (s.subscriptionFees = 0 OR s.subscriptionFees IS NULL))
+    )
+    """)
     List<Scpi> searchScpi(String searchTerm, List<String> location, List<String> sector, double minimumSubscription,double distributionRate, Boolean subscriptionFees);
 
     @Query("SELECT s FROM Scpi s WHERE s.name IN :names")

@@ -20,20 +20,18 @@ public class InvestorService {
     }
 
 
-    public Investor createInvestor(InvestorDTO investorDTO) {
-        Investor investor = investorMapper.toEntity(investorDTO);
-        return investorRepository.save(investor);
-    }
-
-
-    public Investor updateInvestor(String email, InvestorDTO investorDTO) {
+    public Investor createOrUpdateInvestor(String email, InvestorDTO investorDTO) {
         return investorRepository.findById(email)
                 .map(existingInvestor -> {
                     Investor updatedInvestor = investorMapper.toEntity(investorDTO);
-                    updatedInvestor.setEmail(email); // Conserver l'email
+                    updatedInvestor.setEmail(email);
                     return investorRepository.save(updatedInvestor);
                 })
-                .orElseThrow(() -> new RuntimeException("Investor not found with email: " + email));
+                .orElseGet(() -> {
+                    Investor newInvestor = investorMapper.toEntity(investorDTO);
+                    newInvestor.setEmail(email);
+                    return investorRepository.save(newInvestor);
+                });
     }
 
 

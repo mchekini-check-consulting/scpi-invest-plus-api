@@ -3,6 +3,8 @@ package fr.formationacademy.scpiinvestplusapi.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,9 +13,9 @@ import lombok.*;
 public class StatYear {
     @EmbeddedId
     private StatYearId yearStat;
-    private Float distributionRate;
-    private Float sharePrice;
-    private Float reconstitutionValue;
+    private BigDecimal distributionRate;
+    private BigDecimal sharePrice;
+    private BigDecimal reconstitutionValue;
 
     @ManyToOne
     @MapsId("scpiId")

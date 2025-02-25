@@ -23,7 +23,6 @@ public class BatchService {
 
     private final ScpiRepository scpiRepository;
 
-
     @Transactional
     public void saveOrUpdateBatchData(List<BatchDataDto> batchDataList) {
         if (batchDataList == null || batchDataList.isEmpty()) {
@@ -47,7 +46,6 @@ public class BatchService {
                 scpisToInsert.add(scpi);
             }
         }
-
         saveEntities(scpiRepository, scpisToInsert, "New SCPIs");
         saveEntities(scpiRepository, scpisToUpdate, "Updated SCPIs");
     }

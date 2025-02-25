@@ -4,6 +4,7 @@ import fr.formationacademy.scpiinvestplusapi.entity.StatYear;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static fr.formationacademy.scpiinvestplusapi.utils.Constants.*;
@@ -29,10 +30,10 @@ public class ScpiDto {
     private Long capitalization;
 
     @DecimalMin(value = "0.0", inclusive = true, message = "Subscription fees must be non-negative")
-    private Float subscriptionFees;
+    private BigDecimal subscriptionFees;
 
     @DecimalMin(value = "0.0", inclusive = true, message = "Management costs must be non-negative")
-    private Float managementCosts;
+    private BigDecimal managementCosts;
 
     @Min(value = 0, message = "Enjoyment delay must be non-negative")
     private Integer enjoymentDelay;

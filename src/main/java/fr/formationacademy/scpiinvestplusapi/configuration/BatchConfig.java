@@ -1,6 +1,7 @@
 package fr.formationacademy.scpiinvestplusapi.configuration;
 
 import fr.formationacademy.scpiinvestplusapi.batch.listener.BatchJobListener;
+import fr.formationacademy.scpiinvestplusapi.batch.processor.EncodingCorrectionProcessor;
 import fr.formationacademy.scpiinvestplusapi.batch.processor.ScpiItemProcessor;
 import fr.formationacademy.scpiinvestplusapi.batch.reader.ScpiItemReader;
 import fr.formationacademy.scpiinvestplusapi.dto.BatchDataDto;
@@ -73,7 +74,8 @@ public class BatchConfig {
             }
             return scpi;
         };
-        compositeProcessor.setDelegates(Arrays.asList(conversionProcessor, filterProcessor));
+        EncodingCorrectionProcessor<ScpiDto> encodingProcessor = new EncodingCorrectionProcessor<>();
+        compositeProcessor.setDelegates(Arrays.asList(encodingProcessor, conversionProcessor, filterProcessor));
         return compositeProcessor;
     }
 

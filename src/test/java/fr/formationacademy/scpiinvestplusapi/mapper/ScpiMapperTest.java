@@ -16,15 +16,14 @@ class ScpiMapperTest {
 
     @Test
     void itShouldMapCorrectlyFromScpiToScpiDto() {
-        // Given
         Scpi scpi = Scpi.builder()
                 .id(1)
                 .name("SCPI Alpha")
                 .minimumSubscription(5000)
                 .manager("Manager A")
                 .capitalization(1_000_000_000L)
-                .subscriptionFees(2.5f)
-                .managementCosts(1.2f)
+                .subscriptionFees(BigDecimal.valueOf(2.5))
+                .managementCosts(BigDecimal.valueOf(1.5))
                 .enjoymentDelay(3)
                 .iban("FR7630001007941234567890185")
                 .bic("BICCODEXXX")
@@ -34,65 +33,56 @@ class ScpiMapperTest {
                 .locations(List.of(
                         Location.builder()
                                 .id(new LocationId(1, "France"))
-                                .countryPercentage(45.5f)
+                                .countryPercentage(BigDecimal.valueOf(45.5))
                                 .scpi(null)
                                 .build(),
                         Location.builder()
                                 .id(new LocationId(1, "Germany"))
-                                .countryPercentage(30.0f)
+                                .countryPercentage(BigDecimal.valueOf(30.0))
                                 .scpi(null)
                                 .build()
                 ))
                 .sectors(List.of(
                         Sector.builder()
                                 .id(new SectorId(1,"Real Estate" ))
-                                .sectorPercentage(50.0f)
+                                .sectorPercentage(BigDecimal.valueOf(50))
                                 .scpi(null)
                                 .build(),
                         Sector.builder()
                                 .id(new SectorId(1,"Technology"))
-                                .sectorPercentage(25.0f)
+                                .sectorPercentage(BigDecimal.valueOf(25.0))
                                 .scpi(null)
                                 .build()
                 ))
                 .statYears(List.of(
                         StatYear.builder()
                                 .yearStat(new StatYearId(2023, 1))
-                                .distributionRate(4.5f)
-                                .sharePrice(200.0f)
-                                .reconstitutionValue(210.0f)
+                                .distributionRate(BigDecimal.valueOf(4.5))
+                                .sharePrice(BigDecimal.valueOf(200.0))
+                                .reconstitutionValue(BigDecimal.valueOf(200.0))
                                 .scpi(null)
                                 .build(),
                         StatYear.builder()
                                 .yearStat(new StatYearId(2022, 1))
-                                .distributionRate(4.3f)
-                                .sharePrice(195.0f)
-                                .reconstitutionValue(205.0f)
+                                .distributionRate(BigDecimal.valueOf(4.3))
+                                .sharePrice(BigDecimal.valueOf(195.0))
+                                .reconstitutionValue(BigDecimal.valueOf(250.0))
                                 .scpi(null)
                                 .build()
                 ))
                 .build();
-
-
-        // When
         ScpiDtoOut dto = mapper.scpiToScpiDtoOut(scpi);
 
         assertNotNull(dto);
-
-        // Validate StatYear Mapping
         assertNotNull(dto.getStatYear());
-        assertEquals(4.5f, dto.getStatYear().getDistributionRate());
-
-        // Validate Location Mapping (Highest Percentage)
+        assertEquals(BigDecimal.valueOf(4.5), dto.getStatYear().getDistributionRate());
         assertNotNull(dto.getLocation());
         assertEquals(1, dto.getLocation().getId().getScpiId());
         assertEquals("France", dto.getLocation().getId().getCountry());
-        assertEquals(45.5f, dto.getLocation().getCountryPercentage());
-
-        // Validate Sector Mapping (Highest Percentage)
+        assertEquals(BigDecimal.valueOf(45.5), dto.getLocation().getCountryPercentage());
         assertNotNull(dto.getSector());
         assertEquals(1, dto.getSector().getId().getScpiId());
         assertEquals("Real Estate", dto.getSector().getId().getName());
-        assertEquals(50.0f, dto.getSector().getSectorPercentage());
+        assertEquals(BigDecimal.valueOf(50), dto.getSector().getSectorPercentage());
     }
 }

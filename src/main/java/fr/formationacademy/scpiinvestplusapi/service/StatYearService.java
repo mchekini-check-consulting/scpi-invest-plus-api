@@ -4,13 +4,14 @@ import fr.formationacademy.scpiinvestplusapi.dto.ScpiDto;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.entity.StatYear;
 import fr.formationacademy.scpiinvestplusapi.entity.StatYearId;
-import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
 import fr.formationacademy.scpiinvestplusapi.repository.StatYearRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,38 +23,40 @@ import java.util.stream.Collectors;
 public class StatYearService {
 
     private final StatYearRepository statYearRepository;
-    private final ScpiRepository scpiRepository;
 
     public List<StatYear> createStatYears(ScpiDto scpiDto, Scpi scpi) {
         List<StatYear> statYears = new ArrayList<>();
 
-        if (scpiDto.getDistributedRate() == null || scpiDto.getReconstitutionValue() == null || scpiDto.getSharePrice() == null) {
-            log.warn("Aucune donnée pour '{}'", scpi.getName());
+        if (scpiDto.getDistributedRate() == null && scpiDto.getReconstitutionValue() == null && scpiDto.getSharePrice() == null) {
+            log.warn("Aucune donnée disponible pour '{}'", scpi.getName());
             return Collections.emptyList();
         }
 
         int currentYear = Year.now().getValue();
-        String[] tauxDistributionArray = scpiDto.getDistributedRate().split(",");
-        String[] reconstitutionArray = scpiDto.getReconstitutionValue().split(",");
-        String[] sharePriceArray = scpiDto.getSharePrice().split(",");
 
+        String[] tauxDistributionArray = (scpiDto.getDistributedRate() != null) ? scpiDto.getDistributedRate().split(",") : new String[0];
+        String[] reconstitutionArray = (scpiDto.getReconstitutionValue() != null) ? scpiDto.getReconstitutionValue().split(",") : new String[0];
+        String[] sharePriceArray = (scpiDto.getSharePrice() != null) ? scpiDto.getSharePrice().split(",") : new String[0];
         int maxLength = Math.max(tauxDistributionArray.length, Math.max(reconstitutionArray.length, sharePriceArray.length));
 
         for (int i = 0; i < maxLength; i++) {
-            int year = currentYear - i;
+            int year = (currentYear - 1) - i;
             StatYearId yearStatId = new StatYearId(year, scpi.getId());
+
             if (statYearExists(yearStatId)) {
                 log.warn("StatYear déjà existant pour yearStat={} et scpiId={}", year, scpi.getId());
                 continue;
             }
-            float taux = (i < tauxDistributionArray.length) ? Float.parseFloat(tauxDistributionArray[i].trim()) : 0f;
-            float reconstitution = (i < reconstitutionArray.length) ? Float.parseFloat(reconstitutionArray[i].trim()) : 0f;
-            float sharePrice = (i < sharePriceArray.length) ? Float.parseFloat(sharePriceArray[i].trim()) : 0f;
 
-            if (taux < 0) {
-                log.warn("Taux de distribution invalide pour l'année {}: {}%", year, taux);
+            BigDecimal taux = parseBigDecimal(tauxDistributionArray, i);
+            BigDecimal reconstitution = parseBigDecimal(reconstitutionArray, i);
+            BigDecimal sharePrice = parseBigDecimal(sharePriceArray, i);
+
+            if (taux == null && reconstitution == null && sharePrice == null) {
+                log.warn("Aucune donnée valide pour l'année {} et la SCPI '{}'", year, scpi.getName());
                 continue;
             }
+
             StatYear statYearObj = StatYear.builder()
                     .yearStat(yearStatId)
                     .distributionRate(taux)
@@ -61,9 +64,23 @@ public class StatYearService {
                     .sharePrice(sharePrice)
                     .scpi(scpi)
                     .build();
+
             statYears.add(statYearObj);
         }
+
         return statYears;
+    }
+
+    private BigDecimal parseBigDecimal(String[] array, int index) {
+        if (index >= array.length || array[index].trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return new BigDecimal(array[index].trim()).setScale(2, RoundingMode.HALF_UP);
+        } catch (NumberFormatException e) {
+            log.error("Erreur de format pour la valeur '{}' à l'index {}", array[index], index, e);
+            return null;
+        }
     }
 
     public void saveStatYears(List<StatYear> statYears) {
@@ -91,10 +108,11 @@ public class StatYearService {
     }
 
     private boolean isValidStatYear(StatYear statYear) {
-        return statYear != null && statYear.getYearStat() != null
+        return statYear != null
+                && statYear.getYearStat() != null
                 && statYear.getYearStat().getScpiId() != null
                 && statYear.getDistributionRate() != null
-                && statYear.getDistributionRate() >= 0;
+                && statYear.getDistributionRate().compareTo(BigDecimal.ZERO) >= 0;
     }
 
     private boolean statYearExists(StatYearId yearStatId) {
