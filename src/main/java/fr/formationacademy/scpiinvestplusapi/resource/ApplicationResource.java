@@ -25,11 +25,4 @@ public class ApplicationResource {
                 .version(applicationVersion)
                 .build();
     }
-
-    @GetMapping("/private")
-    public String PrivateEndpoint(){
-        return "Ceci est un Endpoint Privé";
-    }
-
-
 }
