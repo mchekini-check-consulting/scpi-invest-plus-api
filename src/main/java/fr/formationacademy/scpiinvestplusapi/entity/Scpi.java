@@ -46,4 +46,7 @@ public class Scpi {
 
     @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StatYear> statYears;
+
+    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ScpiSimulation> scpiSimulations;
 }

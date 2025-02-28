@@ -1,13 +1,11 @@
 package fr.formationacademy.scpiinvestplusapi.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -25,4 +23,11 @@ public class Investor {
     private String phoneNumber;
     private String maritalStatus;
     private String numberOfChildren;
+    @JsonIgnore
+    @OneToMany(mappedBy = "investor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<Simulation> simulations;
+
+
+
 }
