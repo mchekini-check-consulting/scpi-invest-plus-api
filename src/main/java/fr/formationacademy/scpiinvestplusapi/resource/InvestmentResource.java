@@ -1,53 +1,39 @@
 package fr.formationacademy.scpiinvestplusapi.resource;
 
 import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDto;
-import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDtoOut;
-import fr.formationacademy.scpiinvestplusapi.mapper.InvestmentMapper;
+import fr.formationacademy.scpiinvestplusapi.entity.Investment;
 import fr.formationacademy.scpiinvestplusapi.service.InvestmentService;
-import fr.formationacademy.scpiinvestplusapi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/investment")
-@Tag(name = "Investissements", description = "API pour la gestion des investissements")
+@RequestMapping("/api/investment")
 public class InvestmentResource {
 
     private final InvestmentService investmentService;
-    private final InvestmentMapper investmentMapper;
-    private final UserService userService;
 
-    public InvestmentResource(InvestmentService investmentService, InvestmentMapper investmentMapper, UserService userService) {
+    public InvestmentResource(InvestmentService investmentService) {
         this.investmentService = investmentService;
-        this.investmentMapper = investmentMapper;
-        this.userService = userService;
     }
 
+    @Operation(summary = "Créer un nouvel investissement", description = "Cette API permet de créer un nouvel investissement pour une SCPI et un investisseur donnée.")
     @PostMapping
-    @Operation(
-            summary = "Créer un nouvel investissement",
-            description = "Cette API permet de créer un nouvel investissement pour une SCPI et un investisseur donné.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Investissement créé avec succès"),
-                    @ApiResponse(responseCode = "400", description = "Requête invalide"),
-                    @ApiResponse(responseCode = "500", description = "Erreur interne du serveur")
-            }
-    )
     public InvestmentDto createInvestment(@RequestBody InvestmentDto investmentDto) {
         return investmentService.saveInvestment(investmentDto);
     }
 
-    @Operation(summary = "Recuperer la liste des investissements d'un investisseur authentifié", description = "Cette API permet d'obtenir la liste complete des investissements d'un investisseur actuellement authentifié.")
-    @GetMapping
-    public ResponseEntity<List<InvestmentDtoOut>> getInvestments() {
-        try{
-            return ResponseEntity.ok(investmentMapper.toDtoOutList(investmentService.getInvestments(userService.getEmail())));
-        } catch (Exception e){
-            return ResponseEntity.status(403).body(null);
-        }
+    @Operation(summary = "Récupérer les investissements d'un investisseur", description = "Récupère tous les investissements liés à un investisseur spécifique à partir de son email.")
+    @GetMapping("/investor/{email}")
+    public List<Investment> getInvestmentsByInvestor(@PathVariable String email) {
+        return investmentService.getInvestmentsByInvestorEmail(email);
+    }
+
+    @Operation(summary = "Récupérer les investissements d'une SCPI", description = "Renvoie la liste des investissements associés à une SCPI spécifique via son ID.")
+    @GetMapping("/scpi/{id}")
+    public List<Investment> getInvestmentsByScpi(@PathVariable Integer id) {
+        return investmentService.getInvestmentsByScpiId(id);
     }
 }

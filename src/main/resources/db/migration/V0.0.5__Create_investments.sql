@@ -13,9 +13,8 @@ CREATE TABLE investment
     number_shares integer,
     number_years integer,
     total_amount NUMERIC(10,2),
-    Investment_state varchar,
-    investor_id text,
-    scpi_id      integer
+    scpi_id      integer,
+    investor_id text
 );
 
 ALTER TABLE investment

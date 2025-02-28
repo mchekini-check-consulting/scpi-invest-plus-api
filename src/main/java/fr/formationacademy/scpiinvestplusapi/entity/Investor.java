@@ -1,6 +1,7 @@
 package fr.formationacademy.scpiinvestplusapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -13,6 +14,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.List;
 
 @Data
@@ -36,4 +38,6 @@ public class Investor {
     @ToString.Exclude
     private List<Simulation> simulations;
 
+    @OneToMany(mappedBy = "investor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Investment> investments;
 }

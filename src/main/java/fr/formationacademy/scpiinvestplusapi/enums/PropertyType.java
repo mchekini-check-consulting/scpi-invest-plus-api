@@ -1,30 +1,17 @@
 package fr.formationacademy.scpiinvestplusapi.enums;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
 public enum PropertyType {
-    NUE_PROPRIETE("Nue-propriétaire"),
+    PLEINE_PROPRIETE("Pleine propriété"),
+    NUE_PROPRIETE("Nue propriété"),
     USUFRUIT("Usufruit");
 
-    private final String value;
+    private final String label;
 
-    PropertyType(String value) {
-        this.value = value;
+    PropertyType(String label) {
+        this.label = label;
     }
 
-    @JsonValue
-    public String getValue() {
-        return value;
-    }
-
-    @JsonCreator
-    public static PropertyType fromValue(String value) {
-        for (PropertyType type : values()) {
-            if (type.value.equalsIgnoreCase(value)) {
-                return type;
-            }
-        }
-        throw new IllegalArgumentException("Valeur inconnue : " + value);
+    public String getLabel() {
+        return label;
     }
 }
