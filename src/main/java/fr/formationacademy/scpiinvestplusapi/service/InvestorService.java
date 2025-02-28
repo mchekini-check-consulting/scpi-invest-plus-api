@@ -4,11 +4,13 @@ import fr.formationacademy.scpiinvestplusapi.dto.InvestorDTO;
 import fr.formationacademy.scpiinvestplusapi.entity.Investor;
 import fr.formationacademy.scpiinvestplusapi.mapper.InvestorMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.InvestorRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class InvestorService {
 
     private final InvestorRepository investorRepository;
@@ -21,6 +23,8 @@ public class InvestorService {
 
 
     public Investor createOrUpdateInvestor(String email, InvestorDTO investorDTO) {
+        log.info("Creating Investor with email: " + email);
+        log.info("Investor email: " + investorDTO);
         return investorRepository.findById(email)
                 .map(existingInvestor -> {
                     Investor updatedInvestor = investorMapper.toEntity(investorDTO);
