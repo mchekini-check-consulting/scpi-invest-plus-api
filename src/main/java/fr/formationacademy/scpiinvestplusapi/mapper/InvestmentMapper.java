@@ -15,6 +15,7 @@ public interface InvestmentMapper {
     InvestmentDto toDTO(Investment investor);
 
     @Mapping(source = "scpiId", target = "scpi.id")
+    @Mapping(target = "investor", ignore = true)
     Investment toEntity(InvestmentDto investmentDTO);
 
     List<InvestmentDto> toDTOList(List<Investment> investments);

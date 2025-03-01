@@ -2,7 +2,7 @@ package fr.formationacademy.scpiinvestplusapi.enums;
 
 public enum PropertyType {
     PLEINE_PROPRIETE("Pleine propriété"),
-    NUE_PROPRIETE("Nue propriété"),
+    NUE_PROPRIETE("Nue-propriétaire"),
     USUFRUIT("Usufruit");
 
     private final String label;

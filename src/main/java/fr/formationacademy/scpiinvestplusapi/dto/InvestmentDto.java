@@ -8,9 +8,8 @@ import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 
 @Data
 public class InvestmentDto {
-    private Integer id;
     private PropertyType typeProperty;
-    private Integer numberShares;
+    private BigDecimal numberShares;
     private Integer numberYears;
     private BigDecimal totalAmount;
     private Integer scpiId;
