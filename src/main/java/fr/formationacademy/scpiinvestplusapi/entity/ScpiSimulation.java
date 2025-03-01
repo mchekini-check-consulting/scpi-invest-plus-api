@@ -24,13 +24,12 @@ public class ScpiSimulation {
     @ManyToOne
     @MapsId("simulationId")
     @JoinColumn(name = "simulation_id", referencedColumnName = "id", nullable = false)
-    @JsonIgnore
     @ToString.Exclude
     private Simulation simulation;
+
     @ManyToOne
     @MapsId("scpiId")
     @JoinColumn(name = "scpi_id", nullable = false)
-    @JsonIgnore
     @ToString.Exclude
     private Scpi scpi;
 }
