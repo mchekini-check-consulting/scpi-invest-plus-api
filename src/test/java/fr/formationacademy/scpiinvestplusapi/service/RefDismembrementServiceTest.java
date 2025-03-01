@@ -2,7 +2,6 @@ package fr.formationacademy.scpiinvestplusapi.service;
 
 import fr.formationacademy.scpiinvestplusapi.dto.RefDismembermentDto;
 import fr.formationacademy.scpiinvestplusapi.entity.RefDismemberment;
-import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 import fr.formationacademy.scpiinvestplusapi.mapper.RefDismembermentMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.RefDismembermentRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +36,7 @@ class RefDismembermentServiceTest {
     void setUp() {
         entity = new RefDismemberment();
         entity.setId(1);
-        entity.setPropertyType(PropertyType.NUE_PROPRIETE);
+        entity.setPropertyType("Nue-propriétaire");
         entity.setYearDismemberment(2024);
         entity.setRateDismemberment(BigDecimal.valueOf(3.5));
 

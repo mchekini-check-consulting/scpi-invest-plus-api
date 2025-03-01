@@ -24,7 +24,7 @@ public class RefDismemberment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private PropertyType propertyType;
+    private String propertyType;
     private Integer yearDismemberment;
     private BigDecimal rateDismemberment;
 }
