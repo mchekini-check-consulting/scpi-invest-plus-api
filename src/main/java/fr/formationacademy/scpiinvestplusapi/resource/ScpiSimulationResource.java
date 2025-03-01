@@ -21,8 +21,7 @@ import java.util.List;
 @RequestMapping("api/v1/simulation")
 @Tag(name = "Scpi Simulation", description = "API pour la gestion des scpi d'une simulation")
 public class ScpiSimulationResource {
-    private ScpiSimulationService scpiSimulationService;
-
+    private final ScpiSimulationService scpiSimulationService;
     @Autowired
     public ScpiSimulationResource(ScpiSimulationService scpiSimulationService) {
         this.scpiSimulationService = scpiSimulationService;
