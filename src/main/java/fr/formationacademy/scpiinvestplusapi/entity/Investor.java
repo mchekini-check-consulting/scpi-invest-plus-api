@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -38,6 +37,4 @@ public class Investor {
     @ToString.Exclude
     private List<Simulation> simulations;
 
-    @OneToMany(mappedBy = "investor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Investment> investments;
 }

@@ -3,7 +3,6 @@ package fr.formationacademy.scpiinvestplusapi.mapper;
 import java.util.List;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
 import fr.formationacademy.scpiinvestplusapi.dto.RefDismembermentDto;
@@ -16,7 +15,6 @@ public interface RefDismembermentMapper {
 
     List<RefDismembermentDto> toDTOList(List<RefDismemberment> refDismemberments);
 
-    @Mapping(target = "propertyType", ignore = true)
     RefDismemberment toEntity(RefDismembermentDto refDismembermentDTO);
 
     List<RefDismemberment> toEntityList(List<RefDismembermentDto> refDismembermentDTOs);

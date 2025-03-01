@@ -2,10 +2,7 @@ package fr.formationacademy.scpiinvestplusapi.entity;
 
 import java.math.BigDecimal;
 
-import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,11 +25,11 @@ public class Investment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Enumerated(EnumType.STRING)
-    private PropertyType typeProperty;
-    private BigDecimal numberShares;
+    private String typeProperty;
+    private Integer numberShares;
     private Integer numberYears;
     private BigDecimal totalAmount;
+    private String InvestmentState;
 
     @ManyToOne
     @JoinColumn(name = "scpi_id", nullable = false)

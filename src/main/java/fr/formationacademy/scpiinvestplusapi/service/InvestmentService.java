@@ -9,7 +9,6 @@ import fr.formationacademy.scpiinvestplusapi.repository.InvestmentRepository;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
 
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class InvestmentService {
@@ -25,21 +24,6 @@ public class InvestmentService {
         this.scpiRepository = scpiRepository;
         this.investmentMapper = investmentMapper;
         this.investorService = investorservice;
-    }
-
-    public List<InvestmentDto> getAllInvestments() {
-        List<Investment> investments = investmentRepository.findAll();
-        return investments.stream()
-                .map(investmentMapper::toDTO)
-                .toList();
-    }
-
-    public List<Investment> getInvestmentsByInvestorEmail(String email) {
-        return investmentRepository.findByInvestorEmail(email);
-    }
-
-    public List<Investment> getInvestmentsByScpiId(Integer scpiId) {
-        return investmentRepository.findByScpiId(scpiId);
     }
 
     public InvestmentDto saveInvestment(InvestmentDto investmentDto) throws RuntimeException {
