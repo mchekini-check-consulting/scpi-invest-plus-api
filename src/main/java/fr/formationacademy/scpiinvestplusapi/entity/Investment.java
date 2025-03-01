@@ -30,7 +30,7 @@ public class Investment {
     private Integer id;
     @Enumerated(EnumType.STRING)
     private PropertyType typeProperty;
-    private Integer numberShares;
+    private BigDecimal numberShares;
     private Integer numberYears;
     private BigDecimal totalAmount;
 

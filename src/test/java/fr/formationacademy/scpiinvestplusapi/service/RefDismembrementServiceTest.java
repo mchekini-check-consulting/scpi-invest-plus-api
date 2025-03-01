@@ -2,6 +2,7 @@ package fr.formationacademy.scpiinvestplusapi.service;
 
 import fr.formationacademy.scpiinvestplusapi.dto.RefDismembermentDto;
 import fr.formationacademy.scpiinvestplusapi.entity.RefDismemberment;
+import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 import fr.formationacademy.scpiinvestplusapi.mapper.RefDismembermentMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.RefDismembermentRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +37,7 @@ class RefDismembermentServiceTest {
     void setUp() {
         entity = new RefDismemberment();
         entity.setId(1);
-        entity.setPropertyType("Nue-propriétaire");
+        entity.setPropertyType(PropertyType.PLEINE_PROPRIETE);
         entity.setYearDismemberment(2024);
         entity.setRateDismemberment(BigDecimal.valueOf(3.5));
 
@@ -49,11 +50,11 @@ class RefDismembermentServiceTest {
     @Test
     void shouldReturnRefDismembermentByPropertyType() {
         // GIVEN
-        when(repository.findByPropertyType("Nue-propriétaire")).thenReturn(List.of(entity));
+        when(repository.findByPropertyType(PropertyType.PLEINE_PROPRIETE)).thenReturn(List.of(entity));
         when(mapper.toDTOList(List.of(entity))).thenReturn(List.of(dto));
 
         // WHEN
-        List<RefDismembermentDto> result = service.getByPropertyType("Nue-propriétaire");
+        List<RefDismembermentDto> result = service.getByPropertyType(PropertyType.PLEINE_PROPRIETE);
 
         // THEN
         assertThat(result).isNotNull().hasSize(1);
@@ -61,7 +62,7 @@ class RefDismembermentServiceTest {
         assertThat(result.get(0).getYearDismemberment()).isEqualTo(2024);
         assertThat(result.get(0).getRateDismemberment()).isEqualTo(BigDecimal.valueOf(3.5));
 
-        verify(repository).findByPropertyType("Nue-propriétaire");
+        verify(repository).findByPropertyType(PropertyType.PLEINE_PROPRIETE);
         verify(mapper).toDTOList(List.of(entity));
     }
 }
