@@ -36,7 +36,7 @@ public class InvestmentService {
 
         investment.setInvestor(investor);
         investment.setScpi(scpi);
-
+        investment.setInvestmentState("En cours");
         Investment savedInvestment = investmentRepository.save(investment);
 
         return investmentMapper.toDTO(savedInvestment);

@@ -29,7 +29,7 @@ public class Investment {
     private Integer numberShares;
     private Integer numberYears;
     private BigDecimal totalAmount;
-    private String InvestmentState;
+    private String investmentState;
 
     @ManyToOne
     @JoinColumn(name = "scpi_id", nullable = false)

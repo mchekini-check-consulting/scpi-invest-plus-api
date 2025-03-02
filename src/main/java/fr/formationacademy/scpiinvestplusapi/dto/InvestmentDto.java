@@ -11,5 +11,5 @@ public class InvestmentDto {
     private Integer numberYears;
     private BigDecimal totalAmount;
     private Integer scpiId;
-    private String InvestmentState;
+    private String investmentState;
 }

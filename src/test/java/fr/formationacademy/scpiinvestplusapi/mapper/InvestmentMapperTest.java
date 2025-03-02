@@ -20,7 +20,7 @@ class InvestmentMapperTest {
 
     @Test
     void shouldMapEntityToDto() {
-        // GIVEN
+
         Scpi scpi = new Scpi();
         scpi.setId(1);
 
@@ -29,14 +29,12 @@ class InvestmentMapperTest {
                 .numberShares(10000)
                 .numberYears(5)
                 .totalAmount(new BigDecimal("10000.50"))
-                .InvestmentState("En cours")
+                .investmentState("En cours")
                 .scpi(scpi)
                 .build();
 
-        // WHEN
         InvestmentDto dto = investmentMapper.toDTO(investment);
 
-        // THEN
         assertThat(dto).isNotNull();
         assertThat(dto.getTypeProperty()).isEqualTo("Nue-propriétaire");
         assertThat(dto.getInvestmentState()).isEqualTo("En cours");
@@ -48,31 +46,31 @@ class InvestmentMapperTest {
 
     @Test
     void shouldMapDtoToEntityIgnoringInvestor() {
-        // GIVEN
+
         InvestmentDto dto = new InvestmentDto();
         dto.setTypeProperty("Nue-propriétaire"); // Valeur de l'énum
         dto.setNumberShares(10000);
         dto.setNumberYears(10);
+        dto.setInvestmentState("En cours");
         dto.setTotalAmount(new BigDecimal("20000.75"));
         dto.setScpiId(2);
 
-        // WHEN
         Investment entity = investmentMapper.toEntity(dto);
 
-        // THEN
         assertThat(entity).isNotNull();
         assertThat(entity.getTypeProperty()).isEqualTo("Nue-propriétaire");
         assertThat(entity.getNumberShares()).isEqualTo(20);
         assertThat(entity.getNumberYears()).isEqualTo(10);
         assertThat(entity.getTotalAmount()).isEqualTo(new BigDecimal("20000.75"));
         assertThat(entity.getScpi()).isNotNull();
+        assertThat(entity.getInvestmentState()).isEqualTo("En cours");
         assertThat(entity.getScpi().getId()).isEqualTo(2);
         assertThat(entity.getInvestor()).isNull(); // Investor doit être ignoré
     }
 
     @Test
     void shouldMapListOfEntitiesToDtoList() {
-        // GIVEN
+
         Scpi scpi1 = new Scpi();
         scpi1.setId(1);
         Investment investment1 = Investment.builder()
@@ -81,6 +79,7 @@ class InvestmentMapperTest {
                 .numberShares(10000)
                 .numberYears(3)
                 .totalAmount(new BigDecimal("5000.00"))
+                .investmentState("En cours")
                 .scpi(scpi1)
                 .build();
 
@@ -92,24 +91,25 @@ class InvestmentMapperTest {
                 .numberShares(10000)
                 .numberYears(6)
                 .totalAmount(new BigDecimal("8000.00"))
+                .investmentState("En cours")
                 .scpi(scpi2)
                 .build();
 
         List<Investment> investmentList = List.of(investment1, investment2);
 
-        // WHEN
         List<InvestmentDto> dtoList = investmentMapper.toDTOList(investmentList);
 
-        // THEN
         assertThat(dtoList).isNotNull();
         assertThat(dtoList).hasSize(2);
 
         assertThat(dtoList.get(0).getTypeProperty()).isEqualTo("Usufruit");
+        assertThat(dtoList.get(0).getInvestmentState()).isEqualTo("En cours");
         assertThat(dtoList.get(0).getNumberShares()).isEqualTo(5);
         assertThat(dtoList.get(0).getTotalAmount()).isEqualTo(new BigDecimal("5000.00"));
         assertThat(dtoList.get(0).getScpiId()).isEqualTo(1);
 
         assertThat(dtoList.get(1).getTypeProperty()).isEqualTo("Nue-propriétaire");
+        assertThat(dtoList.get(0).getInvestmentState()).isEqualTo("En cours");
         assertThat(dtoList.get(1).getNumberShares()).isEqualTo(8);
         assertThat(dtoList.get(1).getTotalAmount()).isEqualTo(new BigDecimal("8000.00"));
         assertThat(dtoList.get(1).getScpiId()).isEqualTo(2);
