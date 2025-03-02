@@ -59,12 +59,14 @@ class InvestmentServiceTest {
         investment.setNumberShares(new BigDecimal("10000.50"));
         investment.setNumberYears(5);
         investment.setTotalAmount(new BigDecimal("5000"));
+        investment.setInvestmentState("En cours");
         investment.setInvestor(investor);
         investment.setScpi(scpi);
 
         investmentDto = new InvestmentDto();
         investmentDto.setNumberShares(new BigDecimal("10000.50"));
         investmentDto.setNumberYears(5);
+        investmentDto.setInvestmentState("En cours");
         investmentDto.setTotalAmount(new BigDecimal("5000"));
         investmentDto.setScpiId(1);
     }
@@ -115,16 +117,14 @@ class InvestmentServiceTest {
 
     @Test
     void shouldSaveInvestmentSuccessfully() {
-        // GIVEN
+
         when(investmentMapper.toEntity(investmentDto)).thenReturn(investment);
         when(investorService.getCurrentInvestor()).thenReturn(investor);
         when(investmentRepository.save(investment)).thenReturn(investment);
         when(investmentMapper.toDTO(investment)).thenReturn(investmentDto);
 
-        // WHEN
         InvestmentDto result = investmentService.saveInvestment(investmentDto);
 
-        // THEN
         assertThat(result).isNotNull();
         verify(investmentRepository).save(investment);
     }
