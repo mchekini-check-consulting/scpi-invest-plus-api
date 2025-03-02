@@ -7,5 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface InvestorMapper {
     InvestorDTO toDTO(Investor investor);
+
     Investor toEntity(InvestorDTO investorDTO);
 }
