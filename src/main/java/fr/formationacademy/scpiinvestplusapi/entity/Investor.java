@@ -1,7 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import lombok.*;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

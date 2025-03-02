@@ -2,7 +2,6 @@ package fr.formationacademy.scpiinvestplusapi.entity;
 
 import java.math.BigDecimal;
 
-import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
