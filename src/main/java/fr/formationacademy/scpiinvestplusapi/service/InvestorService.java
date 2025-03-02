@@ -56,7 +56,6 @@ public class InvestorService {
 
     public Investor getCurrentInvestor() {
         String email = userService.getEmail();
-
         return investorRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     log.error("Aucun investisseur trouvé pour l'email: {}", email);
