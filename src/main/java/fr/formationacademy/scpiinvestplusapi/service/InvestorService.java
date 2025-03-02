@@ -54,7 +54,6 @@ public class InvestorService {
 
     public Investor getCurrentInvestor() {
         String email = userService.getEmail();
-
         return investorRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Investor not found for email: " + email));
     }
