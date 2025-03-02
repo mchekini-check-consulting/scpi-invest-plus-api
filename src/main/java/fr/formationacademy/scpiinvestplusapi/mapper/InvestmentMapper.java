@@ -2,6 +2,7 @@ package fr.formationacademy.scpiinvestplusapi.mapper;
 
 import java.util.List;
 
+import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDtoOut;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -21,4 +22,9 @@ public interface InvestmentMapper {
     List<InvestmentDto> toDTOList(List<Investment> investments);
 
     List<Investment> toEntityList(List<InvestmentDto> investmentDTOs);
+
+    @Mapping(target = "scpiName", source = "scpi.name")
+    InvestmentDtoOut toDtoOut(Investment investment);
+
+    List<InvestmentDtoOut> toDtoOutList(List<Investment> investments);
 }
