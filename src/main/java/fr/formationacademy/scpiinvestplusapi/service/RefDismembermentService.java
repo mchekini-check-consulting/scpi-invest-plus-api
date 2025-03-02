@@ -2,32 +2,36 @@ package fr.formationacademy.scpiinvestplusapi.service;
 
 import fr.formationacademy.scpiinvestplusapi.dto.RefDismembermentDto;
 
+import fr.formationacademy.scpiinvestplusapi.entity.RefDismemberment;
 import fr.formationacademy.scpiinvestplusapi.mapper.RefDismembermentMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.RefDismembermentRepository;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
-@Slf4j // Active le logger
+@Slf4j
 @Service
 public class RefDismembermentService {
 
     private final RefDismembermentRepository repository;
-    private final RefDismembermentMapper repositoryMapper;
+    private final RefDismembermentMapper mapper;
 
-    @Autowired
-    public RefDismembermentService(RefDismembermentRepository repository, RefDismembermentMapper repositoryMapper) {
-        this.repository = Objects.requireNonNull(repository, "RefDismembermentRepository ne peut pas être null");
-        this.repositoryMapper = Objects.requireNonNull(repositoryMapper,
-                "RefDismembermentMapper ne peut pas être null");
+    public RefDismembermentService(RefDismembermentRepository repository, RefDismembermentMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
     }
 
     public List<RefDismembermentDto> getByPropertyType(String typeProperty) {
-
-        return repositoryMapper.toDTOList(repository.findByPropertyType(typeProperty));
+        log.info("Début de la récupération des dismemberments pour le type de propriété: {}", typeProperty);
+        List<RefDismemberment> entities = repository.findByPropertyType(typeProperty);
+        if (entities.isEmpty()) {
+            log.warn("Aucun dismemberment trouvé pour le type de propriété: {}", typeProperty);
+        } else {
+            log.info("{} dismemberments trouvés pour le type de propriété: {}", entities.size(), typeProperty);
+        }
+        List<RefDismembermentDto> dtoList = mapper.toDTOList(entities);
+        log.info("Fin de la récupération des dismemberments pour le type de propriété: {}", typeProperty);
+        return dtoList;
     }
 }

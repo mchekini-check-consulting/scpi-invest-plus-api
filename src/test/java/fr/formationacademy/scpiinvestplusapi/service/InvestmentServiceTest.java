@@ -69,16 +69,22 @@ class InvestmentServiceTest {
 
     @Test
     void shouldSaveInvestmentSuccessfully() {
-
         when(investmentMapper.toEntity(investmentDto)).thenReturn(investment);
         when(investorService.getCurrentInvestor()).thenReturn(investor);
-        when(investmentRepository.save(investment)).thenReturn(investment);
-        when(investmentMapper.toDTO(investment)).thenReturn(investmentDto);
+        when(scpiRepository.findById(1)).thenReturn(java.util.Optional.of(scpi));
+        when(investmentRepository.save(any(Investment.class))).thenReturn(investment);
+        when(investmentMapper.toDTO(any(Investment.class))).thenReturn(investmentDto);
 
         InvestmentDto result = investmentService.saveInvestment(investmentDto);
 
         assertThat(result).isNotNull();
-        verify(investmentRepository).save(investment);
-    }
+        assertThat(result.getNumberShares()).isEqualTo(investmentDto.getNumberShares());
+        assertThat(result.getInvestmentState()).isEqualTo(investmentDto.getInvestmentState());
+        assertThat(result.getTotalAmount()).isEqualTo(investmentDto.getTotalAmount());
+        assertThat(result.getScpiId()).isEqualTo(investmentDto.getScpiId());
 
+        verify(investmentRepository, times(1)).save(any(Investment.class));
+        verify(investmentMapper, times(1)).toEntity(investmentDto);
+        verify(investmentMapper, times(1)).toDTO(any(Investment.class));
+    }
 }

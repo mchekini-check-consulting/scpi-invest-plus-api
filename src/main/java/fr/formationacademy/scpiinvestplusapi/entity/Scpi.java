@@ -50,6 +50,4 @@ public class Scpi {
     @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ScpiSimulation> scpiSimulations;
 
-    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Investment> investments;
 }
