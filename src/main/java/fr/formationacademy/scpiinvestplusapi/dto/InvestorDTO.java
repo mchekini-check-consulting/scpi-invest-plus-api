@@ -3,6 +3,7 @@ package fr.formationacademy.scpiinvestplusapi.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class InvestorDTO {
@@ -14,4 +15,6 @@ public class InvestorDTO {
     private String phoneNumber;
     private String maritalStatus;
     private String numberOfChildren;
+    private List<InvestmentDto> investments; // Ajout de la liste des investissements
+
 }
