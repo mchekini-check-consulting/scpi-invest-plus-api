@@ -25,6 +25,7 @@ public class InvestorService {
         this.investorMapper = investorMapper;
     }
 
+
     public Investor createOrUpdateInvestor(String email, InvestorDTO investorDTO) {
         log.info("Creating Investor with email: " + email);
         log.info("Investor email: " + investorDTO);
@@ -41,12 +42,14 @@ public class InvestorService {
                 });
     }
 
+
     public List<InvestorDTO> getAllInvestors() {
         List<Investor> investors = investorRepository.findAll();
         return investors.stream()
                 .map(investorMapper::toDTO)
                 .toList();
     }
+
 
     public Optional<Investor> getInvestorByEmail(String email) {
         return investorRepository.findById(email);
