@@ -17,14 +17,13 @@ public class InvestorService {
 
     private final InvestorRepository investorRepository;
     private final InvestorMapper investorMapper;
-    @Autowired
     private UserService userService;
 
     public InvestorService(InvestorRepository investorRepository, InvestorMapper investorMapper) {
         this.investorRepository = investorRepository;
         this.investorMapper = investorMapper;
+        this.userService = userService;
     }
-
 
     public Investor createOrUpdateInvestor(String email, InvestorDTO investorDTO) {
         log.info("Creating Investor with email: " + email);
@@ -59,6 +58,9 @@ public class InvestorService {
         String email = userService.getEmail();
 
         return investorRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Investor not found for email: " + email));
+                .orElseThrow(() -> {
+                    log.error("Aucun investisseur trouvé pour l'email: {}", email);
+                    return new RuntimeException("Investor not found for email: " + email);
+                });
     }
 }
