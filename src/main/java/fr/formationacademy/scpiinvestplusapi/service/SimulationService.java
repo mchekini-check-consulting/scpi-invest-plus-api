@@ -67,4 +67,9 @@ public class SimulationService {
         log.info("DeleteSimulation - The simulation with id {} not found", simulationId);
         return null;
     }
+
+    public SimulationDToOut getSimulationById(Integer simulationId) {
+        Optional<Simulation> simulation = simulationRepository.findById(simulationId);
+        return simulation.map(value -> simulationMapper.toDTO(value)).orElse(null);
+    }
 }
