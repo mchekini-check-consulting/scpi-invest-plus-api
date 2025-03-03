@@ -78,4 +78,21 @@ public class SimulationResource {
         }
         return new ResponseEntity<>(simulationDToOut, HttpStatus.OK);
     }
+
+    @Operation(summary = "Get simulation by ID",
+            description = "Retrieve a simulation by its unique ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Simulation retrieved successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SimulationDToOut.class))),
+            @ApiResponse(responseCode = "404", description = "Simulation ID not found")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<SimulationDToOut> getSimulationById(@PathVariable Integer id) {
+        SimulationDToOut simulationDToOut = simulationService.getSimulationById(id);
+        if (simulationDToOut == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return new ResponseEntity<>(simulationDToOut, HttpStatus.OK);
+    }
 }
