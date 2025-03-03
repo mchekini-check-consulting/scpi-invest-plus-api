@@ -51,4 +51,11 @@ public class ScpiService {
     public ScpiDtoOut getScpiDetailsById(Integer id) {
         return scpiRepository.findById(id).map(scpiMapper::scpiToScpiDtoOut).orElse(null);
     }
+
+    public List<ScpiDtoOut> getAllScpis() {
+        return  scpiRepository.findAll()
+                .stream()
+                .map(scpiMapper :: scpiToScpiDtoOut)
+                .toList();
+    }
 }
