@@ -1,6 +1,5 @@
 package fr.formationacademy.scpiinvestplusapi.dto;
 
-import fr.formationacademy.scpiinvestplusapi.entity.ScpiSimulation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,5 +17,7 @@ public class SimulationDToOut {
     private String name;
     private LocalDate simulationDate;
     private String investorEmail;
+    private Double monthlyIncome;
+    private Double totalInvestment;
     private List<ScpiSimulationDToOut> scpiSimulations;
 }
