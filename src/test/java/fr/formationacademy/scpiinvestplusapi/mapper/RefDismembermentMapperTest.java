@@ -19,16 +19,14 @@ class RefDismembermentMapperTest {
 
     @Test
     void shouldMapEntityToDto() {
-        // GIVEN
+
         RefDismemberment entity = new RefDismemberment();
         entity.setId(1);
         entity.setYearDismemberment(10);
         entity.setRateDismemberment(new BigDecimal("4.25"));
 
-        // WHEN
         RefDismembermentDto dto = mapper.toDTO(entity);
 
-        // THEN
         assertThat(dto).isNotNull();
         assertThat(dto.getId()).isEqualTo(1);
         assertThat(dto.getYearDismemberment()).isEqualTo(10);
@@ -37,7 +35,6 @@ class RefDismembermentMapperTest {
 
     @Test
     void shouldMapListOfEntitiesToDtoList() {
-        // GIVEN
         RefDismemberment entity1 = new RefDismemberment();
         entity1.setId(3);
         entity1.setYearDismemberment(8);
@@ -50,10 +47,8 @@ class RefDismembermentMapperTest {
 
         List<RefDismemberment> entityList = List.of(entity1, entity2);
 
-        // WHEN
         List<RefDismembermentDto> dtoList = mapper.toDTOList(entityList);
 
-        // THEN
         assertThat(dtoList).isNotNull();
         assertThat(dtoList).hasSize(2);
 
