@@ -3,6 +3,7 @@ package fr.formationacademy.scpiinvestplusapi.resource;
 import fr.formationacademy.scpiinvestplusapi.dto.SimulationDToOut;
 import fr.formationacademy.scpiinvestplusapi.dto.SimulationInDTO;
 import fr.formationacademy.scpiinvestplusapi.entity.Simulation;
+import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.service.SimulationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -88,11 +89,8 @@ public class SimulationResource {
             @ApiResponse(responseCode = "404", description = "Simulation ID not found")
     })
     @GetMapping("/{id}")
-    public ResponseEntity<SimulationDToOut> getSimulationById(@PathVariable Integer id) {
+    public ResponseEntity<SimulationDToOut> getSimulationById(@PathVariable Integer id) throws GlobalException {
         SimulationDToOut simulationDToOut = simulationService.getSimulationById(id);
-        if (simulationDToOut == null) {
-            return ResponseEntity.notFound().build();
-        }
         return new ResponseEntity<>(simulationDToOut, HttpStatus.OK);
     }
 }
