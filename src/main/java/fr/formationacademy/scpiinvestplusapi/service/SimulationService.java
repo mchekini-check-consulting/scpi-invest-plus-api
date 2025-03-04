@@ -4,12 +4,14 @@ import fr.formationacademy.scpiinvestplusapi.dto.SimulationDToOut;
 import fr.formationacademy.scpiinvestplusapi.dto.SimulationInDTO;
 import fr.formationacademy.scpiinvestplusapi.entity.Investor;
 import fr.formationacademy.scpiinvestplusapi.entity.Simulation;
+import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.mapper.SimulationMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.SimulationRepository;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,8 +70,10 @@ public class SimulationService {
         return null;
     }
 
-    public SimulationDToOut getSimulationById(Integer simulationId) {
-        Optional<Simulation> simulation = simulationRepository.findById(simulationId);
-        return simulation.map(value -> simulationMapper.toDTO(value)).orElse(null);
+    public SimulationDToOut getSimulationById(Integer simulationId) throws GlobalException {
+        Simulation simulation = simulationRepository.findById(simulationId)
+                .orElseThrow(()-> new GlobalException(HttpStatus.NOT_FOUND,"No simulation found with id: " + simulationId));
+        log.info("GetSimulationById - Load the simulations  {}", simulation);
+        return  simulationMapper.toDTO(simulation);
     }
 }
