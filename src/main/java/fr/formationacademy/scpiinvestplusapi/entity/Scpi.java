@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "scpi", uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
+@Table(name = "scpi", uniqueConstraints = { @UniqueConstraint(columnNames = "name") })
 public class Scpi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,4 +49,5 @@ public class Scpi {
 
     @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ScpiSimulation> scpiSimulations;
+
 }

@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping("api/v1/simulation")
 @Tag(name = "Scpi Simulation", description = "API pour la gestion des scpi d'une simulation")
 public class ScpiSimulationResource {
-    private ScpiSimulationService scpiSimulationService;
+    private final ScpiSimulationService scpiSimulationService;
     @Autowired
     public ScpiSimulationResource(ScpiSimulationService scpiSimulationService) {
         this.scpiSimulationService = scpiSimulationService;
@@ -37,9 +37,14 @@ public class ScpiSimulationResource {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/addScpi")
-    public ScpiSimulation addScpi(@RequestBody ScpiSimulationInDTO scpiSimulationIn) {
-        return this.scpiSimulationService.addScpiToSimulation(scpiSimulationIn);
+    public ResponseEntity<ScpiSimulationDToOut> addScpi(@RequestBody ScpiSimulationInDTO scpiSimulationIn) {
+        ScpiSimulationDToOut scpiSimulationDToOut = this.scpiSimulationService.addScpiToSimulation(scpiSimulationIn);
+        if (scpiSimulationDToOut != null) {
+            return new ResponseEntity<>(scpiSimulationDToOut, HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.FOUND);
     }
+
     @Operation(summary = "Get List of SCPI simulation",
             description = "Get the lisf of SCPI simulation.")
     @ApiResponses(value = {
@@ -51,5 +56,23 @@ public class ScpiSimulationResource {
     @GetMapping("/listScpiSimulation")
     public ResponseEntity<List<ScpiSimulationDToOut>> showScpiSimulation() {
         return new ResponseEntity<>(this.scpiSimulationService.getAllScpitSimulations(), HttpStatus.OK);
+    }
+
+    @Operation(
+            summary = "Delete SCPI from Simulation",
+            description = "Deletes an SCPI entry from a simulation based on the provided simulationId and scpiId."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "SCPI entry successfully deleted",
+                    content = @Content(schema = @Schema(implementation = ScpiSimulationDToOut.class))),
+            @ApiResponse(responseCode = "404", description = "SCPI entry or Simulation not found")
+    })
+    @DeleteMapping("/{simulationId}/{scpiId}")
+    public ResponseEntity<ScpiSimulationDToOut> deleteScipiFromSimulation(@PathVariable Integer simulationId, @PathVariable Integer scpiId) {
+        ScpiSimulationDToOut scpiSimulationDToOut = scpiSimulationService.deleteScipiFromSimulation(simulationId, scpiId);
+        if (scpiSimulationDToOut != null) {
+            return new ResponseEntity<>(scpiSimulationDToOut, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

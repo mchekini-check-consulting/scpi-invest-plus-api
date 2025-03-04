@@ -56,4 +56,14 @@ public class ScpiResource {
     public ResponseEntity<ScpiDtoOut> getDetailsById(@PathVariable Integer scpid) {
         return ResponseEntity.ok(scpiService.getScpiDetailsById(scpid));
     }
+    @Operation(
+            summary = "Récupérer la liste des SCPI avec tous leurs détailler",
+            description = "Retourne toutes les SCPI disponibles sous forme de liste d'objets ScpiDtoOut."
+    )
+    @ApiResponse(responseCode = "200", description = "Liste récupérée avec succès")
+    @ApiResponse(responseCode = "500", description = "Erreur interne du serveur")
+    @GetMapping("/details")
+    public List<ScpiDtoOut> getAllScpis() {
+        return scpiService.getAllScpis();
+    }
 }
