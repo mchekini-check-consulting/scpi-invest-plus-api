@@ -20,4 +20,6 @@ public class SimulationDToOut {
     private Double monthlyIncome;
     private Double totalInvestment;
     private List<ScpiSimulationDToOut> scpiSimulations;
+    private List<LocationDtoOut> locations;
+    private List<SectorDtoOut> sectors;
 }
