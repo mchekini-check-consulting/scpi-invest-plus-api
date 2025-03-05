@@ -16,7 +16,6 @@ public class SimulationDToOut {
     private Integer id;
     private String name;
     private LocalDate simulationDate;
-    private String investorEmail;
     private Double monthlyIncome;
     private Double totalInvestment;
     private List<ScpiSimulationDToOut> scpiSimulations;

@@ -3,7 +3,10 @@ package fr.formationacademy.scpiinvestplusapi.service;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiSimulationInDTO;
 import fr.formationacademy.scpiinvestplusapi.dto.SimulationDToOut;
 import fr.formationacademy.scpiinvestplusapi.dto.SimulationInDTO;
-import fr.formationacademy.scpiinvestplusapi.entity.*;
+import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
+import fr.formationacademy.scpiinvestplusapi.entity.ScpiSimulation;
+import fr.formationacademy.scpiinvestplusapi.entity.ScpiSimulationId;
+import fr.formationacademy.scpiinvestplusapi.entity.Simulation;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.mapper.ScpiSimulationMapper;
 import fr.formationacademy.scpiinvestplusapi.mapper.SimulationMapper;
@@ -27,42 +30,38 @@ public class SimulationService {
     private final ScpiSimulationRepository scpiSimulationRepository;
     private final ScpiSimulationMapper scpiSimulationMapper;
     private final ScpiRepository scpiRepository;
+    private final UserService userService;
 
-    public SimulationService(SimulationRepository simulationRepository, InvestorService investorService, SimulationMapper simulationMapper, ScpiSimulationRepository scpiSimulationRepository, ScpiSimulationMapper scpiSimulationMapper, ScpiRepository scpiRepository) {
+    public SimulationService(SimulationRepository simulationRepository, InvestorService investorService, SimulationMapper simulationMapper, ScpiSimulationRepository scpiSimulationRepository, ScpiSimulationMapper scpiSimulationMapper, ScpiRepository scpiRepository, UserService userService) {
         this.simulationRepository = simulationRepository;
         this.investorService = investorService;
         this.simulationMapper = simulationMapper;
         this.scpiSimulationRepository = scpiSimulationRepository;
         this.scpiSimulationMapper = scpiSimulationMapper;
         this.scpiRepository = scpiRepository;
+        this.userService = userService;
     }
 
     public SimulationDToOut addSimulation(SimulationInDTO simulationInDTO) throws GlobalException {
         log.info("AddSimulation - Simulation body from request {}", simulationInDTO);
-        String email = simulationInDTO.getInvestorEmail();
-        Investor investor = investorService.getInvestorByEmail(email).orElseThrow(
-                () -> new GlobalException(HttpStatus.NOT_FOUND, "Investor with email " + email + " not found")
-        );
-        if (investor != null) {
-            log.info("AddSimulation - Investor email already exists {} ", investor.getEmail());
-            Simulation simulation = simulationMapper.toEntity(simulationInDTO);
-            simulation.setInvestor(investor);
-            simulation = simulationRepository.save(simulation);
-            for (ScpiSimulationInDTO scpiSimulationInDTO : simulationInDTO.getScpis()) {
-                try {
-                    addScpiToSimulation(scpiSimulationInDTO, simulation);
-                } catch (GlobalException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            log.info("AddSimulation - Simulation created: {}", simulation);
-            return simulationMapper.toDTO(simulation);
+        String email = userService.getEmail();
+
+        log.info("AddSimulation - Investor email already exists {} ", email);
+        Simulation simulation = simulationMapper.toEntity(simulationInDTO);
+        simulation.setInvestorEmail(email);
+        simulation = simulationRepository.save(simulation);
+        for (ScpiSimulationInDTO scpiSimulationInDTO : simulationInDTO.getScpis()) {
+            addScpiToSimulation(scpiSimulationInDTO, simulation);
         }
-        return null;
+        log.info("AddSimulation - Simulation created: {}", simulation);
+        return simulationMapper.toDTO(simulation);
+
+
     }
 
     public List<SimulationDToOut> getSimulations() {
-        List<Simulation> simulations = simulationRepository.findAll();
+        String emailInvestor = userService.getEmail();
+        List<Simulation> simulations = simulationRepository.findByInvestorEmail(emailInvestor);
         log.info("GetSimulations - Load the simulations {}", simulations);
         return simulationMapper.toDTO(simulations);
     }
@@ -92,7 +91,7 @@ public class SimulationService {
             return;
         }
 
-        ScpiSimulation scpiSimulation = scpiSimulationMapper.toEntity(scpiSimulationInDTO);
+        ScpiSimulation scpiSimulation = scpiSimulationMapper.toEntity(scpiSimulationInDTO, simulation);
         scpiSimulation.setScpi(scpi);
         scpiSimulation.setSimulation(simulation);
 

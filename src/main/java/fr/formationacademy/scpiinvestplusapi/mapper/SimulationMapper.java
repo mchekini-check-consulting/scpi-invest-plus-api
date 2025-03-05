@@ -15,7 +15,6 @@ import java.util.*;
 
 @Mapper(componentModel = "spring", uses = {ScpiSimulationMapper.class})
 public interface SimulationMapper {
-    @Mapping(target = "investorEmail", source = "investor.email")
     @Mapping(target = "monthlyIncome", source = "simulation", qualifiedByName = "getMonthlyIncome")
     @Mapping(target = "totalInvestment", source = "simulation", qualifiedByName = "getTotalInvestment")
     @Mapping(target = "sectors", source = "simulation", qualifiedByName = "getGlobalSectorStatsForSimulation")
@@ -61,11 +60,11 @@ public interface SimulationMapper {
         if (simulation.getScpiSimulations() == null || simulation.getScpiSimulations().isEmpty()) {
             return Collections.emptyList();
         }
-        BigDecimal totalInvestment = BigDecimal.valueOf(getTotalInvestment(simulation)); // je veux le total investit sur la simulation
+        BigDecimal totalInvestment = BigDecimal.valueOf(getTotalInvestment(simulation));
 
         Map<String, BigDecimal> sectorInvestments = new HashMap<>();
         for (ScpiSimulation scpiSim : simulation.getScpiSimulations()) {
-            BigDecimal scpiRising = scpiSim.getRising(); // Montant de la simulation
+            BigDecimal scpiRising = scpiSim.getRising();
             System.out.println("scpiRising: " + scpiRising);
 
             for (Sector sector : scpiSim.getScpi().getSectors()) {
@@ -84,7 +83,7 @@ public interface SimulationMapper {
         for (Map.Entry<String, BigDecimal> entry : sectorInvestments.entrySet()) {
             BigDecimal percentage = entry.getValue().multiply(BigDecimal.valueOf(100))
                     .divide(totalInvestment, 2, RoundingMode.HALF_UP);
-            sectorDtos.add(new SectorDtoOut(new SectorId(null, entry.getKey()), percentage));
+            sectorDtos.add(new SectorDtoOut(new SectorId(simulation.getScpiSimulations().get(0).getScpi().getId(), entry.getKey()), percentage));
         }
 
         return sectorDtos;

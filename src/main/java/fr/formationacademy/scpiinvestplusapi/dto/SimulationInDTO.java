@@ -15,6 +15,5 @@ import java.util.List;
 public class SimulationInDTO {
     private String name;
     private LocalDate simulationDate;
-    private String investorEmail;
     private List<ScpiSimulationInDTO> scpis;
 }
