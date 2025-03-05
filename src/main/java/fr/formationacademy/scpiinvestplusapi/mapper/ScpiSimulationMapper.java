@@ -12,7 +12,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ScpiSimulationMapper {
 
-    //    @Mapping(target = "simulationId", source = "simulation.id")
     @Mapping(target = "scpiId", source = "scpiSimulation.scpiSimulationId.scpiId")
     @Mapping(target = "scpiName", source = "scpiSimulation.scpi.name")
     ScpiSimulationDToOut toDTO(ScpiSimulation scpiSimulation);

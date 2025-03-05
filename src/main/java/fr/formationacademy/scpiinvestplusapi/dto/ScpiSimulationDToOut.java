@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 @Data
 @Builder
 public class ScpiSimulationDToOut {
-    //    private Integer simulationId;
     private Integer scpiId;
     private Integer numberPart;
     private BigDecimal partPrice;
