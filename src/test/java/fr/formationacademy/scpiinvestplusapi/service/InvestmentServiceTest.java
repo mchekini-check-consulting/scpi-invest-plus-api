@@ -5,8 +5,8 @@ import static org.mockito.Mockito.*;
 
 import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDto;
 import fr.formationacademy.scpiinvestplusapi.entity.Investment;
-import fr.formationacademy.scpiinvestplusapi.entity.Investor;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
+import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.mapper.InvestmentMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.InvestmentRepository;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
@@ -32,20 +32,17 @@ class InvestmentServiceTest {
     private InvestmentMapper investmentMapper;
 
     @Mock
-    private InvestorService investorService;
+    private UserService userService;
 
     @InjectMocks
     private InvestmentService investmentService;
 
     private Investment investment;
     private InvestmentDto investmentDto;
-    private Investor investor;
     private Scpi scpi;
 
     @BeforeEach
     void setUp() {
-        investor = new Investor();
-        investor.setEmail("investor@example.com");
 
         scpi = new Scpi();
         scpi.setId(1);
@@ -56,7 +53,7 @@ class InvestmentServiceTest {
         investment.setNumberYears(5);
         investment.setTotalAmount(new BigDecimal("5000"));
         investment.setInvestmentState("En cours");
-        investment.setInvestor(investor);
+        investment.setInvestorId(userService.getEmail());
         investment.setScpi(scpi);
 
         investmentDto = new InvestmentDto();
@@ -68,9 +65,8 @@ class InvestmentServiceTest {
     }
 
     @Test
-    void shouldSaveInvestmentSuccessfully() {
+    void shouldSaveInvestmentSuccessfully() throws GlobalException {
         when(investmentMapper.toEntity(investmentDto)).thenReturn(investment);
-        when(investorService.getCurrentInvestor()).thenReturn(investor);
         when(scpiRepository.findById(1)).thenReturn(java.util.Optional.of(scpi));
         when(investmentRepository.save(any(Investment.class))).thenReturn(investment);
         when(investmentMapper.toDTO(any(Investment.class))).thenReturn(investmentDto);

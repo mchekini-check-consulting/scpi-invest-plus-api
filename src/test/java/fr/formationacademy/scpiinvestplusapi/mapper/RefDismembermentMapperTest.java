@@ -28,7 +28,6 @@ class RefDismembermentMapperTest {
         RefDismembermentDto dto = mapper.toDTO(entity);
 
         assertThat(dto).isNotNull();
-        assertThat(dto.getId()).isEqualTo(1);
         assertThat(dto.getYearDismemberment()).isEqualTo(10);
         assertThat(dto.getRateDismemberment()).isEqualTo(new BigDecimal("4.25"));
     }
@@ -52,11 +51,9 @@ class RefDismembermentMapperTest {
         assertThat(dtoList).isNotNull();
         assertThat(dtoList).hasSize(2);
 
-        assertThat(dtoList.get(0).getId()).isEqualTo(3);
         assertThat(dtoList.get(0).getYearDismemberment()).isEqualTo(8);
         assertThat(dtoList.get(0).getRateDismemberment()).isEqualTo(new BigDecimal("3.5"));
 
-        assertThat(dtoList.get(1).getId()).isEqualTo(4);
         assertThat(dtoList.get(1).getYearDismemberment()).isEqualTo(12);
         assertThat(dtoList.get(1).getRateDismemberment()).isEqualTo(new BigDecimal("6.0"));
     }

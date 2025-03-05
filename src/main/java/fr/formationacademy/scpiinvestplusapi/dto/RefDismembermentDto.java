@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class RefDismembermentDto {
-    private Integer id;
     private Integer yearDismemberment;
     private BigDecimal rateDismemberment;
 }

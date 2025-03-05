@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface InvestmentRepository extends JpaRepository<Investment, String> {
 
-    List<Investment> findByInvestorEmail(String investorEmail);
+    List<Investment> findByInvestorId(String investmentEmail);
 
-    List<Investment> findByScpiId(Integer scpiId);
 }

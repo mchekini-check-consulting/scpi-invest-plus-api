@@ -10,11 +10,12 @@ CREATE TABLE investment
 (
     id  SERIAL PRIMARY KEY,
     type_property varchar,
-    number_shares NUMERIC(10,2),
+    number_shares integer,
     number_years integer,
     total_amount NUMERIC(10,2),
-    scpi_id      integer,
-    investor_id text
+    Investment_state varchar,
+    investor_id text,
+    scpi_id      integer
 );
 
 ALTER TABLE investment

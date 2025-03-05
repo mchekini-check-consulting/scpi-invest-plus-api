@@ -1,6 +1,8 @@
 package fr.formationacademy.scpiinvestplusapi.resource;
 
 import fr.formationacademy.scpiinvestplusapi.dto.RefDismembermentDto;
+import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
+import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.service.RefDismembermentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,15 +31,14 @@ public class RefDismembermentResource {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Données récupérées avec succès"),
                     @ApiResponse(responseCode = "400", description = "Requête invalide"),
+                    @ApiResponse(responseCode = "404", description = "Aucun résultat trouvé"),
                     @ApiResponse(responseCode = "500", description = "Erreur interne du serveur")
             }
     )
-    public ResponseEntity<List<RefDismembermentDto>> getByTypeProperty(@PathVariable String typeProperty) {
-        try {
-            List<RefDismembermentDto> results = service.getByPropertyType(typeProperty);
+    public ResponseEntity<List<RefDismembermentDto>> getByTypeProperty(@PathVariable String typeProperty) throws GlobalException {
+
+            List<RefDismembermentDto> results = service.getByPropertyType(PropertyType.fromValue(typeProperty));
             return ResponseEntity.ok(results);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Collections.emptyList());
-        }
+
     }
 }
