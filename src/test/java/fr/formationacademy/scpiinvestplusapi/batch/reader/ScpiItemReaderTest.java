@@ -39,7 +39,7 @@ public class ScpiItemReaderTest {
                             firstItem.getAdvertising(),
                             "Advertising incorrect"
                     ),
-                    () -> assertEquals("Pays-bas,47,Espagne,24,Irlande,12,Pologne,11,Allemagne,6", firstItem.getLocations(), "Locations incorrectes"),
+                    () -> assertEquals("Pays-Bas,47,Espagne,24,Irlande,12,Pologne,11,Allemagne,6", firstItem.getLocations(), "Locations incorrectes"),
                     () -> assertEquals("Bureaux,46,Hotels,18,Logistique,9,Sante,18,Commerce,9", firstItem.getSectors(), "Sectors incorrects")
             );
 
@@ -69,7 +69,7 @@ public class ScpiItemReaderTest {
                     () -> assertEquals("FR76 12345 67890 12345678901 12", scpiDto.getIban(), "IBAN incorrect"),
                     () -> assertEquals("ABCDFRPP", scpiDto.getBic(), "BIC incorrect"),
                     () -> assertEquals(5.0f, scpiDto.getCashback(), 0.01, "Cashback incorrect"),
-                    () -> assertEquals("Pays-bas,47,Espagne,24,Irlande,12,Pologne,11,Allemagne,6", scpiDto.getLocations(), "Locations incorrect"),
+                    () -> assertEquals("Pays-Bas,47,Espagne,24,Irlande,12,Pologne,11,Allemagne,6", scpiDto.getLocations(), "Locations incorrect"),
                     () -> assertEquals("Bureaux,46,Hotels,18,Logistique,9,Sante,18,Commerce,9", scpiDto.getSectors(), "Sectors incorrect")
             );
 
