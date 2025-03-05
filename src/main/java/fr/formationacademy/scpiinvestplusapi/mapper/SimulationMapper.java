@@ -101,12 +101,12 @@ public interface SimulationMapper {
             for (ScpiSimulation scpiSim : simulation.getScpiSimulations()) {
                 BigDecimal scpiRising = scpiSim.getRising();
                 System.out.println("scpiRising: " + scpiRising);
-                for (Location location: scpiSim.getScpi().getLocations()){
+                for (Location location : scpiSim.getScpi().getLocations()) {
                     String countryName = location.getId().getCountry();
                     BigDecimal countryPercentatge = location.getCountryPercentage();
-                    System.out.println("Country: "+countryName+" countryPercentatge: " + countryPercentatge);
+                    System.out.println("Country: " + countryName + " countryPercentatge: " + countryPercentatge);
                     BigDecimal amountInvestment = scpiRising.multiply(countryPercentatge).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-                    System.out.println("Country: "+countryName+" countryPercentatge: " + countryPercentatge+ "montant invested: " + amountInvestment);
+                    System.out.println("Country: " + countryName + " countryPercentatge: " + countryPercentatge + "montant invested: " + amountInvestment);
                     countryInvestments.put(countryName, countryInvestments.getOrDefault(countryName, BigDecimal.ZERO).add(amountInvestment));
                     System.out.println("Values of Map for countries: " + countryInvestments + " Pour la scpi " + scpiSim.getScpi().getId());
                 }
@@ -117,7 +117,7 @@ public interface SimulationMapper {
             for (Map.Entry<String, BigDecimal> entry : countryInvestments.entrySet()) {
                 BigDecimal percentage = entry.getValue().multiply(BigDecimal.valueOf(100)).divide(totalInvestesment, 2, RoundingMode.HALF_UP);
                 countryDtos.add(LocationDtoOut.builder()
-                                .id(LocationId.builder().country(entry.getKey()).build())
+                        .id(LocationId.builder().scpiId(simulation.getScpiSimulations().get(0).getScpi().getId()).country(entry.getKey()).build())
                         .countryPercentage(percentage)
                         .build());
 

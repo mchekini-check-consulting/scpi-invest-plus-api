@@ -1,75 +1,107 @@
 package fr.formationacademy.scpiinvestplusapi.service;
 
+import fr.formationacademy.scpiinvestplusapi.dto.ScpiSimulationInDTO;
 import fr.formationacademy.scpiinvestplusapi.dto.SimulationDToOut;
 import fr.formationacademy.scpiinvestplusapi.dto.SimulationInDTO;
-import fr.formationacademy.scpiinvestplusapi.entity.Investor;
-import fr.formationacademy.scpiinvestplusapi.entity.Simulation;
+import fr.formationacademy.scpiinvestplusapi.entity.*;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
+import fr.formationacademy.scpiinvestplusapi.mapper.ScpiSimulationMapper;
 import fr.formationacademy.scpiinvestplusapi.mapper.SimulationMapper;
+import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
+import fr.formationacademy.scpiinvestplusapi.repository.ScpiSimulationRepository;
 import fr.formationacademy.scpiinvestplusapi.repository.SimulationRepository;
-import lombok.Builder;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-@Builder
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class SimulationService {
-    private SimulationRepository simulationRepository;
-    private InvestorService investorService;
-    private SimulationMapper simulationMapper;
 
-    @Autowired
-    public SimulationService(SimulationRepository simulationRepository, InvestorService investorService, SimulationMapper simulationMapper) {
+    private final SimulationRepository simulationRepository;
+    private final InvestorService investorService;
+    private final SimulationMapper simulationMapper;
+    private final ScpiSimulationRepository scpiSimulationRepository;
+    private final ScpiSimulationMapper scpiSimulationMapper;
+    private final ScpiRepository scpiRepository;
+
+    public SimulationService(SimulationRepository simulationRepository, InvestorService investorService, SimulationMapper simulationMapper, ScpiSimulationRepository scpiSimulationRepository, ScpiSimulationMapper scpiSimulationMapper, ScpiRepository scpiRepository) {
         this.simulationRepository = simulationRepository;
         this.investorService = investorService;
         this.simulationMapper = simulationMapper;
+        this.scpiSimulationRepository = scpiSimulationRepository;
+        this.scpiSimulationMapper = scpiSimulationMapper;
+        this.scpiRepository = scpiRepository;
     }
 
-    public SimulationDToOut addSimulation(SimulationInDTO simulationInDTO) {
+    public SimulationDToOut addSimulation(SimulationInDTO simulationInDTO) throws GlobalException {
         log.info("AddSimulation - Simulation body from request {}", simulationInDTO);
         String email = simulationInDTO.getInvestorEmail();
-        Optional<Investor> investor = investorService.getInvestorByEmail(email);
-        if (investor.isPresent()) {
-            log.info("AddSimulation - Investor email already exists {} ", investor.get().getEmail());
+        Investor investor = investorService.getInvestorByEmail(email).orElseThrow(
+                () -> new GlobalException(HttpStatus.NOT_FOUND, "Investor with email " + email + " not found")
+        );
+        if (investor != null) {
+            log.info("AddSimulation - Investor email already exists {} ", investor.getEmail());
             Simulation simulation = simulationMapper.toEntity(simulationInDTO);
-            log.info("AddSimulation - SimulationDTO mapped to entity  {}", simulation);
-            log.info("Investor investor {}", investor.get());
-            simulation.setInvestor(investor.get());
-            log.info("AddSimulation - Investor in simulation created {}", simulation);
-            return simulationMapper.toDTO(simulationRepository.save(simulation));
+            simulation.setInvestor(investor);
+            simulation = simulationRepository.save(simulation);
+            for (ScpiSimulationInDTO scpiSimulationInDTO : simulationInDTO.getScpis()) {
+                try {
+                    addScpiToSimulation(scpiSimulationInDTO, simulation);
+                } catch (GlobalException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            log.info("AddSimulation - Simulation created: {}", simulation);
+            return simulationMapper.toDTO(simulation);
         }
         return null;
     }
 
     public List<SimulationDToOut> getSimulations() {
         List<Simulation> simulations = simulationRepository.findAll();
-        log.info("GetSimulations - Load the simulations  {}", simulations);
-        List<SimulationDToOut> simulationsDTO = simulationMapper.toDTO(simulations);
-        log.info("GetSimulations - Load the simulations dto {}", simulationsDTO);
-        return simulationsDTO;
-    }
-
-    public SimulationDToOut deleteSimulation(Integer simulationId) throws GlobalException {
-        Simulation simulation = simulationRepository.findById(simulationId).orElseThrow(
-                () -> new GlobalException(HttpStatus.NOT_FOUND, "No simulation found with id: " + simulationId));
-        log.info("DeleteSimulation - The simulation exist in database with id {} ", simulation.getId());
-        simulationRepository.deleteById(simulationId);
-        log.info("DeleteSimulation - The simulation was deleted {}", simulation);
-        return simulationMapper.toDTO(simulation);
+        log.info("GetSimulations - Load the simulations {}", simulations);
+        return simulationMapper.toDTO(simulations);
     }
 
     public SimulationDToOut getSimulationById(Integer simulationId) throws GlobalException {
         Simulation simulation = simulationRepository.findById(simulationId)
                 .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "No simulation found with id: " + simulationId));
-        log.info("GetSimulationById - Load the simulations  {}", simulation);
         return simulationMapper.toDTO(simulation);
+    }
+
+    public SimulationDToOut deleteSimulation(Integer simulationId) throws GlobalException {
+        Simulation simulation = simulationRepository.findById(simulationId)
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "No simulation found with id: " + simulationId));
+        simulationRepository.deleteById(simulationId);
+        return simulationMapper.toDTO(simulation);
+    }
+
+    private void addScpiToSimulation(ScpiSimulationInDTO scpiSimulationInDTO, Simulation simulation) throws GlobalException {
+        log.info("AddScpiToSimulation - Get scpi by id: {}", scpiSimulationInDTO.getScpiId());
+        Scpi scpi = scpiRepository.findById(scpiSimulationInDTO.getScpiId()).orElseThrow(
+                () -> new GlobalException(HttpStatus.NOT_FOUND, "No scpi found with id: " + scpiSimulationInDTO.getScpiId())
+        );
+
+        ScpiSimulationId id = new ScpiSimulationId(simulation.getId(), scpiSimulationInDTO.getScpiId());
+
+        if (scpiSimulationRepository.existsById(id)) {
+            return;
+        }
+
+        ScpiSimulation scpiSimulation = scpiSimulationMapper.toEntity(scpiSimulationInDTO);
+        scpiSimulation.setScpi(scpi);
+        scpiSimulation.setSimulation(simulation);
+
+        scpiSimulation = scpiSimulationRepository.save(scpiSimulation);
+        if (simulation.getScpiSimulations() == null) {
+            simulation.setScpiSimulations(new ArrayList<>());
+        }
+        simulation.getScpiSimulations().add(scpiSimulation);
+        simulationRepository.save(simulation);
+        scpiSimulationMapper.toDTO(scpiSimulation);
     }
 }

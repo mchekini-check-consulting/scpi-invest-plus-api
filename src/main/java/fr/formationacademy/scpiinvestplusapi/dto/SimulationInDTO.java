@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,4 +16,5 @@ public class SimulationInDTO {
     private String name;
     private LocalDate simulationDate;
     private String investorEmail;
+    private List<ScpiSimulationInDTO> scpis;
 }

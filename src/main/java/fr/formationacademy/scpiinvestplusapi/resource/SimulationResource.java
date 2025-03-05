@@ -56,11 +56,8 @@ public class SimulationResource {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping
-    public ResponseEntity<SimulationDToOut> createSimulation(@RequestBody SimulationInDTO simulationInDTO) {
+    public ResponseEntity<SimulationDToOut> createSimulation(@RequestBody SimulationInDTO simulationInDTO) throws GlobalException {
         SimulationDToOut simulationDToOut = simulationService.addSimulation(simulationInDTO);
-        if (simulationDToOut == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.status(HttpStatus.CREATED).body(simulationDToOut);
     }
 
