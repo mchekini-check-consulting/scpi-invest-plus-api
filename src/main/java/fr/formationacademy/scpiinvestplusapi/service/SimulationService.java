@@ -57,23 +57,19 @@ public class SimulationService {
         return simulationsDTO;
     }
 
-    public SimulationDToOut deleteSimulation(Integer simulationId) {
-        Optional<Simulation> simulation = simulationRepository.findById(simulationId);
-
-        if (simulation.isPresent()) {
-            log.info("DeleteSimulation - The simulation exist in database with id {} ", simulation.get().getId());
-            simulationRepository.deleteById(simulationId);
-            log.info("DeleteSimulation - The simulation was deleted {}", simulation);
-            return simulationMapper.toDTO(simulation.get());
-        }
-        log.info("DeleteSimulation - The simulation with id {} not found", simulationId);
-        return null;
+    public SimulationDToOut deleteSimulation(Integer simulationId) throws GlobalException {
+        Simulation simulation = simulationRepository.findById(simulationId).orElseThrow(
+                () -> new GlobalException(HttpStatus.NOT_FOUND, "No simulation found with id: " + simulationId));
+        log.info("DeleteSimulation - The simulation exist in database with id {} ", simulation.getId());
+        simulationRepository.deleteById(simulationId);
+        log.info("DeleteSimulation - The simulation was deleted {}", simulation);
+        return simulationMapper.toDTO(simulation);
     }
 
     public SimulationDToOut getSimulationById(Integer simulationId) throws GlobalException {
         Simulation simulation = simulationRepository.findById(simulationId)
-                .orElseThrow(()-> new GlobalException(HttpStatus.NOT_FOUND,"No simulation found with id: " + simulationId));
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "No simulation found with id: " + simulationId));
         log.info("GetSimulationById - Load the simulations  {}", simulation);
-        return  simulationMapper.toDTO(simulation);
+        return simulationMapper.toDTO(simulation);
     }
 }

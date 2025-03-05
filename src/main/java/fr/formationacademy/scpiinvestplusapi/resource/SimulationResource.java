@@ -63,6 +63,7 @@ public class SimulationResource {
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(simulationDToOut);
     }
+
     @Operation(summary = "Delete a simulation",
             description = "Delete a simulation using an ID")
     @ApiResponses(value = {
@@ -72,11 +73,8 @@ public class SimulationResource {
             @ApiResponse(responseCode = "404", description = "Simulation ID not found")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<SimulationDToOut> removeSimulation(@PathVariable Integer id) {
+    public ResponseEntity<SimulationDToOut> removeSimulation(@PathVariable Integer id) throws GlobalException {
         SimulationDToOut simulationDToOut = simulationService.deleteSimulation(id);
-        if (simulationDToOut == null) {
-            return ResponseEntity.notFound().build();
-        }
         return new ResponseEntity<>(simulationDToOut, HttpStatus.OK);
     }
 
