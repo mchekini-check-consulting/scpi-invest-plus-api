@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum PropertyType {
     NUE_PROPRIETE("Nue-propriétaire"),
-    USUFRUIT("Usufruit");
+    USUFRUIT("Usufruit"),
+    PLEINE_PROPRIETE("Pleine propriété");
 
     private final String value;
 
