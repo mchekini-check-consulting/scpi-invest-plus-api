@@ -3,22 +3,21 @@ package fr.formationacademy.scpiinvestplusapi.mapper;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiSimulationDToOut;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiSimulationInDTO;
 import fr.formationacademy.scpiinvestplusapi.entity.ScpiSimulation;
+import fr.formationacademy.scpiinvestplusapi.entity.Simulation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
+
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ScpiSimulationMapper {
 
-    @Mapping(target = "simulationId", source = "scpiSimulation.scpiSimulationId.simulationId")
     @Mapping(target = "scpiId", source = "scpiSimulation.scpiSimulationId.scpiId")
     @Mapping(target = "scpiName", source = "scpiSimulation.scpi.name")
     ScpiSimulationDToOut toDTO(ScpiSimulation scpiSimulation);
+
     List<ScpiSimulationDToOut> toDTO(List<ScpiSimulation> scpiSimulations);
 
-    @Mappings({
-            @Mapping(target = "scpiSimulationId", expression = "java(new ScpiSimulationId(simulationDTOIn.getSimulationId(), simulationDTOIn.getScpiId()))")
-    })
-    ScpiSimulation toEntity(ScpiSimulationInDTO simulationDTOIn);
+    @Mapping(target = "scpiSimulationId", expression = "java(new ScpiSimulationId(simulation.getId(), simulationDTOIn.getScpiId()))")
+    ScpiSimulation toEntity(ScpiSimulationInDTO simulationDTOIn, Simulation simulation);
 }

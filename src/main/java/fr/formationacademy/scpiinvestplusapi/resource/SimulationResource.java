@@ -1,5 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.resource;
 
+import fr.formationacademy.scpiinvestplusapi.dto.ScpiSimulationInDTO;
 import fr.formationacademy.scpiinvestplusapi.dto.SimulationDToOut;
 import fr.formationacademy.scpiinvestplusapi.dto.SimulationInDTO;
 import fr.formationacademy.scpiinvestplusapi.entity.Simulation;
@@ -56,13 +57,12 @@ public class SimulationResource {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping
-    public ResponseEntity<SimulationDToOut> createSimulation(@RequestBody SimulationInDTO simulationInDTO) {
-        SimulationDToOut simulationDToOut = simulationService.addSimulation(simulationInDTO);
-        if (simulationDToOut == null) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<SimulationDToOut> createSimulation(@RequestBody SimulationInDTO simulationInDTO, @RequestParam
+    Boolean status) throws GlobalException {
+        SimulationDToOut simulationDToOut = simulationService.addSimulation(simulationInDTO, status);
         return ResponseEntity.status(HttpStatus.CREATED).body(simulationDToOut);
     }
+
     @Operation(summary = "Delete a simulation",
             description = "Delete a simulation using an ID")
     @ApiResponses(value = {
@@ -72,11 +72,8 @@ public class SimulationResource {
             @ApiResponse(responseCode = "404", description = "Simulation ID not found")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<SimulationDToOut> removeSimulation(@PathVariable Integer id) {
+    public ResponseEntity<SimulationDToOut> removeSimulation(@PathVariable Integer id) throws GlobalException {
         SimulationDToOut simulationDToOut = simulationService.deleteSimulation(id);
-        if (simulationDToOut == null) {
-            return ResponseEntity.notFound().build();
-        }
         return new ResponseEntity<>(simulationDToOut, HttpStatus.OK);
     }
 
@@ -93,4 +90,19 @@ public class SimulationResource {
         SimulationDToOut simulationDToOut = simulationService.getSimulationById(id);
         return new ResponseEntity<>(simulationDToOut, HttpStatus.OK);
     }
+
+    @Operation(summary = "Add an Scpi to a simulation by ID",
+            description = "Add an scpi to a specific simulation by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Scpi add successfully to simulation",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SimulationDToOut.class))),
+            @ApiResponse(responseCode = "404", description = "Simulation ID not found")
+    })
+    @PostMapping("/{simulationId}")
+    public ResponseEntity<SimulationDToOut> addScpiToSimulation(@PathVariable Integer simulationId, @RequestBody ScpiSimulationInDTO scpiSimulationInDTO) throws GlobalException {
+        SimulationDToOut scpiSimulationDToOut = simulationService.addScpiToSimulation(simulationId, scpiSimulationInDTO);
+        return new ResponseEntity<>(scpiSimulationDToOut, HttpStatus.CREATED);
+    }
+
 }

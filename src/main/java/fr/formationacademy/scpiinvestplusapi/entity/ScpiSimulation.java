@@ -1,10 +1,11 @@
 package fr.formationacademy.scpiinvestplusapi.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -19,7 +20,7 @@ public class ScpiSimulation {
     private BigDecimal rising;
     private Integer duree;
     private BigDecimal dureePercentage;
-    private String propertyType;
+    private PropertyType propertyType;
 
     @ManyToOne
     @MapsId("simulationId")
