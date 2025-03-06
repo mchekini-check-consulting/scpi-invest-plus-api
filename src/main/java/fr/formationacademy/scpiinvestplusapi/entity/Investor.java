@@ -36,4 +36,5 @@ public class Investor {
     @ToString.Exclude
     private List<Simulation> simulations;
 
+
 }
