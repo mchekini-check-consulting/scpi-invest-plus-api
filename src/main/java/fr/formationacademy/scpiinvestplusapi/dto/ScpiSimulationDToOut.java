@@ -1,5 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.dto;
 
+import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +19,6 @@ public class ScpiSimulationDToOut {
     private BigDecimal rising;
     private Integer duree;
     private BigDecimal dureePercentage;
-    private String propertyType;
+    private PropertyType propertyType;
     private String scpiName;
 }
