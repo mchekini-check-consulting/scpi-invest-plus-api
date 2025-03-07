@@ -100,8 +100,8 @@ public class SimulationResource {
             @ApiResponse(responseCode = "404", description = "Simulation ID not found")
     })
     @PostMapping("/{simulationId}")
-    public ResponseEntity<SimulationDToOut> addScpiToSimulation(@PathVariable Integer simulationId, @RequestBody ScpiSimulationInDTO scpiSimulationInDTO) throws GlobalException {
-        SimulationDToOut scpiSimulationDToOut = simulationService.addScpiToSimulation(simulationId, scpiSimulationInDTO);
+    public ResponseEntity<SimulationDToOut> addScpiToSimulation(@PathVariable Integer simulationId, @RequestBody ScpiSimulationInDTO scpiSimulationInDTO, @RequestParam Boolean status) throws GlobalException {
+        SimulationDToOut scpiSimulationDToOut = simulationService.addScpiToSimulation(simulationId, scpiSimulationInDTO, status);
         return new ResponseEntity<>(scpiSimulationDToOut, HttpStatus.CREATED);
     }
 
