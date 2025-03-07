@@ -53,7 +53,7 @@ public class SimulationResource {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Simulation created successfully",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Simulation.class))),
+                            schema = @Schema(implementation = SimulationDToOut.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping
