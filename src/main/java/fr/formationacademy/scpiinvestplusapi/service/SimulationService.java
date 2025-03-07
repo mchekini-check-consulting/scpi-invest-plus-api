@@ -12,6 +12,7 @@ import fr.formationacademy.scpiinvestplusapi.mapper.SimulationMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
 import fr.formationacademy.scpiinvestplusapi.repository.SimulationRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ public class SimulationService {
     private final ScpiRepository scpiRepository;
     private final UserService userService;
 
+    @Autowired
     public SimulationService(SimulationRepository simulationRepository, SimulationMapper simulationMapper, ScpiSimulationMapper scpiSimulationMapper, ScpiRepository scpiRepository, UserService userService) {
         this.simulationRepository = simulationRepository;
         this.simulationMapper = simulationMapper;
