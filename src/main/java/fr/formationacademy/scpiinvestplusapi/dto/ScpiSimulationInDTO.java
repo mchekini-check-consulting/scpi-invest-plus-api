@@ -20,4 +20,5 @@ public class ScpiSimulationInDTO {
     private Integer duree;
     private BigDecimal dureePercentage;
     private String propertyType;
+    private String investorEmail;
 }
