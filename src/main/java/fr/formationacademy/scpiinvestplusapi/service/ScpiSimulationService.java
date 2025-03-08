@@ -1,9 +1,11 @@
 package fr.formationacademy.scpiinvestplusapi.service;
 
-import fr.formationacademy.scpiinvestplusapi.dto.FinancialResultDTO;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiSimulationDToOut;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiSimulationInDTO;
-import fr.formationacademy.scpiinvestplusapi.entity.*;
+import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
+import fr.formationacademy.scpiinvestplusapi.entity.ScpiSimulation;
+import fr.formationacademy.scpiinvestplusapi.entity.ScpiSimulationId;
+import fr.formationacademy.scpiinvestplusapi.entity.Simulation;
 import fr.formationacademy.scpiinvestplusapi.mapper.ScpiSimulationMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiSimulationRepository;
@@ -24,17 +26,15 @@ public class ScpiSimulationService {
     private final ScpiSimulationMapper scpiSimulationMapper;
     private final ScpiRepository scpiRepository;
     private final SimulationRepository simulationRepository;
-    private final SimulationFinancialCalculatorService simulationFinancialCalculatorService;
 
     @Autowired
     public ScpiSimulationService(ScpiSimulationRepository scpiSimulationRepository, ScpiSimulationMapper scpiSimulationMapper,
                                  ScpiRepository scpiRepository,
-                                 SimulationRepository simulationRepository, SimulationFinancialCalculatorService simulationFinancialCalculatorService) {
+                                 SimulationRepository simulationRepository) {
         this.scpiSimulationRepository = scpiSimulationRepository;
         this.scpiSimulationMapper = scpiSimulationMapper;
         this.scpiRepository = scpiRepository;
         this.simulationRepository = simulationRepository;
-        this.simulationFinancialCalculatorService = simulationFinancialCalculatorService;
     }
 
     public ScpiSimulationDToOut addScpiToSimulation(ScpiSimulationInDTO scpiSimulationInDTO) {
@@ -44,24 +44,17 @@ public class ScpiSimulationService {
 
         log.info("AddScpiToSimulation - Get simulation by id: {}", scpiSimulationInDTO.getSimulationId());
         Optional<Simulation> simulation = simulationRepository.findById(scpiSimulationInDTO.getSimulationId());
-
         ScpiSimulationId id = new ScpiSimulationId(scpiSimulationInDTO.getSimulationId(), scpiSimulationInDTO.getScpiId());
-
         if (scpiSimulationRepository.existsById(id)) {
-            log.info("AddScpiToSimulation - The simulation with id {} already exists and has the scpi with id {}",
-                    id.getSimulationId(), id.getScpiId());
+            log.info("AddScpiToSimulation - The simulation with id {} already exists and has the scpi with id {}", id.getSimulationId(), id.getScpiId());
             return null;
         }
-
         if (scpi.isPresent() && simulation.isPresent()) {
             ScpiSimulation scpiSimulation = scpiSimulationMapper.toEntity(scpiSimulationInDTO);
-            log.info("AddScpiToSimulation - Map ScpiSimulationInDto {} to ScpiSimulation {}", scpiSimulationInDTO, scpiSimulation);
+            log.info("AddScpiToSimulation - Map ScpiSimulationInDto {} to ScpiSimulation {} ", scpiSimulationInDTO, scpiSimulation);
+
             scpiSimulation.setScpi(scpi.get());
             scpiSimulation.setSimulation(simulation.get());
-
-            FinancialResultDTO result = simulationFinancialCalculatorService.calculateFinancialResults(scpiSimulationInDTO, scpiSimulation);
-            scpiSimulation.setGrossRevenue(result.getGrossRevenue());
-            scpiSimulation.setNetRevenue(result.getNetIncome());
 
             log.info("AddScpiToSimulation - Saving scpi simulation {}", scpiSimulation);
             ScpiSimulation savedScpiSimulation = scpiSimulationRepository.save(scpiSimulation);
@@ -74,15 +67,14 @@ public class ScpiSimulationService {
             }
 
             existingSimulation.getScpiSimulations().add(savedScpiSimulation);
+
             log.info("AddScpiToSimulation - Edited simulation {}", existingSimulation);
-
             simulationRepository.save(existingSimulation);
-
             return scpiSimulationMapper.toDTO(savedScpiSimulation);
         }
-
         return null;
     }
+
 
     public List<ScpiSimulationDToOut> getAllScpitSimulations() {
         return scpiSimulationMapper.toDTO(scpiSimulationRepository.findAll());

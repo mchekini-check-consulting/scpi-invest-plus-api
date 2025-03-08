@@ -1,5 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,8 +20,6 @@ public class ScpiSimulation {
     private Integer duree;
     private BigDecimal dureePercentage;
     private String propertyType;
-    private BigDecimal grossRevenue;
-    private BigDecimal netRevenue;
 
     @ManyToOne
     @MapsId("simulationId")
