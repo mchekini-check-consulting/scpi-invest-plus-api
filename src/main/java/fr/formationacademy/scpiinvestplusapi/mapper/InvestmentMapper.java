@@ -20,5 +20,8 @@ public interface InvestmentMapper {
 
     List<InvestmentDto> toDTOList(List<Investment> investments);
 
+    @Mapping(target = "scpiName", source = "scpi.name")
+    InvestmentDtoOut toDtoOut(Investment investment);
+
     List<InvestmentDtoOut> toDtoOutList(List<Investment> investmentsByInvestorEmail);
 }
