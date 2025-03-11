@@ -86,7 +86,7 @@ class SimulationServiceTest {
         when(scpiSimulationMapper.toEntity(scpiSimulationInDTO, simulation)).thenReturn(scpiSimulation);
         when(simulationMapper.toDTO(simulation)).thenReturn(simulationDToOut);
 
-        SimulationDToOut result = simulationService.addSimulation(simulationInDTO, true);
+        SimulationDToOut result = simulationService.addSimulation(simulationInDTO);
 
         assertNotNull(result);
         verify(simulationRepository, times(1)).save(simulation);
@@ -98,7 +98,7 @@ class SimulationServiceTest {
         when(simulationMapper.toEntity(simulationInDTO)).thenReturn(simulation);
         when(scpiRepository.findById(1)).thenReturn(Optional.empty());
 
-        GlobalException exception = assertThrows(GlobalException.class, () -> simulationService.addSimulation(simulationInDTO, true));
+        GlobalException exception = assertThrows(GlobalException.class, () -> simulationService.addSimulation(simulationInDTO));
         assertEquals(HttpStatus.NOT_FOUND, exception.getHttpStatus());
     }
 
