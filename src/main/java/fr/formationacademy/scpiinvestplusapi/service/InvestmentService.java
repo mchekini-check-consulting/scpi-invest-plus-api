@@ -1,6 +1,7 @@
 package fr.formationacademy.scpiinvestplusapi.service;
 
 import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDto;
+import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDtoOut;
 import fr.formationacademy.scpiinvestplusapi.entity.Investment;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
@@ -49,9 +50,8 @@ public class InvestmentService {
         return investmentMapper.toDTO(savedInvestment);
     }
 
-    public List<Investment> getInvestments(String email) {
-        return investmentRepository.findByInvestorId(email);
-
+    public List<InvestmentDtoOut> getInvestments() {
+        return  investmentMapper.toDtoOutList(investmentRepository.findByInvestorId(userService.getEmail()));
     }
 
 
