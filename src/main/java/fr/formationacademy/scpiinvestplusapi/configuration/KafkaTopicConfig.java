@@ -10,7 +10,7 @@ public class KafkaTopicConfig {
     @Bean
     public NewTopic getTopic() {
         return TopicBuilder.name("scpi-partner-topic")
-                .partitions(3)
+                .partitions(1)
                 .replicas(1)
                 .build();
     }
