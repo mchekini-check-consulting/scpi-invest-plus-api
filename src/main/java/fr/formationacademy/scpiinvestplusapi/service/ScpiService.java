@@ -5,11 +5,14 @@ import fr.formationacademy.scpiinvestplusapi.dto.SearchScpiDto;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.mapper.ScpiMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
+@Slf4j
 public class ScpiService {
     private final ScpiRepository scpiRepository;
     private final ScpiMapper scpiMapper;
@@ -58,4 +61,19 @@ public class ScpiService {
                 .map(scpiMapper :: scpiToScpiDtoOut)
                 .toList();
     }
+
+    public void deleteMissingScpis(Set<String> scpisInCsv) {
+        List<Scpi> allScpis = scpiRepository.findAll();
+        List<Scpi> scpisToDelete = allScpis.stream()
+                .filter(scpi -> !scpisInCsv.contains(scpi.getName()))
+                .toList();
+
+        if (!scpisToDelete.isEmpty()) {
+            log.info("Suppression de {} SCPIs absentes du fichier CSV.", scpisToDelete.size());
+            scpiRepository.deleteAll(scpisToDelete);
+        } else {
+            log.info("Aucune SCPI à supprimer.");
+        }
+    }
+
 }
