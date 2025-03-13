@@ -2,11 +2,13 @@ spring:
   application:
     name: scpi-invest-plus-api
     version: 1.0.0
+
   datasource:
-    url: jdbc:postgresql://scpi-invest-db:5432/postgres
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: postgres
+    password: admin
     driver-class-name: org.postgresql.Driver
+
   jpa:
     database: postgresql
     hibernate:
@@ -14,21 +16,27 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: https://keycloak.check-consulting.net/realms/master
           jwk-set-uri: https://keycloak.check-consulting.net/realms/master/protocol/openid-connect/certs
+
   kafka:
-    bootstrap-servers:
-      - kafka-1:9092
-      - kafka-2:9093
-      - kafka-3:9094
+    bootstrap-servers: localhost:9092,localhost:9093,localhost:9094
+
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     consumer:
-      group-id: scpi-partner-group
+      group-id: ${kafka.group-id:scpi-partner-group}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: com.fasterxml.jackson.databind.JsonNode
+
+
+

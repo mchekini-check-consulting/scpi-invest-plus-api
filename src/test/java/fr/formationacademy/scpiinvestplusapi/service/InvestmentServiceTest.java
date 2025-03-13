@@ -3,6 +3,7 @@ package fr.formationacademy.scpiinvestplusapi.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDto;
 import fr.formationacademy.scpiinvestplusapi.entity.Investment;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
@@ -65,7 +66,7 @@ class InvestmentServiceTest {
     }
 
     @Test
-    void shouldSaveInvestmentSuccessfully() throws GlobalException {
+    void shouldSaveInvestmentSuccessfully() throws GlobalException, JsonProcessingException {
         when(investmentMapper.toEntity(investmentDto)).thenReturn(investment);
         when(scpiRepository.findById(1)).thenReturn(java.util.Optional.of(scpi));
         when(investmentRepository.save(any(Investment.class))).thenReturn(investment);

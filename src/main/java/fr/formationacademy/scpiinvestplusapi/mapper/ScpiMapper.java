@@ -60,4 +60,9 @@ public interface ScpiMapper {
                 : null;
     }
 
+    @Mapping(target = "statYears", ignore = true)
+    @Mapping(target = "locations", ignore = true)
+    @Mapping(target = "sectors", ignore = true)
+    Scpi toEntity(ScpiDtoOut scpiDtoOut);
+
 }
