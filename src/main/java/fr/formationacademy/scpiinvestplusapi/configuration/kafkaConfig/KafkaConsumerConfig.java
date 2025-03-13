@@ -14,6 +14,8 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import java.util.HashMap;
 import java.util.Map;
 
+import static fr.formationacademy.scpiinvestplusapi.utils.Constants.SCPI_PARTNER_GROUP;
+
 @Configuration
 @EnableKafka
 public class KafkaConsumerConfig {
@@ -24,7 +26,7 @@ public class KafkaConsumerConfig {
     public Map<String, Object> consumerConfigs() {
         Map<String, Object> props = new HashMap<>();
         props.put("bootstrap.servers", bootstrapServers);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "scpi-partner-group");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, SCPI_PARTNER_GROUP);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");

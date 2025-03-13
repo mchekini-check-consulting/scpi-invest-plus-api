@@ -19,5 +19,7 @@ public interface Constants {
     String APP_ROOT = "/api/v1/";
 
     //KAFKA
+    String SCPI_PARTNER_GROUP = "scpi-partner-group";
     String SCPI_PARTNER_TOPIC = "scpi-partner-topic";
+    String SCPI_PARTNER_RESPONSE_TOPIC = "scpi-partner-response-topic";
 }
