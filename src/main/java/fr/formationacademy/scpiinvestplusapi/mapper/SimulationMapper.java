@@ -15,7 +15,6 @@ import java.util.*;
 
 @Mapper(componentModel = "spring", uses = {ScpiSimulationMapper.class})
 public interface SimulationMapper {
-    @Mapping(target = "investorEmail", source = "investor.email")
     @Mapping(target = "monthlyIncome", source = "simulation", qualifiedByName = "getMonthlyIncome")
     @Mapping(target = "totalInvestment", source = "simulation", qualifiedByName = "getTotalInvestment")
     @Mapping(target = "sectors", source = "simulation", qualifiedByName = "getGlobalSectorStatsForSimulation")
@@ -56,33 +55,27 @@ public interface SimulationMapper {
     @Named("getGlobalSectorStatsForSimulation")
     @Mapping(target = "id", ignore = true)
     default List<SectorDtoOut> getGlobalSectorStatsForSimulation(Simulation simulation) {
-          if (simulation.getScpiSimulations() == null || simulation.getScpiSimulations().isEmpty()) {
+        if (simulation.getScpiSimulations() == null || simulation.getScpiSimulations().isEmpty()) {
             return Collections.emptyList();
         }
-        BigDecimal totalInvestment = BigDecimal.valueOf(getTotalInvestment(simulation)); // je veux le total investit sur la simulation
+        BigDecimal totalInvestment = BigDecimal.valueOf(getTotalInvestment(simulation));
 
         Map<String, BigDecimal> sectorInvestments = new HashMap<>();
         for (ScpiSimulation scpiSim : simulation.getScpiSimulations()) {
-            BigDecimal scpiRising = scpiSim.getRising(); // Montant de la simulation
-
+            BigDecimal scpiRising = scpiSim.getRising();
 
             for (Sector sector : scpiSim.getScpi().getSectors()) {
                 String sectorName = sector.getId().getName();
                 BigDecimal sectorPercentage = sector.getSectorPercentage();
-
                 BigDecimal investedAmount = scpiRising.multiply(sectorPercentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-
                 sectorInvestments.put(sectorName, sectorInvestments.getOrDefault(sectorName, BigDecimal.ZERO).add(investedAmount));
-
-
             }
         }
-
         List<SectorDtoOut> sectorDtos = new ArrayList<>();
         for (Map.Entry<String, BigDecimal> entry : sectorInvestments.entrySet()) {
             BigDecimal percentage = entry.getValue().multiply(BigDecimal.valueOf(100))
                     .divide(totalInvestment, 2, RoundingMode.HALF_UP);
-            sectorDtos.add(new SectorDtoOut(new SectorId(null, entry.getKey()), percentage));
+            sectorDtos.add(new SectorDtoOut(new SectorId(simulation.getScpiSimulations().get(0).getScpi().getId(), entry.getKey()), percentage));
         }
 
         return sectorDtos;
@@ -91,27 +84,24 @@ public interface SimulationMapper {
     @Named("getGlobalCountryStatForSimulation")
 
     default List<LocationDtoOut> getGlobalCountryStatForSimulation(Simulation simulation) {
-
         if (simulation.getScpiSimulations() != null && !simulation.getScpiSimulations().isEmpty()) {
-
             BigDecimal totalInvestesment = BigDecimal.valueOf(getTotalInvestment(simulation));
             Map<String, BigDecimal> countryInvestments = new HashMap<>();
             for (ScpiSimulation scpiSim : simulation.getScpiSimulations()) {
                 BigDecimal scpiRising = scpiSim.getRising();
-
-                for (Location location: scpiSim.getScpi().getLocations()){
+                for (Location location : scpiSim.getScpi().getLocations()) {
                     String countryName = location.getId().getCountry();
                     BigDecimal countryPercentatge = location.getCountryPercentage();
-                        BigDecimal amountInvestment = scpiRising.multiply(countryPercentatge).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-                     countryInvestments.put(countryName, countryInvestments.getOrDefault(countryName, BigDecimal.ZERO).add(amountInvestment));
-                    }
-               }
+                    BigDecimal amountInvestment = scpiRising.multiply(countryPercentatge).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+                    countryInvestments.put(countryName, countryInvestments.getOrDefault(countryName, BigDecimal.ZERO).add(amountInvestment));
+                }
+            }
 
             List<LocationDtoOut> countryDtos = new ArrayList<>();
             for (Map.Entry<String, BigDecimal> entry : countryInvestments.entrySet()) {
                 BigDecimal percentage = entry.getValue().multiply(BigDecimal.valueOf(100)).divide(totalInvestesment, 2, RoundingMode.HALF_UP);
                 countryDtos.add(LocationDtoOut.builder()
-                                .id(LocationId.builder().country(entry.getKey()).build())
+                        .id(LocationId.builder().scpiId(simulation.getScpiSimulations().get(0).getScpi().getId()).country(entry.getKey()).build())
                         .countryPercentage(percentage)
                         .build());
 
