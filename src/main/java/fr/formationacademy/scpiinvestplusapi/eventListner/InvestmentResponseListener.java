@@ -4,16 +4,20 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import static fr.formationacademy.scpiinvestplusapi.utils.Constants.*;
+import static fr.formationacademy.scpiinvestplusapi.utils.Constants.SCPI_PARTNER_GROUP;
+import static fr.formationacademy.scpiinvestplusapi.utils.Constants.SCPI_PARTNER_RESPONSE_TOPIC;
 
+@Component
 public class InvestmentResponseListener {
     private static final Logger logger = LoggerFactory.getLogger(InvestmentResponseListener.class);
 
-    @KafkaListener(topics = SCPI_PARTNER_TOPIC, groupId = SCPI_PARTNER_GROUP)
+    @KafkaListener(topics = SCPI_PARTNER_RESPONSE_TOPIC, groupId = SCPI_PARTNER_GROUP)
     public void consumeResponse(ConsumerRecord<String, Map<String, Object>> record) {
+        logger.info("Received investment response: {}", record);
         Map<String, Object> response = record.value();
         logger.info("Réponse de la demande d'investissement reçu du topic {} : {}", SCPI_PARTNER_RESPONSE_TOPIC, response);
         processResponse(response);
