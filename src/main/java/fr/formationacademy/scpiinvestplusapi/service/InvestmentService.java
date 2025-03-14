@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-import static fr.formationacademy.scpiinvestplusapi.utils.Constants.SCPI_PARTNER_TOPIC;
+import static fr.formationacademy.scpiinvestplusapi.utils.Constants.SCPI_REQUEST_TOPIC;
 
 @Service
 @Slf4j
@@ -98,7 +98,7 @@ public class InvestmentService {
     }
 
     public void sendInvestment(InvestmentKafkaDto investmentKafkaDto) {
-        kafkaTemplate.send(SCPI_PARTNER_TOPIC, investmentKafkaDto);
+        kafkaTemplate.send(SCPI_REQUEST_TOPIC, investmentKafkaDto);
     }
 
 }
