@@ -1,12 +1,12 @@
 package fr.formationacademy.scpiinvestplusapi.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -18,12 +18,9 @@ public class Simulation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private  String name;
+    private String name;
     private LocalDate simulationDate;
-
-    @ManyToOne
-    @JoinColumn(name = "investor_email", nullable = false)
-    private Investor investor;
+    private String investorEmail;
 
     @OneToMany(mappedBy = "simulation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ScpiSimulation> scpiSimulations;

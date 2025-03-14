@@ -29,13 +29,16 @@ public class SimulationResource {
         this.simulationService = simulationService;
     }
 
-    @Operation(summary = "Get all simulations",
-            description = "Retrieves a list of all simulations. Returns 204 if no simulations are found.")
+    @Operation(summary = "Obtenir toutes les simulations.",
+            description = "Obtenir une liste des simulation stockées en base de données pour l'utilisateur identifé.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of simulations retrieved successfully",
+            @ApiResponse(responseCode = "200", description = "La liste des simulations ont été récupérées",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = SimulationDToOut.class))),
-            @ApiResponse(responseCode = "204", description = "No simulations found")
+            @ApiResponse(responseCode = "204", description = "Pas de simulations trouvées.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SimulationDToOut.class))
+            )
     })
     @GetMapping
     public ResponseEntity<List<SimulationDToOut>> getAllSimulations() {
@@ -43,45 +46,39 @@ public class SimulationResource {
         if (simulations.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-
         return new ResponseEntity<>(simulations, HttpStatus.OK);
     }
 
-    @Operation(summary = "Create a new simulation",
-            description = "Creates a simulation for an existing investor identified by email.")
+    @Operation(summary = "Création d'une nuovelle simulation",
+            description = "Création d'une nouvelle simulation à partir des données reçus par l'application.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Simulation created successfully",
+            @ApiResponse(responseCode = "201", description = "Simulation crée",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Simulation.class))),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+                            schema = @Schema(implementation = SimulationDToOut.class))),
+            @ApiResponse(responseCode = "500", description = "Erreur lors de la caréation")
     })
     @PostMapping
-    public ResponseEntity<SimulationDToOut> createSimulation(@RequestBody SimulationInDTO simulationInDTO) {
+    public ResponseEntity<SimulationDToOut> createSimulation(@RequestBody SimulationInDTO simulationInDTO) throws GlobalException {
         SimulationDToOut simulationDToOut = simulationService.addSimulation(simulationInDTO);
-        if (simulationDToOut == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.status(HttpStatus.CREATED).body(simulationDToOut);
     }
-    @Operation(summary = "Delete a simulation",
-            description = "Delete a simulation using an ID")
+
+    @Operation(summary = "Supprimer une simulation",
+            description = "Supprimer une simulation à l'aide de son identifiant pour l'utilisateur connecté.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Simulation deleted successfully",
+            @ApiResponse(responseCode = "200", description = "Suppression de la simulation réussie.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Simulation.class))),
-            @ApiResponse(responseCode = "404", description = "Simulation ID not found")
+            @ApiResponse(responseCode = "404", description = "La simulation n'existe pas dans la base de données")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<SimulationDToOut> removeSimulation(@PathVariable Integer id) {
+    public ResponseEntity<SimulationDToOut> removeSimulation(@PathVariable Integer id) throws GlobalException {
         SimulationDToOut simulationDToOut = simulationService.deleteSimulation(id);
-        if (simulationDToOut == null) {
-            return ResponseEntity.notFound().build();
-        }
         return new ResponseEntity<>(simulationDToOut, HttpStatus.OK);
     }
 
-    @Operation(summary = "Get simulation by ID",
-            description = "Retrieve a simulation by its unique ID")
+    @Operation(summary = "Charger une simulation en utilisant identifiant de la simulation",
+            description = "Selectionner une simulation appartenant à  l'utilisateur en fonction de l'identifiant introduit.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Simulation retrieved successfully",
                     content = @Content(mediaType = "application/json",
@@ -93,4 +90,6 @@ public class SimulationResource {
         SimulationDToOut simulationDToOut = simulationService.getSimulationById(id);
         return new ResponseEntity<>(simulationDToOut, HttpStatus.OK);
     }
+
+
 }
