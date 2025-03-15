@@ -30,8 +30,6 @@ public class BatchService {
             return;
         }
 
-        log.info("Processing {} batch items...", batchDataList.size());
-
         Map<String, Scpi> existingScpis = getExistingScpis(batchDataList);
         List<Scpi> scpisToInsert = new ArrayList<>();
         List<Scpi> scpisToUpdate = new ArrayList<>();

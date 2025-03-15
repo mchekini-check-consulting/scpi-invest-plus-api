@@ -48,16 +48,13 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
         log.info("Rechargement du cache des SCPIs...");
         List<Scpi> scpis = scpiRepository.findAll();
         scpis.forEach(scpi -> existingScpis.put(scpi.getName(), scpi));
-        log.info("Cache des SCPIs rechargé: {}", existingScpis.size());
     }
 
     @Override
     public Scpi process(@NonNull BatchDataDto batchDataDto) {
-        log.info("Processing BatchDataDto: {}", batchDataDto);
 
         ScpiDto dto = batchDataDto.getScpiDto();
         if (dto == null || dto.getName() == null) {
-            log.warn("SCPI invalide, ignorée.");
             return null;
         }
         scpisInCsv.add(dto.getName());
@@ -66,7 +63,6 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
         Scpi existingScpi = existingScpis.get(dto.getName());
 
         if (existingScpi != null && isSame(existingScpi, dto)) {
-            log.info("SCPI '{}' déjà existante et inchangée, ignorée.", dto.getName());
             return existingScpi;
         }
 

@@ -43,7 +43,6 @@ public class SectorService{
         List<SectorRequest> newSectorRequests = sectorMapper.toRequestSectorList(newSectors);
 
         if (isSameSector(existingSectors, newSectorRequests)) {
-            log.info("Aucune modification des secteurs pour la SCPI: {}", scpi.getName());
             return existingSectors;
         }
 
@@ -81,7 +80,7 @@ public class SectorService{
 
     public void saveSectors(List<Sector> sectors) {
         if (sectors == null || sectors.isEmpty()) {
-            log.warn("Tentative de sauvegarde d'une liste vide ou nulle de secteurs.");
+            log.debug("Tentative de sauvegarde d'une liste vide ou nulle de secteurs.");
             return;
         }
 
@@ -96,7 +95,6 @@ public class SectorService{
 
         try {
             sectorRepository.saveAll(validSectors);
-            log.info("{} secteurs enregistrés avec succès.", validSectors.size());
         } catch (Exception e) {
             log.error("Erreur lors de la sauvegarde des secteurs : {}", e.getMessage(), e);
             throw new RuntimeException("Impossible d'enregistrer les secteurs", e);
