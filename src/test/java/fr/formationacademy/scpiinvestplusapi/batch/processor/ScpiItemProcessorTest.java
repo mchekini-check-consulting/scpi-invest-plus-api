@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
 import fr.formationacademy.scpiinvestplusapi.service.LocationService;
-import fr.formationacademy.scpiinvestplusapi.service.ScpiService;
 import fr.formationacademy.scpiinvestplusapi.service.SectorService;
 import fr.formationacademy.scpiinvestplusapi.service.StatYearService;
 import org.junit.jupiter.api.Test;
@@ -39,15 +38,12 @@ public class ScpiItemProcessorTest {
     @Mock
     private StatYearService statYearService;
 
-    @Mock
-    private ScpiService scpiService;
-
     @InjectMocks
     private ScpiItemProcessor processor;
 
     @BeforeEach
     void setUp() {
-        processor = new ScpiItemProcessor(scpiRepository, locationService, sectorService, statYearService, scpiService);
+        processor = new ScpiItemProcessor(scpiRepository, locationService, sectorService, statYearService);
     }
 
     @Test
