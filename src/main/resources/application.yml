@@ -20,3 +20,17 @@ spring:
         jwt:
           issuer-uri: https://keycloak.check-consulting.net/realms/master
           jwk-set-uri: https://keycloak.check-consulting.net/realms/master/protocol/openid-connect/certs
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
