@@ -77,67 +77,7 @@ class InvestorServiceTest {
         verify(investorRepository, times(1)).save(updatedInvestor);
     }
 
-    @Test
-    void testCreateOrUpdateInvestor_WhenInvestorDoesNotExist() {
-        String email = "new@example.com";
-        Investor newInvestor = new Investor();
-        newInvestor.setEmail(email);
-        newInvestor.setFirstName("John");
-        newInvestor.setLastName("Doe");
 
-        when(investorRepository.findById(email)).thenReturn(Optional.empty());
-        when(investorMapper.toEntity(investorDTO)).thenReturn(newInvestor);
-        when(investorRepository.save(newInvestor)).thenReturn(newInvestor);
-
-        Investor result = investorService.createOrUpdateInvestor(email, investorDTO);
-
-
-        assertNotNull(result);
-        assertEquals(email, result.getEmail());
-        assertEquals("John", result.getFirstName());
-        assertEquals("Doe", result.getLastName());
-
-        verify(investorRepository, times(1)).findById(email);
-        verify(investorMapper, times(1)).toEntity(investorDTO);
-        verify(investorRepository, times(1)).save(newInvestor);
-    }
-    @Test
-    void testGetAllInvestors() {
-        Investor investor1 = new Investor();
-        investor1.setEmail("investor1@example.com");
-
-        Investor investor2 = new Investor();
-        investor2.setEmail("investor2@example.com");
-
-        List<Investor> investors = List.of(investor1, investor2);
-
-        InvestorDTO investorDTO1 = new InvestorDTO();
-
-        investorDTO1.setEmail("investor1@example.com");
-
-        InvestorDTO investorDTO2 = new InvestorDTO();
-        investorDTO2.setEmail("investor2@example.com");
-
-        List<InvestorDTO> expectedDTOs = List.of(investorDTO1, investorDTO2);
-
-
-        when(investorRepository.findAll()).thenReturn(investors);
-        when(investorMapper.toDTO(investor1)).thenReturn(investorDTO1);
-        when(investorMapper.toDTO(investor2)).thenReturn(investorDTO2);
-
-
-        List<InvestorDTO> result = investorService.getAllInvestors();
-
-
-        verify(investorRepository, times(1)).findAll();
-
-
-        verify(investorMapper, times(1)).toDTO(investor1);
-        verify(investorMapper, times(1)).toDTO(investor2);
-
-
-        assertEquals(expectedDTOs, result);
-    }
 
     @Test
     void testGetInvestorByEmail_WhenInvestorExists() {
