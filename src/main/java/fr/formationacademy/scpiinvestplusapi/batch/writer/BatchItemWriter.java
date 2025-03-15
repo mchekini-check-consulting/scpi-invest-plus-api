@@ -6,6 +6,7 @@ import fr.formationacademy.scpiinvestplusapi.service.BatchService;
 import fr.formationacademy.scpiinvestplusapi.service.LocationService;
 import fr.formationacademy.scpiinvestplusapi.service.SectorService;
 import fr.formationacademy.scpiinvestplusapi.service.StatYearService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class BatchItemWriter implements ItemWriter<BatchDataDto> {
 
     private final BatchService batchService;
@@ -45,6 +47,6 @@ public class BatchItemWriter implements ItemWriter<BatchDataDto> {
                 statYearService.saveStatYears(batchData.getStatYears());
             }
         });
-
+        log.info("{} SCPI enregistrées en base.", batchDataList.size());
     }
 }

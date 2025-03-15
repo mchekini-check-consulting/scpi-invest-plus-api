@@ -44,7 +44,6 @@ public class StatYearService {
             StatYearId yearStatId = new StatYearId(year, scpi.getId());
 
             if (statYearExists(yearStatId)) {
-                log.warn("StatYear déjà existant pour yearStat={} et scpiId={}", year, scpi.getId());
                 continue;
             }
 
@@ -78,14 +77,14 @@ public class StatYearService {
         try {
             return new BigDecimal(array[index].trim()).setScale(2, RoundingMode.HALF_UP);
         } catch (NumberFormatException e) {
-            log.error("Erreur de format pour la valeur '{}' à l'index {}", array[index], index, e);
+            log.debug("Erreur de format pour la valeur '{}' à l'index {}", array[index], index, e);
             return null;
         }
     }
 
     public void saveStatYears(List<StatYear> statYears) {
         if (CollectionUtils.isEmpty(statYears)) {
-            log.warn("Tentative de sauvegarde d'une liste vide ou nulle de statistiques annuelles.");
+            log.debug("Tentative de sauvegarde d'une liste vide ou nulle de statistiques annuelles.");
             return;
         }
 
@@ -100,7 +99,6 @@ public class StatYearService {
 
         try {
             statYearRepository.saveAll(validStatYears);
-            log.info("{} statistiques annuelles enregistrées avec succès.", validStatYears.size());
         } catch (Exception e) {
             log.error("Erreur lors de la sauvegarde des statistiques annuelles : {}", e.getMessage(), e);
             throw new RuntimeException("Impossible d'enregistrer les statistiques annuelles", e);

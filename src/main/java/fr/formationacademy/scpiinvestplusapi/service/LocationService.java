@@ -41,11 +41,8 @@ public class LocationService {
         List<LocationRequest> newLocationRequests = locationMapper.toRequestLocationList(newLocations);
 
         if (isSameLocation(existingLocations, newLocationRequests)) {
-            log.info("Aucune modification des localisations pour la SCPI: {}", scpi.getName());
             return existingLocations;
         }
-
-        log.info("Mise à jour des localisations pour la SCPI: {}", scpi.getName());
         return newLocations;
     }
 
@@ -79,7 +76,7 @@ public class LocationService {
 
     public void saveLocations(List<Location> locations) {
         if (locations == null || locations.isEmpty()) {
-            log.warn("Tentative de sauvegarde d'une liste vide ou nulle de localisations.");
+            log.debug("Tentative de sauvegarde d'une liste vide ou nulle de localisations.");
             return;
         }
 
@@ -94,7 +91,6 @@ public class LocationService {
 
         try {
             locationRepository.saveAll(validLocations);
-            log.info("{} localisations enregistrées avec succès.", validLocations.size());
         } catch (Exception e) {
             log.error("Erreur lors de la sauvegarde des localisations : {}", e.getMessage(), e);
             throw new RuntimeException("Impossible d'enregistrer les localisations", e);
