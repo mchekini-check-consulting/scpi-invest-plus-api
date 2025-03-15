@@ -28,7 +28,7 @@ public class StatYearService {
         List<StatYear> statYears = new ArrayList<>();
 
         if (scpiDto.getDistributedRate() == null && scpiDto.getReconstitutionValue() == null && scpiDto.getSharePrice() == null) {
-            log.warn("Aucune donnée disponible pour '{}'", scpi.getName());
+            log.debug("Aucune donnée disponible pour '{}'", scpi.getName());
             return Collections.emptyList();
         }
 
@@ -52,7 +52,7 @@ public class StatYearService {
             BigDecimal sharePrice = parseBigDecimal(sharePriceArray, i);
 
             if (taux == null && reconstitution == null && sharePrice == null) {
-                log.warn("Aucune donnée valide pour l'année {} et la SCPI '{}'", year, scpi.getName());
+                log.debug("Aucune donnée valide pour l'année {} et la SCPI '{}'", year, scpi.getName());
                 continue;
             }
 
@@ -93,7 +93,7 @@ public class StatYearService {
                 .collect(Collectors.toList());
 
         if (validStatYears.isEmpty()) {
-            log.warn("Aucune donnée de statistique valide à sauvegarder.");
+            log.debug("Aucune donnée de statistique valide à sauvegarder.");
             return;
         }
 

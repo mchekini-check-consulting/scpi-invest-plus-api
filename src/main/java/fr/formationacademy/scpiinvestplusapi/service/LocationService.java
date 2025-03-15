@@ -27,13 +27,13 @@ public class LocationService {
 
     public List<Location> createLocations(String localisationData, Scpi scpi) {
         if (StringUtils.isBlank(localisationData)) {
-            log.warn("Aucune localisation fournie pour la SCPI: {}", scpi.getName());
+            log.debug("Aucune localisation fournie pour la SCPI: {}", scpi.getName());
             return Collections.emptyList();
         }
 
         List<Location> newLocations = parseLocations(localisationData, scpi);
         if (newLocations.isEmpty()) {
-            log.warn("Aucune localisation valide créée pour la SCPI: {}", scpi.getName());
+            log.debug("Aucune localisation valide créée pour la SCPI: {}", scpi.getName());
             return Collections.emptyList();
         }
 
@@ -63,7 +63,7 @@ public class LocationService {
         try {
             BigDecimal percentage = new BigDecimal(percentageStr).setScale(1, RoundingMode.HALF_UP);
             if (percentage.compareTo(BigDecimal.ZERO) < 0 || percentage.compareTo(BigDecimal.valueOf(100)) > 0) {
-                log.warn("Pourcentage invalide pour {}: {}%", country, percentage);
+                log.debug("Pourcentage invalide pour {}: {}%", country, percentage);
                 return Optional.empty();
             }
             return Optional.of(new Location(new LocationId(scpi.getId(), country), percentage, scpi));
@@ -72,7 +72,6 @@ public class LocationService {
             return Optional.empty();
         }
     }
-
 
     public void saveLocations(List<Location> locations) {
         if (locations == null || locations.isEmpty()) {
@@ -85,7 +84,7 @@ public class LocationService {
                 .toList();
 
         if (validLocations.isEmpty()) {
-            log.warn("Aucune localisation valide à sauvegarder.");
+            log.debug("Aucune localisation valide à sauvegarder.");
             return;
         }
 
@@ -99,14 +98,14 @@ public class LocationService {
 
     private boolean isValidLocation(Location location) {
         if (location == null || location.getId() == null || StringUtils.isBlank(location.getId().getCountry()) || location.getId().getScpiId() == null) {
-            log.warn("Localisation invalide : clé composite incorrecte {}", location);
+            log.debug("Localisation invalide : clé composite incorrecte {}", location);
             return false;
         }
 
         if (location.getCountryPercentage() == null
                 || location.getCountryPercentage().compareTo(BigDecimal.ZERO) < 0
                 || location.getCountryPercentage().compareTo(BigDecimal.valueOf(100)) > 0) {
-            log.warn("Localisation invalide : pourcentage incorrect {}", location);
+            log.debug("Localisation invalide : pourcentage incorrect {}", location);
             return false;
         }
 
@@ -126,7 +125,6 @@ public class LocationService {
                         existingMap.get(dto.getCountry()).compareTo(dto.getCountryPercentage()) == 0
         );
     }
-
 
 }
 
