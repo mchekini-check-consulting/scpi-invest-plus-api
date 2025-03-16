@@ -15,6 +15,6 @@ public class InvestorDTO {
     private String phoneNumber;
     private String maritalStatus;
     private String numberOfChildren;
-    private List<InvestmentDto> investments; // Ajout de la liste des investissements
+    private List<InvestmentDto> investments;
 
 }
