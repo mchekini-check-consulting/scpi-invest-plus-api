@@ -47,6 +47,6 @@ public class BatchItemWriter implements ItemWriter<BatchDataDto> {
                 statYearService.saveStatYears(batchData.getStatYears());
             }
         });
-        log.info("{} SCPI enregistrées en base.", batchDataList.size());
+        log.info("{} SCPI enregistrées en base", batchDataList.size());
     }
 }
