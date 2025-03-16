@@ -19,7 +19,6 @@ public class PlanService {
     }
 
     public List<PlanDto> getAllPlans() {
-        List<PlanDto> plans = planRepository.findAll().stream().map(planMapper::toPlanDto).toList();
-        return plans;
+        return planRepository.findAll().stream().map(planMapper::toPlanDto).toList();
     }
 }

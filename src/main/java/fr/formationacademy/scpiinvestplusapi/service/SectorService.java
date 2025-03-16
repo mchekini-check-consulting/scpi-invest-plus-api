@@ -29,13 +29,13 @@ public class SectorService{
 
     public List<Sector> createSectors(String sectorData, Scpi scpi) {
         if (StringUtils.isBlank(sectorData)) {
-            log.warn("Aucun secteur fourni pour la SCPI: {}", scpi.getName());
+            log.debug("Aucun secteur fourni pour la SCPI: {}", scpi.getName());
             return Collections.emptyList();
         }
 
         List<Sector> newSectors = parseSectors(sectorData, scpi);
         if (newSectors.isEmpty()) {
-            log.warn("Aucun secteur valide créé pour la SCPI: {}", scpi.getName());
+            log.debug("Aucun secteur valide créé pour la SCPI: {}", scpi.getName());
             return Collections.emptyList();
         }
 
@@ -67,7 +67,7 @@ public class SectorService{
         try {
             BigDecimal percentage = new BigDecimal(percentageStr);
             if (percentage.compareTo(BigDecimal.ZERO) < 0 || percentage.compareTo(BigDecimal.valueOf(100)) > 0) {
-                log.warn("Pourcentage invalide pour {}: {}%", name, percentage);
+                log.debug("Pourcentage invalide pour {}: {}%", name, percentage);
                 return Optional.empty();
             }
             return Optional.of(new Sector(new SectorId(scpi.getId(), name), percentage, scpi));
@@ -89,7 +89,7 @@ public class SectorService{
                 .toList();
 
         if (validSectors.isEmpty()) {
-            log.warn("Aucun secteur valide à sauvegarder.");
+            log.debug("Aucun secteur valide à sauvegarder.");
             return;
         }
 
@@ -103,12 +103,12 @@ public class SectorService{
 
     private boolean isValidSector(Sector sector) {
         if (sector == null || sector.getId() == null || StringUtils.isBlank(sector.getId().getName()) || sector.getId().getScpiId() == null) {
-            log.warn("Secteur invalide : clé composite incorrecte {}", sector);
+            log.debug("Secteur invalide : clé composite incorrecte {}", sector);
             return false;
         }
 
         if (sector.getSectorPercentage() == null || sector.getSectorPercentage().compareTo(BigDecimal.ZERO) < 0 || sector.getSectorPercentage().compareTo(BigDecimal.valueOf(100)) > 0) {
-            log.warn("Secteur invalide : pourcentage incorrect {}", sector);
+            log.debug("Secteur invalide : pourcentage incorrect {}", sector);
             return false;
         }
 
