@@ -73,10 +73,15 @@ public class BatchConfig {
     @Bean
     public ItemWriter<Scpi> writer() {
         return items -> {
-            log.info("Insertion/Mise à jour d'{} LOT des SCPIs.", items.size());
-            JpaItemWriter<Scpi> jpaWriter = new JpaItemWriter<>();
-            jpaWriter.setEntityManagerFactory(entityManagerFactory);
-            jpaWriter.write(items);
+            if (!items.isEmpty()) {
+                log.info("Insertion/Mise à jour de {} SCPIs dans le lot actuel.", items.size());
+                JpaItemWriter<Scpi> jpaWriter = new JpaItemWriter<>();
+                jpaWriter.setEntityManagerFactory(entityManagerFactory);
+                jpaWriter.write(items);
+                log.info("Un {} lot des SCPIs a bien été persisté en base.", items.size());
+            } else {
+                log.info("Aucune SCPI à insérer ou mettre à jour dans ce lot.");
+            }
         };
     }
 
@@ -122,7 +127,7 @@ public class BatchConfig {
     @Bean
     public Step importStep(ItemProcessor<ScpiDto, Scpi> processor, ItemWriter<Scpi> writer) {
         return new StepBuilder("importStep", jobRepository)
-                .<ScpiDto, Scpi>chunk(10, transactionManager)
+                .<ScpiDto, Scpi>chunk(20, transactionManager)
                 .reader(scpiItemReader.reader())
                 .processor(processor)
                 .writer(writer)
