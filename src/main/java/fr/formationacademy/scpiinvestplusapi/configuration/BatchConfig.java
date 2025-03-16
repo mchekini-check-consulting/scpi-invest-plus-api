@@ -73,7 +73,7 @@ public class BatchConfig {
     @Bean
     public ItemWriter<Scpi> writer() {
         return items -> {
-            log.info("Insertion/Mise à jour de {} SCPI.", items.size());
+            log.info("Insertion/Mise à jour d'{} LOT des SCPIs.", items.size());
             JpaItemWriter<Scpi> jpaWriter = new JpaItemWriter<>();
             jpaWriter.setEntityManagerFactory(entityManagerFactory);
             jpaWriter.write(items);

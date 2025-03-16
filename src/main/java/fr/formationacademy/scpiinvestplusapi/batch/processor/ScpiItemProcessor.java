@@ -9,7 +9,6 @@ import fr.formationacademy.scpiinvestplusapi.entity.Sector;
 import fr.formationacademy.scpiinvestplusapi.entity.StatYear;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
 import fr.formationacademy.scpiinvestplusapi.service.LocationService;
-import fr.formationacademy.scpiinvestplusapi.service.ScpiService;
 import fr.formationacademy.scpiinvestplusapi.service.SectorService;
 import fr.formationacademy.scpiinvestplusapi.service.StatYearService;
 import io.micrometer.common.lang.NonNull;
@@ -30,7 +29,6 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
     private final LocationService locationService;
     private final SectorService sectorService;
     private final StatYearService statYearService;
-    private final ScpiService scpiService;
 
     public final Map<String, Scpi> existingScpis = new HashMap<>();
     private final Set<String> scpisInCsv = new HashSet<>();
@@ -45,28 +43,23 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
     }
 
     public void refreshCache() {
-        log.info("Rechargement du cache des SCPIs...");
+        log.debug("Rechargement du cache des SCPIs...");
         List<Scpi> scpis = scpiRepository.findAll();
         scpis.forEach(scpi -> existingScpis.put(scpi.getName(), scpi));
-        log.info("Cache des SCPIs rechargé: {}", existingScpis.size());
     }
 
     @Override
     public Scpi process(@NonNull BatchDataDto batchDataDto) {
-        log.info("Processing BatchDataDto: {}", batchDataDto);
 
         ScpiDto dto = batchDataDto.getScpiDto();
         if (dto == null || dto.getName() == null) {
-            log.warn("SCPI invalide, ignorée.");
             return null;
         }
         scpisInCsv.add(dto.getName());
 
-
         Scpi existingScpi = existingScpis.get(dto.getName());
 
         if (existingScpi != null && isSame(existingScpi, dto)) {
-            log.info("SCPI '{}' déjà existante et inchangée, ignorée.", dto.getName());
             return existingScpi;
         }
 
@@ -122,7 +115,6 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
     public boolean isSame(Scpi existing, ScpiDto dto) {
         return Objects.equals(existing.getMinimumSubscription(), dto.getMinimumSubscription()) && Objects.equals(existing.getCapitalization(), dto.getCapitalization()) && Objects.equals(existing.getManager(), dto.getManager()) && Objects.equals(existing.getSubscriptionFees(), dto.getSubscriptionFees()) && Objects.equals(existing.getManagementCosts(), dto.getManagementCosts()) && Objects.equals(existing.getEnjoymentDelay(), dto.getEnjoymentDelay()) && Objects.equals(existing.getIban(), dto.getIban()) && Objects.equals(existing.getBic(), dto.getBic()) && Objects.equals(existing.getScheduledPayment(), dto.getScheduledPayment()) && Objects.equals(existing.getFrequencyPayment(), dto.getFrequencyPayment()) && Objects.equals(existing.getCashback(), dto.getCashback()) && Objects.equals(existing.getAdvertising(), dto.getAdvertising()) && Objects.equals(existing.getLocations(), dto.getLocations()) && Objects.equals(existing.getStatYears(), dto.getStatYear()) && Objects.equals(existing.getSectors(), dto.getSectors());
     }
-
 
 }
 

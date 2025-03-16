@@ -26,11 +26,9 @@ public class BatchService {
     @Transactional
     public void saveOrUpdateBatchData(List<BatchDataDto> batchDataList) {
         if (batchDataList == null || batchDataList.isEmpty()) {
-            log.warn("Batch data list is empty. Skipping processing.");
+            log.debug("Batch data list is empty. Skipping processing.");
             return;
         }
-
-        log.info("Processing {} batch items...", batchDataList.size());
 
         Map<String, Scpi> existingScpis = getExistingScpis(batchDataList);
         List<Scpi> scpisToInsert = new ArrayList<>();

@@ -1,19 +1,19 @@
 services:
-    scpi-invest-db:
-      image: postgres
-      container_name: scpi-invest-db
-      environment:
-        - POSTGRES_USER=postgres
-        - POSTGRES_PASSWORD=postgres
-        - POSTGRES_DB=postgres
-      ports:
-        - "5432:5432"
-    scpi-invest-plus-api:
-      build:
-        context: .
-        dockerfile: Dockerfile
-      container_name: scpi-invest-plus-api
-      links:
-        - "scpi-invest-db:scpi-invest-db"
-      ports:
-        - "8080:8080"
+  scpi-invest-db:
+    image: postgres
+    container_name: scpi-invest-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+  scpi-invest-plus-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: scpi-invest-plus-api
+    links:
+      - "scpi-invest-db:scpi-invest-db"
+    ports:
+      - "8080:8080"

@@ -28,7 +28,7 @@ public class StatYearService {
         List<StatYear> statYears = new ArrayList<>();
 
         if (scpiDto.getDistributedRate() == null && scpiDto.getReconstitutionValue() == null && scpiDto.getSharePrice() == null) {
-            log.warn("Aucune donnée disponible pour '{}'", scpi.getName());
+            log.debug("Aucune donnée disponible pour '{}'", scpi.getName());
             return Collections.emptyList();
         }
 
@@ -44,7 +44,6 @@ public class StatYearService {
             StatYearId yearStatId = new StatYearId(year, scpi.getId());
 
             if (statYearExists(yearStatId)) {
-                log.warn("StatYear déjà existant pour yearStat={} et scpiId={}", year, scpi.getId());
                 continue;
             }
 
@@ -53,7 +52,7 @@ public class StatYearService {
             BigDecimal sharePrice = parseBigDecimal(sharePriceArray, i);
 
             if (taux == null && reconstitution == null && sharePrice == null) {
-                log.warn("Aucune donnée valide pour l'année {} et la SCPI '{}'", year, scpi.getName());
+                log.debug("Aucune donnée valide pour l'année {} et la SCPI '{}'", year, scpi.getName());
                 continue;
             }
 
@@ -78,14 +77,14 @@ public class StatYearService {
         try {
             return new BigDecimal(array[index].trim()).setScale(2, RoundingMode.HALF_UP);
         } catch (NumberFormatException e) {
-            log.error("Erreur de format pour la valeur '{}' à l'index {}", array[index], index, e);
+            log.debug("Erreur de format pour la valeur '{}' à l'index {}", array[index], index, e);
             return null;
         }
     }
 
     public void saveStatYears(List<StatYear> statYears) {
         if (CollectionUtils.isEmpty(statYears)) {
-            log.warn("Tentative de sauvegarde d'une liste vide ou nulle de statistiques annuelles.");
+            log.debug("Tentative de sauvegarde d'une liste vide ou nulle de statistiques annuelles.");
             return;
         }
 
@@ -94,13 +93,12 @@ public class StatYearService {
                 .collect(Collectors.toList());
 
         if (validStatYears.isEmpty()) {
-            log.warn("Aucune donnée de statistique valide à sauvegarder.");
+            log.debug("Aucune donnée de statistique valide à sauvegarder.");
             return;
         }
 
         try {
             statYearRepository.saveAll(validStatYears);
-            log.info("{} statistiques annuelles enregistrées avec succès.", validStatYears.size());
         } catch (Exception e) {
             log.error("Erreur lors de la sauvegarde des statistiques annuelles : {}", e.getMessage(), e);
             throw new RuntimeException("Impossible d'enregistrer les statistiques annuelles", e);
