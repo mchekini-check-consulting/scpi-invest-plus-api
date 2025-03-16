@@ -26,22 +26,6 @@ public class InvestorService {
         this.userService = userService;
     }
 
-    public Investor createOrUpdateInvestor(String email, InvestorDTO investorDTO) {
-        log.info("Creating Investor with email: " + email);
-        log.info("Investor email: " + investorDTO);
-        return investorRepository.findById(email)
-                .map(existingInvestor -> {
-                    Investor updatedInvestor = investorMapper.toEntity(investorDTO);
-                    updatedInvestor.setEmail(email);
-                    return investorRepository.save(updatedInvestor);
-                })
-                .orElseGet(() -> {
-                    Investor newInvestor = investorMapper.toEntity(investorDTO);
-                    newInvestor.setEmail(email);
-                    return investorRepository.save(newInvestor);
-                });
-    }
-
 
     public Investor createInvestor(InvestorDTO investorDTO) throws GlobalException {
         log.info("Creating new Investor");
@@ -72,14 +56,4 @@ public class InvestorService {
         return investorRepository.findById(email);
     }
 
-    public Investor getCurrentInvestor() {
-        String email = userService.getEmail();
-        log.info("Tentative de récupération de l'investisseur avec l'email: {}", email);
-
-        return investorRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.error("Aucun investisseur trouvé pour l'email: {}", email);
-                    return new RuntimeException("Investor not found for email: " + email);
-                });
-    }
 }

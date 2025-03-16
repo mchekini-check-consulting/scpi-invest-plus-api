@@ -2,6 +2,7 @@ package fr.formationacademy.scpiinvestplusapi.service;
 
 import fr.formationacademy.scpiinvestplusapi.dto.InvestorDTO;
 import fr.formationacademy.scpiinvestplusapi.entity.Investor;
+import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.mapper.InvestorMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.InvestorRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -44,41 +46,6 @@ class InvestorServiceTest {
         investorDTO.setNumberOfChildren("0");
     }
 
-
-    @Test
-    void testCreateOrUpdateInvestor_WhenInvestorExists() {
-        // Arrange
-        String email = "test@example.com";
-        Investor existingInvestor = new Investor();
-        existingInvestor.setEmail(email);
-        existingInvestor.setFirstName("OldFirstName");
-        existingInvestor.setLastName("OldLastName");
-
-        Investor updatedInvestor = new Investor();
-        updatedInvestor.setEmail(email);
-        updatedInvestor.setFirstName("NewFirstName");
-        updatedInvestor.setLastName("NewLastName");
-
-        when(investorRepository.findById(email)).thenReturn(Optional.of(existingInvestor));
-        when(investorMapper.toEntity(investorDTO)).thenReturn(updatedInvestor);
-        when(investorRepository.save(updatedInvestor)).thenReturn(updatedInvestor);
-
-        // Act
-        Investor result = investorService.createOrUpdateInvestor(email, investorDTO);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(email, result.getEmail());
-        assertEquals("NewFirstName", result.getFirstName());
-        assertEquals("NewLastName", result.getLastName());
-
-        verify(investorRepository, times(1)).findById(email);
-        verify(investorMapper, times(1)).toEntity(investorDTO);
-        verify(investorRepository, times(1)).save(updatedInvestor);
-    }
-
-
-
     @Test
     void testGetInvestorByEmail_WhenInvestorExists() {
 
@@ -104,6 +71,95 @@ class InvestorServiceTest {
         verify(investorRepository, times(1)).findById(email);
     }
 
+    @Test
+    void createInvestor_ShouldCreateInvestor_WhenEmailIsUnique() throws GlobalException {
+        // Given
+        InvestorDTO investorDTO = new InvestorDTO();
+        investorDTO.setEmail("test@example.com");
+
+        Investor investor = new Investor();
+        investor.setEmail("test@example.com");
+
+
+        when(investorMapper.toEntity(investorDTO)).thenReturn(investor);
+        when(investorRepository.existsById(investor.getEmail())).thenReturn(false);
+        when(investorRepository.save(any(Investor.class))).thenReturn(investor);
+
+
+        Investor result = investorService.createInvestor(investorDTO);
+
+
+        assertNotNull(result);
+        assertEquals("test@example.com", result.getEmail());
+        verify(investorRepository).save(investor);
+    }
+
+    @Test
+    void createInvestor_ShouldThrowException_WhenEmailAlreadyExists() {
+
+        InvestorDTO investorDTO = new InvestorDTO();
+        investorDTO.setEmail("existing@example.com");
+
+        Investor investor = new Investor();
+        investor.setEmail("existing@example.com");
+
+
+        when(investorMapper.toEntity(investorDTO)).thenReturn(investor);
+        when(investorRepository.existsById(investor.getEmail())).thenReturn(true);
+
+
+        GlobalException thrown = assertThrows(GlobalException.class, () -> {
+            investorService.createInvestor(investorDTO);
+        });
+
+        assertEquals(HttpStatus.CONFLICT, thrown.getHttpStatus());
+        assertEquals("An investor with this email already exists.", thrown.getMessage());
+        verify(investorRepository, never()).save(any(Investor.class));
+    }
+
+    @Test
+    void updateInvestor_ShouldUpdateInvestor_WhenEmailExists() throws GlobalException {
+        // Given
+        String email = "test@example.com";
+
+        Investor existingInvestor = new Investor();
+        existingInvestor.setEmail(email);
+
+        Investor updatedInvestor = new Investor();
+        updatedInvestor.setEmail(email);
+        updatedInvestor.setFirstName("Updated Name");
+
+        when(investorRepository.findById(email)).thenReturn(Optional.of(existingInvestor));
+        when(investorMapper.toEntity(investorDTO)).thenReturn(updatedInvestor);
+        when(investorRepository.save(updatedInvestor)).thenReturn(updatedInvestor);
+
+        // When
+        Investor result = investorService.updateInvestor(email, investorDTO);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(email, result.getEmail());
+        assertEquals("Updated Name", result.getFirstName());
+
+        verify(investorRepository).save(updatedInvestor);
+    }
+
+
+    @Test
+    void updateInvestor_ShouldThrowException_WhenEmailDoesNotExist() {
+        // Given
+        String email = "nonexistent@example.com";
+        when(investorRepository.findById(email)).thenReturn(Optional.empty());
+
+        // When & Then
+        GlobalException thrown = assertThrows(GlobalException.class, () -> {
+            investorService.updateInvestor(email, investorDTO);
+        });
+
+        assertEquals(HttpStatus.NOT_FOUND, thrown.getHttpStatus());
+        assertEquals("Investor not found with email: " + email, thrown.getMessage());
+        verify(investorRepository, never()).save(any(Investor.class));
+    }
     @Test
     void testGetInvestorByEmail_WhenInvestorDoesNotExist() {
         String email = "nonexistent@example.com";
