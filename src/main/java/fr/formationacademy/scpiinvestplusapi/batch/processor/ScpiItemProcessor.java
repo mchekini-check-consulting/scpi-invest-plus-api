@@ -39,7 +39,7 @@ public class ScpiItemProcessor implements ItemProcessor<BatchDataDto, Scpi> {
         log.info("Chargement des SCPIs existantes...");
         List<Scpi> scpis = scpiRepository.findAll();
         scpis.forEach(scpi -> existingScpis.put(scpi.getName(), scpi));
-        log.info("Nombre de SCPIs existantes chargées: {}", existingScpis.size());
+        log.info("Nombre de SCPIs existantes trouvées dans le cache des SCPIs: {}", existingScpis.size());
     }
 
     public void refreshCache() {
