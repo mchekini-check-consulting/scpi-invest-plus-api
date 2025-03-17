@@ -46,7 +46,6 @@ public class SectorService{
             return existingSectors;
         }
 
-        log.info("Mise à jour des secteurs pour la SCPI: {}", scpi.getName());
         return newSectors;
     }
 

@@ -29,7 +29,7 @@ public class RefDismembermentService {
         log.info("Début de la récupération des démembrements pour le type de propriété: {}", typeProperty);
         List<RefDismemberment> entities = repository.findByPropertyType(typeProperty);
         if (entities.isEmpty()) {
-            log.warn("Aucun dismemberment trouvé pour le type de propriété: {}", typeProperty);
+            log.debug("Aucun dismemberment trouvé pour le type de propriété: {}", typeProperty);
             throw new GlobalException(HttpStatus.NOT_FOUND,"No SCPI found with Property Type : " + typeProperty.getValue());
         } else {
             log.info("{} démembrements trouvés pour le type de propriété: {}", entities.size(), typeProperty);

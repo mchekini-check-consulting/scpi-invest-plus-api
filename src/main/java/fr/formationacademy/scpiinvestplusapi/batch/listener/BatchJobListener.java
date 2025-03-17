@@ -45,7 +45,7 @@ public class BatchJobListener implements JobExecutionListener {
                     jobExecution.getStatus(),
                     duration);
         } else {
-            log.warn("Batch job '{}' finished, but start time was not recorded!",
+            log.debug("Batch job '{}' finished, but start time was not recorded!",
                     jobExecution.getJobInstance().getJobName());
         }
 
