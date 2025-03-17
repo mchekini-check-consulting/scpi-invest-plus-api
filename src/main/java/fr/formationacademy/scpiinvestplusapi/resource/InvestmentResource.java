@@ -1,5 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.resource;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDto;
 import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDtoOut;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
@@ -34,7 +35,7 @@ public class InvestmentResource {
                     @ApiResponse(responseCode = "500", description = "Erreur interne du serveur")
             }
     )
-    public ResponseEntity<InvestmentDto> createInvestment(@RequestBody InvestmentDto investmentDto) throws GlobalException {
+    public ResponseEntity<InvestmentDto> createInvestment(@RequestBody InvestmentDto investmentDto) throws GlobalException, JsonProcessingException {
         InvestmentDto investmentDtoResult = investmentService.saveInvestment(investmentDto);
 
         return new ResponseEntity<>(investmentDtoResult, HttpStatus.CREATED);
