@@ -74,7 +74,7 @@ public class BatchConfig {
     public ItemWriter<Scpi> writer() {
         return items -> {
             if (!items.isEmpty()) {
-                log.info("Insertion/Mise à jour de {} SCPIs dans le lot actuel.", items.size());
+                log.debug("Insertion/Mise à jour de {} SCPIs dans le lot actuel.", items.size());
                 JpaItemWriter<Scpi> jpaWriter = new JpaItemWriter<>();
                 jpaWriter.setEntityManagerFactory(entityManagerFactory);
                 jpaWriter.write(items);
