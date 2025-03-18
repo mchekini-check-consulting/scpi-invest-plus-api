@@ -17,7 +17,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   kafka:
-    bootstrap-servers: kafka-svc.kafka:9094
+    bootstrap-servers: kafka-0.kafka-headless.kafka:9092,kafka-1.kafka-headless.kafka:9092,kafka-3.kafka-headless.kafka:9092
 
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
