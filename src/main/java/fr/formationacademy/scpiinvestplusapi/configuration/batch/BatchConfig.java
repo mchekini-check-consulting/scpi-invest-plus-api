@@ -1,4 +1,4 @@
-package fr.formationacademy.scpiinvestplusapi.configuration.batchConfig;
+package fr.formationacademy.scpiinvestplusapi.configuration.batch;
 
 import fr.formationacademy.scpiinvestplusapi.batch.listener.BatchJobListener;
 import fr.formationacademy.scpiinvestplusapi.batch.processor.EncodingCorrectionProcessor;

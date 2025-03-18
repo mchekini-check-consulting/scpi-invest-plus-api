@@ -19,15 +19,6 @@ spring:
   kafka:
     bootstrap-servers: kafka-svc.kafka:9094
 
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    consumer:
-      group-id: scpi-partner-group
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
 
   security:
     oauth2:

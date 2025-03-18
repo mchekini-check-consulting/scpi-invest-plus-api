@@ -1,6 +1,7 @@
-package fr.formationacademy.scpiinvestplusapi.configuration.kafkaConfig;
+package fr.formationacademy.scpiinvestplusapi.configuration.kafka;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.RoundRobinPartitioner;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,22 +20,20 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     String bootstrapServers;
 
-    @Bean
-    public Map<String, Object> producerConfigs() {
-        Map<String, Object> props = new HashMap<>();
-        props.put("bootstrap.servers", bootstrapServers);
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return props;
-    }
 
     @Bean
     public ProducerFactory<String, Object> producerFactory() {
-        return new DefaultKafkaProducerFactory<>(producerConfigs());
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        configProps.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, RoundRobinPartitioner.class);
+        configProps.put(ProducerConfig.ACKS_CONFIG, "all");
+        return new DefaultKafkaProducerFactory<>(configProps);
     }
 
     @Bean
-    public KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String, Object> producerFactory) {
-        return new KafkaTemplate<>(producerFactory);
+    public KafkaTemplate<String, Object> kafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
     }
 }

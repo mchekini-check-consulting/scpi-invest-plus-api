@@ -1,4 +1,4 @@
-package fr.formationacademy.scpiinvestplusapi.configuration.kafkaConfig;
+package fr.formationacademy.scpiinvestplusapi.configuration.kafka;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
@@ -13,16 +13,16 @@ public class KafkaTopicConfig {
     @Bean
     public NewTopic getTopic() {
         return TopicBuilder.name(SCPI_REQUEST_TOPIC)
-                .partitions(3)
-                .replicas(3)
+                .partitions(1)
+                .replicas(1)
                 .build();
     }
 
     @Bean
     public NewTopic getResponseTopic() {
         return TopicBuilder.name(SCPI_PARTNER_RESPONSE_TOPIC)
-                .partitions(3)
-                .replicas(3)
+                .partitions(1)
+                .replicas(1)
                 .build();
     }
 }
