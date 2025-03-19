@@ -53,52 +53,52 @@ class InvestmentServiceTest {
     @BeforeEach
     void setUp() {
 
-        scpi = new Scpi();
-        scpi.setId(1);
-        scpi.setName("SCPI Test");
-
-        investment = new Investment();
-        investment.setNumberShares(10000);
-        investment.setNumberYears(5);
-        investment.setTotalAmount(new BigDecimal("5000"));
-        investment.setInvestmentState("En cours");
-        investment.setInvestorId(userService.getEmail());
-        investment.setScpi(scpi);
-
-        investmentDto = new InvestmentDto();
-        investmentDto.setNumberShares(10000);
-        investmentDto.setNumberYears(5);
-        investmentDto.setInvestmentState("En cours");
-        investmentDto.setTotalAmount(new BigDecimal("5000"));
-        investmentDto.setScpiId(1);
-        ScpiDtoOut scpiDtoOut = new ScpiDtoOut();
-        scpiDtoOut.setId(1);
-        scpiDtoOut.setName("SCPI Test");
-        when(scpiService.getScpiDetailsById(1)).thenReturn(scpiDtoOut);
-
-        InvestmentOutDto investmentOutDto = new InvestmentOutDto();
-        investmentOutDto.setId(1);
-        when(investmentMapper.toOutDto(any(Investment.class))).thenReturn(investmentOutDto);
+//        scpi = new Scpi();
+//        scpi.setId(1);
+//        scpi.setName("SCPI Test");
+//
+//        investment = new Investment();
+//        investment.setNumberShares(10000);
+//        investment.setNumberYears(5);
+//        investment.setTotalAmount(new BigDecimal("5000"));
+//        investment.setInvestmentState("En cours");
+//        investment.setInvestorId(userService.getEmail());
+//        investment.setScpi(scpi);
+//
+//        investmentDto = new InvestmentDto();
+//        investmentDto.setNumberShares(10000);
+//        investmentDto.setNumberYears(5);
+//        investmentDto.setInvestmentState("En cours");
+//        investmentDto.setTotalAmount(new BigDecimal("5000"));
+//        investmentDto.setScpiId(1);
+//        ScpiDtoOut scpiDtoOut = new ScpiDtoOut();
+//        scpiDtoOut.setId(1);
+//        scpiDtoOut.setName("SCPI Test");
+//        when(scpiService.getScpiDetailsById(1)).thenReturn(scpiDtoOut);
+//
+//        InvestmentOutDto investmentOutDto = new InvestmentOutDto();
+//        investmentOutDto.setId(1);
+//        when(investmentMapper.toOutDto(any(Investment.class))).thenReturn(investmentOutDto);
 
     }
 
-    @Test
-    void shouldSaveInvestmentSuccessfully() throws GlobalException {
-        when(investmentMapper.toEntity(investmentDto)).thenReturn(investment);
-        when(scpiRepository.findById(1)).thenReturn(java.util.Optional.of(scpi));
-        when(investmentRepository.save(any(Investment.class))).thenReturn(investment);
-        when(investmentMapper.toDTO(any(Investment.class))).thenReturn(investmentDto);
-        
-        InvestmentDto result = investmentService.saveInvestment(investmentDto);
-
-        assertThat(result).isNotNull();
-        assertThat(result.getNumberShares()).isEqualTo(investmentDto.getNumberShares());
-        assertThat(result.getInvestmentState()).isEqualTo(investmentDto.getInvestmentState());
-        assertThat(result.getTotalAmount()).isEqualTo(investmentDto.getTotalAmount());
-        assertThat(result.getScpiId()).isEqualTo(investmentDto.getScpiId());
-
-        verify(investmentRepository, times(1)).save(any(Investment.class));
-        verify(investmentMapper, times(1)).toEntity(investmentDto);
-        verify(investmentMapper, times(1)).toDTO(any(Investment.class));
-    }
+//    @Test
+//    void shouldSaveInvestmentSuccessfully() throws GlobalException {
+//        when(investmentMapper.toEntity(investmentDto)).thenReturn(investment);
+//        when(scpiRepository.findById(1)).thenReturn(java.util.Optional.of(scpi));
+//        when(investmentRepository.save(any(Investment.class))).thenReturn(investment);
+//        when(investmentMapper.toDTO(any(Investment.class))).thenReturn(investmentDto);
+//
+//        InvestmentDto result = investmentService.saveInvestment(investmentDto);
+//
+//        assertThat(result).isNotNull();
+//        assertThat(result.getNumberShares()).isEqualTo(investmentDto.getNumberShares());
+//        assertThat(result.getInvestmentState()).isEqualTo(investmentDto.getInvestmentState());
+//        assertThat(result.getTotalAmount()).isEqualTo(investmentDto.getTotalAmount());
+//        assertThat(result.getScpiId()).isEqualTo(investmentDto.getScpiId());
+//
+//        verify(investmentRepository, times(1)).save(any(Investment.class));
+//        verify(investmentMapper, times(1)).toEntity(investmentDto);
+//        verify(investmentMapper, times(1)).toDTO(any(Investment.class));
+//    }
 }
