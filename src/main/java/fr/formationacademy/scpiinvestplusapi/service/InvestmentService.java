@@ -1,6 +1,9 @@
 package fr.formationacademy.scpiinvestplusapi.service;
 
-import fr.formationacademy.scpiinvestplusapi.dto.*;
+import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDto;
+import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDtoOut;
+import fr.formationacademy.scpiinvestplusapi.dto.ScpiDtoOut;
+import fr.formationacademy.scpiinvestplusapi.dto.ScpiRequestDto;
 import fr.formationacademy.scpiinvestplusapi.entity.Investment;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
@@ -25,12 +28,12 @@ public class InvestmentService {
     private final InvestmentMapper investmentMapper;
     private final ScpiRepository scpiRepository;
     private final UserService userService;
-    private final KafkaTemplate<String, InvestmentKafkaDto> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
 
     public InvestmentService(InvestmentRepository investmentRepository, ScpiService scpiService,
                              InvestmentMapper investmentMapper, ScpiRepository scpiRepository, UserService userService,
-                             KafkaTemplate<String, InvestmentKafkaDto> kafkaTemplate) {
+                             KafkaTemplate<String, Object> kafkaTemplate) {
         this.investmentRepository = investmentRepository;
         this.scpiService = scpiService;
         this.investmentMapper = investmentMapper;
@@ -71,20 +74,20 @@ public class InvestmentService {
         investment.setInvestorId(email);
         investment.setInvestmentState("En cours");
         investment.setScpi(scpiEntity);
-        
+
         Investment savedInvestment = investmentRepository.save(investment);
         log.info("Investissement enregistré avec succès - ID: {}", savedInvestment.getId());
 
-        InvestmentKafkaDto kafkaDto = new InvestmentKafkaDto();
-        InvestmentOutDto investmentOutDto = investmentMapper.toOutDto(savedInvestment);
-        investmentOutDto.setId(savedInvestment.getId());
-        kafkaDto.setInvestmentDto(investmentOutDto);
-        kafkaDto.setInvestorEmail(email);
-        kafkaDto.setScpi(scpiDtoOut);
-
-
-        log.info("Envoi la demande d'investissement au Bouchon pour Objet Traitement : {}", kafkaDto);
-        sendInvestment(kafkaDto);
+        ScpiRequestDto request = ScpiRequestDto.builder()
+                .investmentId(savedInvestment.getId())
+                .name(scpiDtoOut.getName())
+                .amount(investmentDto.getTotalAmount())
+                .propertyType(investmentDto.getTypeProperty())
+                .numberYears(investmentDto.getNumberYears())
+                .investorEmail(userService.getEmail())
+                .build();
+        log.info("Envoi la demande d'investissement au Bouchon pour Objet Traitement : {}", request);
+        sendInvestment(request);
         log.info("Investissement envoyé avec succès à Kafka - ID: {}", savedInvestment.getId());
 
         return investmentMapper.toDTO(savedInvestment);
@@ -95,8 +98,8 @@ public class InvestmentService {
         return investmentMapper.toDtoOutList(investmentRepository.findByInvestorId(userService.getEmail()));
     }
 
-    public void sendInvestment(InvestmentKafkaDto investmentKafkaDto) {
-        kafkaTemplate.send(SCPI_REQUEST_TOPIC, investmentKafkaDto);
+    public void sendInvestment(ScpiRequestDto scpiRequestDto) {
+        kafkaTemplate.send(SCPI_REQUEST_TOPIC, scpiRequestDto);
     }
 
 }
