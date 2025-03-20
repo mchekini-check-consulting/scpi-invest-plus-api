@@ -22,6 +22,7 @@ public class Investment {
     private BigDecimal totalAmount;
     private String investmentState;
     private String investorId;
+    private String rejectedReason;
     @ManyToOne
     @JoinColumn(name = "scpi_id", nullable = false)
     private Scpi scpi;
