@@ -13,9 +13,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class ScpiRequestDto {
-
     private Integer investmentId;
-    private String name;
+    private String scpiName;
     private BigDecimal amount;
     private String investorEmail;
     private PropertyType propertyType;
