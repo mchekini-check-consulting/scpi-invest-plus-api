@@ -80,7 +80,7 @@ public class InvestmentService {
 
         ScpiRequestDto request = ScpiRequestDto.builder()
                 .investmentId(savedInvestment.getId())
-                .name(scpiDtoOut.getName())
+                .scpiName(scpiDtoOut.getName())
                 .amount(investmentDto.getTotalAmount())
                 .propertyType(investmentDto.getTypeProperty())
                 .numberYears(investmentDto.getNumberYears())
@@ -92,7 +92,6 @@ public class InvestmentService {
 
         return investmentMapper.toDTO(savedInvestment);
     }
-
 
     public List<InvestmentDtoOut> getInvestments() {
         return investmentMapper.toDtoOutList(investmentRepository.findByInvestorId(userService.getEmail()));
