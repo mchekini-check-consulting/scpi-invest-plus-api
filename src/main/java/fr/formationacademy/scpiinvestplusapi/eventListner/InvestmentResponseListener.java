@@ -1,7 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.eventListner;
 
 import fr.formationacademy.scpiinvestplusapi.dto.InvestmentResponse;
-import fr.formationacademy.scpiinvestplusapi.enums.InvestmentState;
 import fr.formationacademy.scpiinvestplusapi.repository.InvestmentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
