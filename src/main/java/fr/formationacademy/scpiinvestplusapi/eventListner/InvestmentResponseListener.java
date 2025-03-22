@@ -1,33 +1,45 @@
 package fr.formationacademy.scpiinvestplusapi.eventListner;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import fr.formationacademy.scpiinvestplusapi.dto.InvestmentResponse;
+import fr.formationacademy.scpiinvestplusapi.enums.InvestmentState;
+import fr.formationacademy.scpiinvestplusapi.repository.InvestmentRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 import static fr.formationacademy.scpiinvestplusapi.utils.Constants.SCPI_PARTNER_GROUP;
 import static fr.formationacademy.scpiinvestplusapi.utils.Constants.SCPI_PARTNER_RESPONSE_TOPIC;
 
 @Component
+@Slf4j
 public class InvestmentResponseListener {
-    private static final Logger logger = LoggerFactory.getLogger(InvestmentResponseListener.class);
 
-    @KafkaListener(topics = SCPI_PARTNER_RESPONSE_TOPIC, groupId = SCPI_PARTNER_GROUP)
-    public void consumeResponse(ConsumerRecord<String, Map<String, Object>> record) {
-        logger.info("Received investment response: {}", record);
-        Map<String, Object> response = record.value();
-        logger.info("Réponse de la demande d'investissement reçu du topic {} : {}", SCPI_PARTNER_RESPONSE_TOPIC, response);
-        processResponse(response);
+    private final InvestmentRepository investmentRepository;
+
+    public InvestmentResponseListener(InvestmentRepository investmentRepository) {
+        this.investmentRepository = investmentRepository;
     }
 
-    private void processResponse(Map<String, Object> response) {
-        String status = (String) response.get("status");
-        String investorEmail = (String) response.get("investorEmail");
-        String scpiName = (String) response.get("scpiName");
+    @KafkaListener(topics = SCPI_PARTNER_RESPONSE_TOPIC, groupId = SCPI_PARTNER_GROUP)
+    public void consumeResponse(InvestmentResponse response) {
+        log.info("Received investment response: {}", response);
+        try {
+            if (response != null) {
+                log.info("Réponse de la demande d'investissement reçu : {}", response);
+                processResponse(response);
+            } else {
+                log.error("Message Kafka vide ou mal formé");
+            }
+        } catch (Exception e) {
+            log.error("Erreur de traitement du message Kafka : {}", e.getMessage(), e);
+        }
+    }
 
-        logger.info("Traitement du message : Status={}, InvestorEmail={}, ScpiName={}", status, investorEmail, scpiName);
+    private void processResponse(InvestmentResponse response) {
+        investmentRepository.findById(response.getInvestmentId()).ifPresent(investment -> {
+            investment.setInvestmentState(response.getInvestmentState().toString());
+            investment.setRejectedReason(response.getRejectionReason());
+            investmentRepository.save(investment);
+        });
     }
 }
