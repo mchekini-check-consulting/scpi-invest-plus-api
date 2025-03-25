@@ -23,7 +23,7 @@ public class ScpiService {
     }
 
     public List<ScpiDtoOut> getScpis() {
-        List<Scpi> scpis = scpiRepository.findAll();
+        List<Scpi> scpis = scpiRepository.findAllOrderByLatestDistributionRateDesc();
         return scpiMapper.scpiToScpiDtoOut(scpis);
     }
     public List<ScpiDtoOut> getScpiWithFilter(SearchScpiDto searchScpiDto) {
