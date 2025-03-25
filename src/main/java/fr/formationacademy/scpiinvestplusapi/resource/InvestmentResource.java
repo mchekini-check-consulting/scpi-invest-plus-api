@@ -14,8 +14,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 
+import static fr.formationacademy.scpiinvestplusapi.utils.Constants.APP_ROOT;
+
 @RestController
-@RequestMapping("/api/v1/investment")
+@RequestMapping(APP_ROOT + "investment")
 @Tag(name = "Investissements", description = "API pour la gestion des investissements")
 public class InvestmentResource {
 

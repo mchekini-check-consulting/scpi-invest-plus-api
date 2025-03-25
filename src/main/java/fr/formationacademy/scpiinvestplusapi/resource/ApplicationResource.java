@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static fr.formationacademy.scpiinvestplusapi.utils.Constants.APP_ROOT;
+
 @RestController
-@RequestMapping("api/v1/application")
+@RequestMapping(APP_ROOT + "application")
 @Slf4j
 public class ApplicationResource {
 
