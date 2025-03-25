@@ -33,4 +33,14 @@ ScpiRepository extends JpaRepository<Scpi, Integer> {
     @Query("SELECT s FROM Scpi s WHERE s.name IN :names")
     Set<Scpi> findByNameIn(@Param("names") List<String> names);
 
+    @Query("""
+        SELECT s FROM Scpi s
+        LEFT JOIN s.statYears sy
+        WHERE sy.yearStat.yearStat = (
+            SELECT MAX(sy2.yearStat.yearStat) FROM StatYear sy2 WHERE sy2.scpi = s
+        ) OR sy.yearStat IS NULL
+        ORDER BY sy.distributionRate DESC, sy.sharePrice DESC, sy.reconstitutionValue DESC
+    """)
+    List<Scpi> findAllOrderByLatestDistributionRateDesc();
+
 }
