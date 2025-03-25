@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public interface LocationRepository extends JpaRepository<Location, LocationId> {
-
     @Query("SELECT l FROM Location l WHERE l.id.scpiId = :scpiId")
     List<Location> findByScpiId(@Param("scpiId") Integer scpiId);
 }

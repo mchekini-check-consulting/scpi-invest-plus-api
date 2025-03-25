@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static fr.formationacademy.scpiinvestplusapi.utils.Constants.APP_ROOT;
+
 @Tag(name = "Gestion des Plans", description = "Points d'accès pour la gestion des plans d'abonnement")
 @RestController
-@RequestMapping("/api/v1/plans")
+@RequestMapping(APP_ROOT + "plans")
 public class PlanRessource {
 
     private final PlanService planService;

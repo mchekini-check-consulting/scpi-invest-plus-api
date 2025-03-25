@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static fr.formationacademy.scpiinvestplusapi.utils.Constants.APP_ROOT;
+
 @RestController
-@RequestMapping(path = "/api/v1/scpi")
+@RequestMapping(path = APP_ROOT + "scpi")
 public class ScpiResource {
     private final ScpiService scpiService;
 
