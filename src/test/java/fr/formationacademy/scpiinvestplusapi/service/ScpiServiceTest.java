@@ -85,10 +85,10 @@ class ScpiServiceTest {
                         .build()
         );
 
-        lenient().when(scpiRepository.findAll()).thenReturn(mockScpiEntities);
+        lenient().when(scpiRepository.findAllOrderByLatestDistributionRateDesc()).thenReturn(mockScpiEntities);
         lenient().when(scpiMapper.scpiToScpiDtoOut(mockScpiEntities)).thenReturn(mockScpiDtoEntities);
         List<ScpiDtoOut> result = underTest.getScpis();
-        verify(scpiRepository).findAll();
+        verify(scpiRepository).findAllOrderByLatestDistributionRateDesc();
         verify(scpiMapper).scpiToScpiDtoOut(mockScpiEntities);
         assertNotNull(result);
         assertEquals(mockScpiDtoEntities, result);
