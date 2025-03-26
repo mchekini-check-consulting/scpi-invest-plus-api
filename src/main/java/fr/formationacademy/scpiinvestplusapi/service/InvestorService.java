@@ -18,12 +18,12 @@ public class InvestorService {
 
     private final InvestorRepository investorRepository;
     private final InvestorMapper investorMapper;
-    private final UserService userService;
 
-    public InvestorService(InvestorRepository investorRepository, InvestorMapper investorMapper, UserService userService) {
+
+    public InvestorService(InvestorRepository investorRepository, InvestorMapper investorMapper) {
         this.investorRepository = investorRepository;
         this.investorMapper = investorMapper;
-        this.userService = userService;
+
     }
 
 
@@ -36,7 +36,9 @@ public class InvestorService {
             throw new GlobalException(HttpStatus.CONFLICT, "An investor with this email already exists.");
         }
 
+        log.info("saving ne Investor");
         return investorRepository.save(newInvestor);
+
     }
 
     public Investor updateInvestor(String email, InvestorDTO investorDTO) throws GlobalException{
