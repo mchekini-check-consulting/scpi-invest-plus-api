@@ -13,16 +13,16 @@ public class KafkaTopicConfig {
     @Bean
     public NewTopic getTopic() {
         return TopicBuilder.name(SCPI_REQUEST_TOPIC)
-                .partitions(1)
-                .replicas(1)
+                .partitions(2)
+                .replicas(2)
                 .build();
     }
 
     @Bean
     public NewTopic getResponseTopic() {
         return TopicBuilder.name(SCPI_PARTNER_RESPONSE_TOPIC)
-                .partitions(1)
-                .replicas(1)
+                .partitions(2)
+                .replicas(2)
                 .build();
     }
 }

@@ -8,6 +8,8 @@ services:
       - POSTGRES_DB=postgres
     ports:
       - "5432:5432"
+
+
   scpi-invest-plus-api:
     build:
       context: .
@@ -17,29 +19,54 @@ services:
       - "scpi-invest-db:scpi-invest-db"
     ports:
       - "8080:8080"
+
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_SERVER_ID: 1
     ports:
       - "2181:2181"
-  kafka:
+
+  kafka-1:
     image: confluentinc/cp-kafka:6.1.1
-    container_name: kafka
-    hostname: broker1
+    container_name: kafka-1
+    hostname: kafka-1
     ports:
       - "9092:9092"
-      - "9094:9092"
+      - "19092:19092"
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: localhost
-      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,OUTSIDE://0.0.0.0:9094
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://localhost:9092,OUTSIDE://kafka:9094
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9092,OUTSIDE://0.0.0.0:19092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-1:9092,OUTSIDE://host.docker.internal:19092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    depends_on:
+      - zookeeper
+
+
+  kafka-2:
+    image: confluentinc/cp-kafka:6.1.1
+    container_name: kafka-2
+    hostname: kafka-2
+    ports:
+      - "9093:9093"
+      - "19093:19093"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:9093,OUTSIDE://0.0.0.0:19093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka-2:9093,OUTSIDE://host.docker.internal:19093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    depends_on:
+      - zookeeper
 
   kafka-ui:
     image: provectuslabs/kafka-ui
@@ -49,9 +76,12 @@ services:
     restart: always
     environment:
       - KAFKA_CLUSTERS_0_NAME=scpi-invest
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9094
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka-1:19092,kafka-1:19093
       - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
-    links:
-      - "kafka:kafka"
     depends_on:
-      - kafka
+      - kafka-1
+      - kafka-2
+
+networks:
+  scpi-invest-network:
+    driver: bridge
