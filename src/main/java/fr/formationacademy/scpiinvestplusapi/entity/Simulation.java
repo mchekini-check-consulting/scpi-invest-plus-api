@@ -18,6 +18,8 @@ public class Simulation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+
     private String name;
     private LocalDate simulationDate;
     private String investorEmail;
