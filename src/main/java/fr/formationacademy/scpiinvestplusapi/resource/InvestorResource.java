@@ -4,18 +4,20 @@ import fr.formationacademy.scpiinvestplusapi.dto.InvestorDTO;
 import fr.formationacademy.scpiinvestplusapi.entity.Investor;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.service.InvestorService;
+import fr.formationacademy.scpiinvestplusapi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
 
 import static fr.formationacademy.scpiinvestplusapi.utils.Constants.APP_ROOT;
 
@@ -25,9 +27,11 @@ import static fr.formationacademy.scpiinvestplusapi.utils.Constants.APP_ROOT;
 public class InvestorResource {
 
     private final InvestorService investorService;
+    private final UserService userService;
 
-    public InvestorResource(InvestorService investorService) {
+    public InvestorResource(InvestorService investorService, UserService userService) {
         this.investorService = investorService;
+        this.userService = userService;
     }
 
     @Operation(
@@ -39,7 +43,7 @@ public class InvestorResource {
             @ApiResponse(responseCode = "400", description = "Requête invalide"),
             @ApiResponse(responseCode = "500", description = "Erreur interne du serveur")
     })
-    @PostMapping
+    @PostMapping("")
     public ResponseEntity<Investor> createInvestor(
             @RequestBody InvestorDTO investorDTO
     ) throws GlobalException {
@@ -57,19 +61,18 @@ public class InvestorResource {
             @ApiResponse(responseCode = "400", description = "Données de mise à jour invalides"),
             @ApiResponse(responseCode = "500", description = "Erreur interne du serveur")
     })
-    @PatchMapping("/{email}")
+    @PatchMapping("")
     public ResponseEntity<Investor> updateInvestor(
-            @PathVariable @Parameter(description = "Email de l'investisseur à mettre à jour", required = true) String email,
             @RequestBody InvestorDTO investorDTO
     ) throws GlobalException {
-        Investor updatedInvestor = investorService.updateInvestor(email, investorDTO);
+        Investor updatedInvestor = investorService.updateInvestor(userService.getEmail(), investorDTO);
         return ResponseEntity.ok(updatedInvestor);
     }
 
     @Operation(summary = "Récupérer un investisseur par email")
-    @GetMapping("/{email}")
-    public ResponseEntity<Investor> getInvestorByEmail(@PathVariable String email) {
-        return investorService.getInvestorByEmail(email).map(ResponseEntity::ok)
+    @GetMapping("")
+    public ResponseEntity<Investor> getInvestorByEmail() {
+        return investorService.getInvestorByEmail(userService.getEmail()).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
