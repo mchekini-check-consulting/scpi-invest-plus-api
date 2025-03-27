@@ -12,9 +12,8 @@ import org.springframework.data.elasticsearch.annotations.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(indexName = "scpisearch")
-public class ScpiSearch {
-
+@Document(indexName = "scpi")
+public class ScpiIndex {
 
     @Id
     private String id;

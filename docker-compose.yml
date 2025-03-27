@@ -25,6 +25,7 @@ services:
       start_period: 20s
       timeout: 5s
 
+
   scpi-invest-plus-api:
     build:
       context: .
@@ -53,6 +54,7 @@ services:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
       - "5601:5601"
+
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
