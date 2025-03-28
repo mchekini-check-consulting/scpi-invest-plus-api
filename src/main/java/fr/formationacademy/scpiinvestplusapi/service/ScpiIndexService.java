@@ -33,20 +33,22 @@ public class ScpiIndexService {
     private void createIndexWithMapping() throws IOException {
 
         String mappingJson = """
-        {
-          "mappings": {
-            "properties": {
-              "id": { "type": "keyword" },
-              "name": { "type": "text" },
-              "minimumSubscription": { "type": "integer" },
-              "subscriptionFees": { "type": "double" },
-              "managementCosts": { "type": "double" },
-              "frequencyPayment": { "type": "keyword" },
-              "minimumInvestmentAmount": { "type": "float" }
-            }
-          }
-        }
-    """;
+                    {
+                      "mappings": {
+                        "properties": {
+                          "id": { "type": "keyword" },
+                          "name": { "type": "text" },
+                          "minimumSubscription": { "type": "integer" },
+                          "subscriptionFees": { "type": "double" },
+                          "managementCosts": { "type": "double" },
+                          "frequencyPayment": { "type": "keyword" },
+                          "minimumInvestmentAmount": { "type": "float" }
+                          "locations": { "type": "keyword" },
+                          "sectors": { "type": "keyword" }
+                        }
+                      }
+                    }
+                """;
 
         elasticsearchClient.indices().create(c -> c
                 .index(INDEX_NAME)
