@@ -1,9 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.entity;
 
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,18 +22,12 @@ public class ScpiIndex {
     private String id;
     private String name;
     private Integer minimumSubscription;
-    private String manager;
-    private Long capitalization;
     private BigDecimal subscriptionFees;
     private BigDecimal managementCosts;
-    private Integer enjoymentDelay;
     private String frequencyPayment;
-    private Float cashback;
-    private String advertising;
-    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Location> locations;
 
-    @OneToMany(mappedBy = "scpi", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Sector> sectors;
+   // private List<Location> locations;
+   // private List<Sector> sectors;
+    private Float minimumInvestmentAmount;
 
 }
