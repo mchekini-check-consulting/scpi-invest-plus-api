@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,5 +21,13 @@ public class ScpiIndex {
     @Id
     private String id;
     private String name;
+    private Integer minimumSubscription;
+    private BigDecimal subscriptionFees;
+    private BigDecimal managementCosts;
+    private String frequencyPayment;
+
+   // private List<Location> locations;
+   // private List<Sector> sectors;
+    private Float minimumInvestmentAmount;
 
 }
