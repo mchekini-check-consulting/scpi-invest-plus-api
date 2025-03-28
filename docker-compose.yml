@@ -31,9 +31,12 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: scpi-invest-plus-api
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
     links:
-      - "scpi-invest-db:scpi-invest-db"
-      - "elasticsearch:elasticsearch"
+        - scpi-invest-db
+        - elasticsearch
     ports:
       - "8080:8080"
     environment:

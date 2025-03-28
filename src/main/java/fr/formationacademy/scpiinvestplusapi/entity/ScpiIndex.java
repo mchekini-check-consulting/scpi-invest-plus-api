@@ -25,7 +25,6 @@ public class ScpiIndex {
     private BigDecimal subscriptionFees;
     private BigDecimal managementCosts;
     private String frequencyPayment;
-
     private List<String> locations;
     private List<String> sectors;
     private Float minimumInvestmentAmount;
