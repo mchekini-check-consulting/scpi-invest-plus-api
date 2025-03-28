@@ -6,11 +6,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "Recherche des SCPI", description = "API pour faire des recherches avec Elasticsearch")
-@RestController // Remplacement de @Controller par @RestController pour éviter d'écrire @ResponseBody
-@RequestMapping("/api/v1/scpiSearch")
+@RestController
+@RequestMapping("/api/v1/scpi")
 public class ScpiIndexResource {
 
     private final ScpiIndexService scpiSearchService;
@@ -24,7 +25,7 @@ public class ScpiIndexResource {
             description = "Permet d'enregistrer plusieurs recherches SCPI dans Elasticsearch"
     )
     @PostMapping
-    public Iterable<ScpiIndex> saveMultipleScpiSearch(@RequestBody List<ScpiIndex> scpiSearchList) {
-        return scpiSearchService.saveMultipleScpiSearch(scpiSearchList);
+    public boolean saveMultipleScpiSearch(@RequestBody List<ScpiIndex> scpiSearchList) throws IOException {
+        return scpiSearchService.saveMultipleScpiIndex(scpiSearchList);
     }
 }
