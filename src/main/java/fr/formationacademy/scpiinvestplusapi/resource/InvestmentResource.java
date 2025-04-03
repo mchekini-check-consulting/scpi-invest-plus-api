@@ -6,6 +6,10 @@ import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDtoOut;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.service.InvestmentService;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/investment")
 @Tag(name = "Investissements", description = "API pour la gestion des investissements")
+@Slf4j
 public class InvestmentResource {
 
     private final InvestmentService investmentService;
@@ -44,7 +49,28 @@ public class InvestmentResource {
 
     @Operation(summary = "Recupérer la liste des investissements d'un investisseur authentifié", description = "Cette API permet d'obtenir la liste complète des investissements d'un investisseur actuellement authentifié.")
     @GetMapping
-    public ResponseEntity<List<InvestmentDtoOut>> getInvestments() {
-        return ResponseEntity.ok(investmentService.getInvestments());
+    public ResponseEntity<List<InvestmentDtoOut>> getInvestments(
+            @RequestParam(required = false, defaultValue = "VALIDATED", value = "state") String state
+    ) {
+        return ResponseEntity.ok(investmentService.getInvestments(state));
+    }
+
+    @Operation(summary = "Recupérer la liste des investissements d'un investisseur authentifié", description = "Cette API permet d'obtenir la liste complète des investissements d'un investisseur actuellement authentifié.")
+    @GetMapping("/page")
+    public ResponseEntity<Page<InvestmentDtoOut>> getInvestments(
+            @PageableDefault(size = 15) Pageable pageable, @RequestParam(required = false, defaultValue = "VALIDATED", value = "state") String state
+
+    ) {
+        Page<InvestmentDtoOut> investments = investmentService.getPageableInvestments(pageable, state);
+
+        System.out.println("State: " + state);
+        investments.forEach(investment ->
+                System.out.println("Investment ID: " + investment.getId() +
+                        ", SCPI Name: " + investment.getScpiName() +
+                        ", Amount: " + investment.getTotalAmount() +
+                        ", Property: " + investment.getTypeProperty()
+                )
+        );
+        return ResponseEntity.ok(investments);
     }
 }

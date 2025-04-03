@@ -1,6 +1,7 @@
 package fr.formationacademy.scpiinvestplusapi.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 import jakarta.persistence.*;
@@ -23,8 +24,9 @@ public class Investment {
     private String investmentState;
     private String investorId;
     private String rejectedReason;
+    private LocalDate createdAt;
+
     @ManyToOne
     @JoinColumn(name = "scpi_id", nullable = false)
     private Scpi scpi;
-
 }
