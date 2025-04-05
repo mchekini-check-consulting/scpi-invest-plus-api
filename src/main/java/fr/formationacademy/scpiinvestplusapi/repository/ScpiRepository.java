@@ -4,11 +4,9 @@ package fr.formationacademy.scpiinvestplusapi.repository;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public interface
@@ -29,9 +27,6 @@ ScpiRepository extends JpaRepository<Scpi, Integer> {
     )
     """)
     List<Scpi> searchScpi(String searchTerm, List<String> location, List<String> sector, double minimumSubscription,double distributionRate, Boolean subscriptionFees);
-
-    @Query("SELECT s FROM Scpi s WHERE s.name IN :names")
-    Set<Scpi> findByNameIn(@Param("names") List<String> names);
 
     @Query("""
         SELECT s FROM Scpi s
