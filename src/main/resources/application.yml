@@ -9,6 +9,9 @@ spring:
     password: postgres
     driver-class-name: org.postgresql.Driver
 
+  elasticsearch:
+    uris: http://elasticsearch:9200
+
   jpa:
     database: postgresql
     hibernate:
@@ -21,8 +24,6 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
-
 
   security:
     oauth2:
