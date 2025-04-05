@@ -4,3 +4,5 @@ spring:
   kafka:
     bootstrap-servers: localhost:9094
 
+  elasticsearch:
+      uris: http://localhost:9200
