@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StatYearRepository extends JpaRepository<StatYear, StatYearId> {
-    boolean existsByYearStat(StatYearId yearStat);
 
 }
