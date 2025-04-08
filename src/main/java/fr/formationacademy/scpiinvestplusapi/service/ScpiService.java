@@ -26,6 +26,7 @@ public class ScpiService {
         List<Scpi> scpis = scpiRepository.findAllOrderByLatestDistributionRateDesc();
         return scpiMapper.scpiToScpiDtoOut(scpis);
     }
+
     public List<ScpiDtoOut> getScpiWithFilter(SearchScpiDto searchScpiDto) {
         String searchTerm = (searchScpiDto.getSearchTerm() != null && !searchScpiDto.getSearchTerm().trim().isEmpty())
                 ? searchScpiDto.getSearchTerm().trim()
@@ -56,9 +57,9 @@ public class ScpiService {
     }
 
     public List<ScpiDtoOut> getAllScpis() {
-        return  scpiRepository.findAll()
+        return scpiRepository.findAll()
                 .stream()
-                .map(scpiMapper :: scpiToScpiDtoOut)
+                .map(scpiMapper::scpiToScpiDtoOut)
                 .toList();
     }
 
@@ -74,6 +75,11 @@ public class ScpiService {
         } else {
             log.info("Aucune SCPI à supprimer.");
         }
+    }
+
+
+    public List<ScpiDtoOut> getScpisWithScheduledPayment() {
+        return scpiMapper.scpiToScpiDtoOut(scpiRepository.findByScheduledPaymentTrue());
     }
 
 }

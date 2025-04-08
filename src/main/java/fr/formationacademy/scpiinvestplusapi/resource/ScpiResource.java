@@ -34,17 +34,18 @@ public class ScpiResource {
             summary = "Recherche des SCPI avec filtres",
             description = "Permet de rechercher des SCPI en appliquant des filtres spécifiques.",
             responses = {
-        @ApiResponse(responseCode = "200", description = "Liste des SCPI trouvées",
-                content = @Content(mediaType = "application/json",
-                        schema = @Schema(implementation = ScpiDtoOut.class))),
-        @ApiResponse(responseCode = "400", description = "Requête invalide"),
-        @ApiResponse(responseCode = "500", description = "Erreur serveur")
-    }
+                    @ApiResponse(responseCode = "200", description = "Liste des SCPI trouvées",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ScpiDtoOut.class))),
+                    @ApiResponse(responseCode = "400", description = "Requête invalide"),
+                    @ApiResponse(responseCode = "500", description = "Erreur serveur")
+            }
     )
     @PostMapping("/search")
     public ResponseEntity<List<ScpiDtoOut>> getScpiWithFilter(@RequestBody SearchScpiDto searchScpiDto) {
         return ResponseEntity.ok(scpiService.getScpiWithFilter(searchScpiDto));
     }
+
     @Operation(summary = "Retrieve SCPI details by ID",
             description = "Returns SCPI details as a DTO based on the provided ID.")
     @ApiResponses(value = {
@@ -58,6 +59,7 @@ public class ScpiResource {
     public ResponseEntity<ScpiDtoOut> getDetailsById(@PathVariable Integer scpid) {
         return ResponseEntity.ok(scpiService.getScpiDetailsById(scpid));
     }
+
     @Operation(
             summary = "Récupérer la liste des SCPI avec tous leurs détailler",
             description = "Retourne toutes les SCPI disponibles sous forme de liste d'objets ScpiDtoOut."
@@ -68,4 +70,14 @@ public class ScpiResource {
     public List<ScpiDtoOut> getAllScpis() {
         return scpiService.getAllScpis();
     }
+
+    @Operation(
+            summary = "Récupérer les SCPI avec versement programmé",
+            description = "Retourne la liste des SCPI pour lesquelles le versement programmé est activé."
+    )
+    @GetMapping("/scheduled")
+    public List<ScpiDtoOut> getScpisWithScheduledPayment() {
+        return scpiService.getScpisWithScheduledPayment();
+    }
+
 }
