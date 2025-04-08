@@ -21,7 +21,9 @@ spec:
           imagePullPolicy: Always
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value:  "{{.Values.application.environment }}"
+              value:  "{{ .Values.application.environment }}"
           envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-configmap
             - secretRef:
                 name: api-db-credentials

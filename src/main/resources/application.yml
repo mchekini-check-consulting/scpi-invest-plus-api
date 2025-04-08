@@ -4,8 +4,8 @@ spring:
     version: 1.0.0
 
   datasource:
-    url: jdbc:postgresql://scpi-invest-db:5432/postgres
-    username: postgres
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
     password: postgres
     driver-class-name: org.postgresql.Driver
 
@@ -17,7 +17,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   kafka:
-    bootstrap-servers: kafka-svc.kafka:9094
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -28,9 +28,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://keycloak.check-consulting.net/realms/master
-          jwk-set-uri: https://keycloak.check-consulting.net/realms/master/protocol/openid-connect/certs
-
+          issuer-uri: ${SPRING_SECURITY_ISSUER_URI}
+          jwk-set-uri: ${SPRING_SECURITY_JWK_URI}
 
 management:
   endpoints:

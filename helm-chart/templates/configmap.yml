@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  SPRING_DATASOURCE_URL: "{{ .Values.database.url }}"
+  SPRING_DATASOURCE_USERNAME: "{{ .Values.database.username }}"
+  SPRING_KAFKA_BOOTSTRAP_SERVERS: "{{ .Values.kafka.bootstrapServers }}"
+  SPRING_SECURITY_ISSUER_URI: "{{ .Values.security.oauth2.issuerUri }}"
+  SPRING_SECURITY_JWK_URI: "{{ .Values.security.oauth2.jwkSetUri }}"

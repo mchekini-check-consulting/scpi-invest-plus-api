@@ -5,3 +5,15 @@ image:
 
 application:
   environment: int
+
+database:
+  url: jdbc:postgresql://localhost:5432/postgres
+  username: postgres
+
+kafka:
+  bootstrapServers: localhost:9092
+
+security:
+  oauth2:
+    issuerUri: https://keycloak.local/realms/dev
+    jwkSetUri: https://keycloak.local/realms/dev/protocol/openid-connect/certs
