@@ -42,7 +42,7 @@ public class ScpiIndexService {
 
             SearchResponse<ScpiDocumentDTO> response = elasticsearchClient.search(s -> s
                             .index(INDEX_NAME)
-                            .size(51)
+                            .size(52)
                             .query(q -> q.matchAll(m -> m)),
                     ScpiDocumentDTO.class);
 
