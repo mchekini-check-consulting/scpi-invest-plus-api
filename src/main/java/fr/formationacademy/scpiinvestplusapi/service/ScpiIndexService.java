@@ -98,7 +98,6 @@ public class ScpiIndexService {
             ));
         }
 
-
         if (subscriptionFees != null) {
             log.info("Searching with subscriptionFees: {}", subscriptionFees);
             if (subscriptionFees) {
