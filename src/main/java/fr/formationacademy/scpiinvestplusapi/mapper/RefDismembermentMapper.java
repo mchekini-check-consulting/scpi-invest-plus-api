@@ -16,7 +16,6 @@ public interface RefDismembermentMapper {
 
     List<RefDismembermentDto> toDTOList(List<RefDismemberment> refDismemberments);
 
-    @Mapping(target = "propertyType", ignore = true)
     RefDismemberment toEntity(RefDismembermentDto refDismembermentDTO);
 
     List<RefDismemberment> toEntityList(List<RefDismembermentDto> refDismembermentDTOs);

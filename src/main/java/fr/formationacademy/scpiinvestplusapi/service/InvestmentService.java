@@ -9,12 +9,16 @@ import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.mapper.InvestmentMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.InvestmentRepository;
+import fr.formationacademy.scpiinvestplusapi.repository.PaginationRepository;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static fr.formationacademy.scpiinvestplusapi.utils.Constants.SCPI_REQUEST_TOPIC;
@@ -29,18 +33,19 @@ public class InvestmentService {
     private final ScpiRepository scpiRepository;
     private final UserService userService;
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final PaginationRepository paginationRepository;
 
 
     public InvestmentService(InvestmentRepository investmentRepository, ScpiService scpiService,
                              InvestmentMapper investmentMapper, ScpiRepository scpiRepository, UserService userService,
-                             KafkaTemplate<String, Object> kafkaTemplate) {
+                             KafkaTemplate<String, Object> kafkaTemplate, PaginationRepository paginationRepository) {
         this.investmentRepository = investmentRepository;
         this.scpiService = scpiService;
         this.investmentMapper = investmentMapper;
         this.scpiRepository = scpiRepository;
         this.userService = userService;
         this.kafkaTemplate = kafkaTemplate;
-
+        this.paginationRepository = paginationRepository;
     }
 
     public InvestmentDto saveInvestment(InvestmentDto investmentDto) throws GlobalException {
@@ -74,6 +79,8 @@ public class InvestmentService {
         investment.setInvestorId(email);
         investment.setInvestmentState("En cours");
         investment.setScpi(scpiEntity);
+        investment.setCreatedAt(LocalDate.now());
+
 
         Investment savedInvestment = investmentRepository.save(investment);
         log.info("Investissement enregistré avec succès - ID: {}", savedInvestment.getId());
@@ -93,8 +100,13 @@ public class InvestmentService {
         return investmentMapper.toDTO(savedInvestment);
     }
 
-    public List<InvestmentDtoOut> getInvestments() {
-        return investmentMapper.toDtoOutList(investmentRepository.findByInvestorId(userService.getEmail()));
+    public List<InvestmentDtoOut> getInvestments(String state) {
+        return investmentMapper.toDtoOutList(investmentRepository.findByInvestorIdAndInvestmentState(userService.getEmail(), state));
+    }
+
+    public Page<InvestmentDtoOut> getPageableInvestments(Pageable pageable, String state) {
+        Page<Investment> investments = paginationRepository.findByInvestorIdAndInvestmentState(userService.getEmail(), pageable, state);
+        return investmentMapper.toDtoOutPage(investments);
     }
 
     public void sendInvestment(ScpiRequestDto scpiRequestDto) {

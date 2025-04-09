@@ -4,6 +4,7 @@ import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Data
 public class InvestmentOutDto {
@@ -15,4 +16,5 @@ public class InvestmentOutDto {
     private Integer scpiId;
     private String scpiName;
     private String investmentState;
+    private LocalDate createdAt;
 }
