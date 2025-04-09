@@ -98,12 +98,24 @@ public class ScpiIndexService {
             ));
         }
 
+
         if (subscriptionFees != null) {
             log.info("Searching with subscriptionFees: {}", subscriptionFees);
-            boolQuery.filter(f -> f.term(t -> t
-                    .field("subscriptionFees")
-                    .value(subscriptionFees)
-            ));
+            if (subscriptionFees) {
+
+                boolQuery.filter(f -> f.range(r -> r
+                        .term(t -> t.field("subscriptionFeesBigDecimal")
+                        .gt(String.valueOf(0))
+                        )
+                ));
+
+            } else {
+
+                boolQuery.filter(f -> f.term(t -> t
+                        .field("subscriptionFeesBigDecimal")
+                        .value(0)
+                ));
+            }
         }
 
         if (frequencyPayment != null && !frequencyPayment.trim().isEmpty()) {
