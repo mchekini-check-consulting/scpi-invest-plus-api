@@ -1,6 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.resource;
 
-import fr.formationacademy.scpiinvestplusapi.dto.ScpiIndexDto;
+import fr.formationacademy.scpiinvestplusapi.dto.ScpiDocumentDTO;
 import fr.formationacademy.scpiinvestplusapi.service.ScpiIndexService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -42,10 +43,10 @@ public class ScpiIndexResource {
             @RequestParam(required = false) String name,
 
             @Parameter(description = "", example = "10")
-            @RequestParam(required = false) Float distributionRate,
+            @RequestParam(required = false) BigDecimal distributionRate,
 
             @Parameter(description = "", example = "100")
-            @RequestParam(required = false) Float minimumSubscription,
+            @RequestParam(required = false) Integer minimumSubscription,
 
 
             @RequestParam(required = false) Boolean subscriptionFees,
@@ -61,7 +62,7 @@ public class ScpiIndexResource {
     ) {
 
         try {
-            List<ScpiIndexDto> results = scpiSearchService.searchScpi(name, distributionRate,minimumSubscription,subscriptionFees,frequencyPayment,locations,sectors);
+            List<ScpiDocumentDTO> results = scpiSearchService.searchScpi(name, distributionRate,minimumSubscription,subscriptionFees,frequencyPayment,locations,sectors);
 
             if (results.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -81,5 +82,28 @@ public class ScpiIndexResource {
                             "details", e.getMessage()
                     ));
         }
+    }
+
+    @Operation(
+            summary = "Récupérer toutes les SCPI (sans filtre)",
+            description = "Retourne toutes les SCPI de l'index Elasticsearch sans appliquer de filtre"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Liste des SCPI"),
+            @ApiResponse(responseCode = "500", description = "Erreur serveur")
+    })
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllScpi() {
+        Object result = scpiSearchService.getAllScpi();
+
+        if (result instanceof String) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of(
+                            "status", "error",
+                            "message", result
+                    ));
+        }
+
+        return ResponseEntity.ok(result);
     }
 }

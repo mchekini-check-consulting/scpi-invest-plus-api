@@ -4,10 +4,11 @@ package fr.formationacademy.scpiinvestplusapi.service;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
-import fr.formationacademy.scpiinvestplusapi.dto.ScpiIndexDto;
+import fr.formationacademy.scpiinvestplusapi.dto.ScpiDocumentDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,9 +26,9 @@ public class ScpiIndexService {
         this.elasticsearchClient = elasticsearchClient;
     }
 
-    public List<ScpiIndexDto> searchScpi(String name, Float distributionRate, Float minimumSubscription, Boolean subscriptionFees, String frequencyPayment, List<String> locations, List<String> sectors) throws IOException {
+    public List<ScpiDocumentDTO> searchScpi(String name, BigDecimal distributionRate, Integer minimumSubscription, Boolean subscriptionFees, String frequencyPayment, List<String> locations, List<String> sectors) throws IOException {
 
-        List<ScpiIndexDto> scpiList  = new ArrayList<>();
+        List<ScpiDocumentDTO> scpiList  = new ArrayList<>();
 
         boolean noFilter = (name == null || name.trim().isEmpty()) &&
                 distributionRate == null &&
@@ -39,10 +40,11 @@ public class ScpiIndexService {
 
         if (noFilter) {
 
-            SearchResponse<ScpiIndexDto> response = elasticsearchClient.search(s -> s
+            SearchResponse<ScpiDocumentDTO> response = elasticsearchClient.search(s -> s
                             .index(INDEX_NAME)
+                            .size(51)
                             .query(q -> q.matchAll(m -> m)),
-                    ScpiIndexDto.class);
+                    ScpiDocumentDTO.class);
 
             if (response.hits() != null) {
                 scpiList = response.hits().hits().stream()
@@ -146,10 +148,10 @@ public class ScpiIndexService {
                 );
             }
         }
-        SearchResponse<ScpiIndexDto> response = elasticsearchClient.search(s -> s
+        SearchResponse<ScpiDocumentDTO> response = elasticsearchClient.search(s -> s
                         .index(INDEX_NAME)
                         .query(q -> q.bool(boolQuery.build()))
-                , ScpiIndexDto.class);
+                , ScpiDocumentDTO.class);
 
         if (response.hits() != null) {
             scpiList = response.hits().hits().stream()
@@ -158,5 +160,23 @@ public class ScpiIndexService {
                     .collect(Collectors.toList());
         }
         return scpiList;
+    }
+
+    public Object getAllScpi() {
+        try {
+            return elasticsearchClient.search(s -> s
+                                    .index(INDEX_NAME)
+                                    .query(q -> q.matchAll(m -> m)),
+                            ScpiDocumentDTO.class)
+                    .hits()
+                    .hits()
+                    .stream()
+                    .map(hit -> hit.source())
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            log.error("Erreur lors de la récupération des SCPI", e);
+            return "Erreur lors de la récupération des données : " + e.getMessage();
+        }
     }
 }
