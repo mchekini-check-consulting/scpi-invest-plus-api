@@ -2,7 +2,6 @@ package fr.formationacademy.scpiinvestplusapi.dto;
 
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -11,13 +10,13 @@ public class ScpiDocumentDTO {
     private String id;
     private Long scpiId;
     private String name;
-    private Double distributionRate;
-    private Double subscriptionFeesBigDecimal;
-    private Double managementCosts;
+    private Float distributionRate;
+    private Float subscriptionFeesBigDecimal;
+    private Float managementCosts;
     private Long capitalization;
-    private Long enjoymentDelay;
+    private Integer enjoymentDelay;
     private String frequencyPayment;
-    private Long minimumSubscription;
+    private Integer minimumSubscription;
     private CountryDominant countryDominant;
     private SectorDominant sectorDominant;
     private List<Location> locations;
@@ -37,12 +36,13 @@ public class ScpiDocumentDTO {
 
     @Data
     public static class Location {
-        private Integer id;
+        private String country;
         private Float countryPercentage;
     }
 
     @Data
     public static class Sector {
+        private String name;
         private Float sectorPercentage;
     }
 }
