@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scpi-invest-plus-api-app-config
+  labels:
+    app: scpi-invest-plus-api
+data:
+  application.yml: |
+    spring:
+      application:
+        name: scpi-invest-plus-api
+        version: "1.0.0"
+
+      datasource:
+        url: {{ .Values.database.url | quote }}
+        username: {{ .Values.database.username | quote }}
+        password: {{ .Values.database.password | quote }}
+        driver-class-name: org.postgresql.Driver
+
+      jpa:
+        hibernate:
+          ddl-auto: {{ .Values.jpa.hibernate.ddlAuto | default "validate" | quote }}
+          dialect: {{ .Values.jpa.hibernate.dialect | default "org.hibernate.dialect.PostgreSQLDialect" | quote }}
+
+      kafka:
+        bootstrap-servers: {{ .Values.kafka.bootstrapServers | quote }}
+
+      security:
+        oauth2:
+          resourceserver:
+            jwt:
+              issuer-uri: {{ .Values.security.oauth2.issuerUri | quote }}
+              jwk-set-uri: {{ .Values.security.oauth2.jwkSetUri | quote }}
+
+    management:
+      endpoints:
+        web:
+          exposure:
+            include: {{ .Values.management.endpoints.web.exposure | default "health,prometheus" | quote }}
+      prometheus:
+        metrics:
+          export:
+            enabled: {{ .Values.management.prometheus.enabled | default "true" | quote }}
