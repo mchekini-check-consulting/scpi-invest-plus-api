@@ -4,6 +4,7 @@ import fr.formationacademy.scpiinvestplusapi.dto.InvestorDTO;
 import fr.formationacademy.scpiinvestplusapi.entity.Investor;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.service.InvestorService;
+import fr.formationacademy.scpiinvestplusapi.service.KeycloakAdminService;
 import fr.formationacademy.scpiinvestplusapi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -28,10 +29,12 @@ public class InvestorResource {
 
     private final InvestorService investorService;
     private final UserService userService;
+    private final KeycloakAdminService keycloakService;
 
-    public InvestorResource(InvestorService investorService, UserService userService) {
+    public InvestorResource(InvestorService investorService, UserService userService, KeycloakAdminService keycloakService) {
         this.investorService = investorService;
         this.userService = userService;
+        this.keycloakService = keycloakService;
     }
 
     @Operation(
@@ -74,5 +77,10 @@ public class InvestorResource {
     public ResponseEntity<Investor> getInvestorByEmail() {
         return investorService.getInvestorByEmail(userService.getEmail()).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping
+    public void updateRole(@RequestParam("currentRole") String currentRole,@RequestParam("newRole") String newRole) {
+        keycloakService.updateRoleForUser(currentRole, newRole);
     }
 }
