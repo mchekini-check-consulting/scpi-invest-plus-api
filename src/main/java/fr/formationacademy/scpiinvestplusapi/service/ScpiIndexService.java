@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,7 @@ public class ScpiIndexService {
     public ScpiIndexService(ElasticsearchClient elasticsearchClient) {
         this.elasticsearchClient = elasticsearchClient;
     }
+
 
     public List<ScpiDocumentDTO> searchScpi(String name, BigDecimal distributionRate, Integer minimumSubscription, Boolean subscriptionFees, String frequencyPayment, List<String> locations, List<String> sectors) throws IOException {
 
