@@ -19,6 +19,8 @@ spec:
         - name: scpi-invest-plus-api
           image: "{{.Values.image.repo}}/{{.Values.image.name}}:{{.Values.image.tag}}"
           imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
           env:
             - name: SPRING_PROFILES_ACTIVE
               value:  "{{ .Values.application.environment }}"
@@ -27,3 +29,17 @@ spec:
                 name: {{ .Release.Name }}-configmap
             - secretRef:
                 name: api-db-credentials
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+          readinessProbe:
+              httpGet:
+                path: /actuator/health/readiness
+                port: 8080
+              initialDelaySeconds: 10
+              periodSeconds: 5

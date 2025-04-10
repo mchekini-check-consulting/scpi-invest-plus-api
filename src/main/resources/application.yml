@@ -6,16 +6,16 @@ spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
-    password: postgres
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     database: postgresql
     hibernate:
-      ddl-auto: validate
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:validate}
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: ${SPRING_JPA_HIBERNATE_DIALECT:org.hibernate.dialect.PostgreSQLDialect}
   kafka:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
     producer:
@@ -35,14 +35,14 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,prometheus
+        include: ${MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED:true}
   endpoint:
     prometheus:
-      enabled: true
+      enabled: ${MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED:true}
   prometheus:
     metrics:
       export:
-        enabled: true
+        enabled: ${MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED:true}
 
 
 
