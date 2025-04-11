@@ -3,6 +3,7 @@ package fr.formationacademy.scpiinvestplusapi.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiDocumentDTO;
 import fr.formationacademy.scpiinvestplusapi.utils.Constants;
@@ -65,16 +66,11 @@ public class ScpiIndexService {
             boolQuery.must(s -> s
                     .bool(b -> b
                             .should(sh -> sh
-                                    .fuzzy(f -> f
-                                            .field("name")
-                                            .value(name)
+                                    .multiMatch(m -> m
+                                            .query(name)
+                                            .fields("name")
                                             .fuzziness("2")
-                                    )
-                            )
-                            .should(sh -> sh
-                                    .wildcard(w -> w
-                                            .field("name")
-                                            .value("*" + name + "*")
+                                            .operator(Operator.Or)
                                     )
                             )
                     )
@@ -107,6 +103,7 @@ public class ScpiIndexService {
                 boolQuery.filter(f -> f.range(r -> r
                         .term(t -> t.field("subscriptionFeesBigDecimal")
                         .gt(String.valueOf(0))
+
                         )
                 ));
 
@@ -115,6 +112,7 @@ public class ScpiIndexService {
                 boolQuery.filter(f -> f.term(t -> t
                         .field("subscriptionFeesBigDecimal")
                         .value(0)
+
                 ));
             }
         }
