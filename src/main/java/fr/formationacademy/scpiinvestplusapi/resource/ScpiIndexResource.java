@@ -41,22 +41,15 @@ public class ScpiIndexResource {
     public ResponseEntity<?> searchScpi(
             @Parameter(description = "Nom de la SCPI (recherche approximative)", example = "Comète")
             @RequestParam(required = false) String name,
-
             @Parameter(description = "", example = "10")
             @RequestParam(required = false) BigDecimal distributionRate,
-
             @Parameter(description = "", example = "100")
             @RequestParam(required = false) Integer minimumSubscription,
-
-
             @RequestParam(required = false) Boolean subscriptionFees,
-
             @Parameter(description = "Fréquence de paiement (Mensuelle ou Annuel)", example = "Mensuelle")
             @RequestParam(required = false) String frequencyPayment,
-
             @Parameter(description = "Liste des locations pour la recherche", example = "[\"France\", \"Italie\"]")
             @RequestParam(required = false) List<String> locations,
-
             @Parameter(description = "Liste des secteurs pour la recherche", example = "[\"Santé\", \"Bureaux\"]")
             @RequestParam(required = false) List<String> sectors
     ) {

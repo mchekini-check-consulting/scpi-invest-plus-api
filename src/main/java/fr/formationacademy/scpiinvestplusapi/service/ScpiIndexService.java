@@ -5,14 +5,12 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiDocumentDTO;
+import fr.formationacademy.scpiinvestplusapi.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,7 +42,7 @@ public class ScpiIndexService {
 
             SearchResponse<ScpiDocumentDTO> response = elasticsearchClient.search(s -> s
                             .index(INDEX_NAME)
-                            .size(52)
+                            .size(Constants.DEFAULT_RESULT_SIZE)
                             .query(q -> q.matchAll(m -> m)),
                     ScpiDocumentDTO.class);
 
@@ -52,6 +50,7 @@ public class ScpiIndexService {
                 scpiList = response.hits().hits().stream()
                         .map(hit -> hit.source())
                         .filter(Objects::nonNull)
+                        .sorted(Comparator.comparing(ScpiDocumentDTO::getDistributionRate).reversed())
                         .collect(Collectors.toList());
             }
 
