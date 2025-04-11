@@ -85,7 +85,7 @@ public class ScpiIndexService {
             log.info("Searching with minimumSubscription: {}", distributionRate);
             boolQuery.filter(f -> f.range(r -> r
                     .term(t -> t.field("distributionRate")
-                            .lte(String.valueOf(distributionRate))
+                            .gte(String.valueOf(distributionRate))
                     )
             ));
         }
@@ -94,7 +94,7 @@ public class ScpiIndexService {
             log.info("Searching with minimumSubscription: {}", minimumSubscription);
             boolQuery.filter(f -> f.range(r -> r
                     .term(t -> t.field("minimumSubscription")
-                            .lte(String.valueOf(minimumSubscription))
+                            .gte(String.valueOf(minimumSubscription))
                     )
             ));
         }
