@@ -9,7 +9,6 @@ import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.mapper.InvestmentMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.InvestmentRepository;
-import fr.formationacademy.scpiinvestplusapi.repository.PaginationRepository;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -33,19 +32,17 @@ public class InvestmentService {
     private final ScpiRepository scpiRepository;
     private final UserService userService;
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private final PaginationRepository paginationRepository;
 
 
     public InvestmentService(InvestmentRepository investmentRepository, ScpiService scpiService,
                              InvestmentMapper investmentMapper, ScpiRepository scpiRepository, UserService userService,
-                             KafkaTemplate<String, Object> kafkaTemplate, PaginationRepository paginationRepository) {
+                             KafkaTemplate<String, Object> kafkaTemplate) {
         this.investmentRepository = investmentRepository;
         this.scpiService = scpiService;
         this.investmentMapper = investmentMapper;
         this.scpiRepository = scpiRepository;
         this.userService = userService;
         this.kafkaTemplate = kafkaTemplate;
-        this.paginationRepository = paginationRepository;
     }
 
     public InvestmentDto saveInvestment(InvestmentDto investmentDto) throws GlobalException {
@@ -105,9 +102,17 @@ public class InvestmentService {
     }
 
     public Page<InvestmentDtoOut> getPageableInvestments(Pageable pageable, String state) {
-        Page<Investment> investments = paginationRepository.findByInvestorIdAndInvestmentState(userService.getEmail(), pageable, state);
+        Page<Investment> investments;
+    
+        if (state == null || state.isBlank()) {
+            investments = investmentRepository.findByInvestorId(userService.getEmail(), pageable);
+        } else {
+            investments = investmentRepository.findByInvestorIdAndInvestmentState(userService.getEmail(), pageable, state);
+        }
+    
         return investmentMapper.toDtoOutPage(investments);
     }
+    
 
     public void sendInvestment(ScpiRequestDto scpiRequestDto) {
         kafkaTemplate.send(SCPI_REQUEST_TOPIC, scpiRequestDto);

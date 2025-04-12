@@ -52,27 +52,18 @@ public class InvestmentResource {
     @Operation(summary = "Recupérer la liste des investissements d'un investisseur authentifié", description = "Cette API permet d'obtenir la liste complète des investissements d'un investisseur actuellement authentifié.")
     @GetMapping
     public ResponseEntity<List<InvestmentDtoOut>> getInvestments(
-            @RequestParam(required = false, defaultValue = "VALIDATED", value = "state") String state
+            @RequestParam(required = false,defaultValue = "VALIDATED", value = "state") String state
     ) {
         return ResponseEntity.ok(investmentService.getInvestments(state));
     }
 
-    @Operation(summary = "Recupérer la liste des investissements d'un investisseur authentifié", description = "Cette API permet d'obtenir la liste complète des investissements d'un investisseur actuellement authentifié.")
+    @Operation(summary = "Récupérer les investissements paginés selon l'état", description = "Cette API permet de récupérer une liste paginée des investissements, filtrée optionnellement par état")
     @GetMapping("/page")
     public ResponseEntity<Page<InvestmentDtoOut>> getInvestments(
-            @PageableDefault(size = 15) Pageable pageable, @RequestParam(required = false, defaultValue = "VALIDATED", value = "state") String state
+            @PageableDefault(size = 10) Pageable pageable, @RequestParam(required = false, value = "state") String state
 
     ) {
         Page<InvestmentDtoOut> investments = investmentService.getPageableInvestments(pageable, state);
-
-        System.out.println("State: " + state);
-        investments.forEach(investment ->
-                System.out.println("Investment ID: " + investment.getId() +
-                        ", SCPI Name: " + investment.getScpiName() +
-                        ", Amount: " + investment.getTotalAmount() +
-                        ", Property: " + investment.getTypeProperty()
-                )
-        );
         return ResponseEntity.ok(investments);
     }
 }
