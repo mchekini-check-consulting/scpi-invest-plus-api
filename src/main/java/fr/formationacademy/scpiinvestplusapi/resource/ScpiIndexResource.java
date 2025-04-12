@@ -1,5 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.resource;
 
+import fr.formationacademy.scpiinvestplusapi.dto.CriteriaIn;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiDocumentDTO;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiSearchCriteriaDto;
 import fr.formationacademy.scpiinvestplusapi.service.ScpiIndexService;
@@ -22,11 +23,11 @@ import java.util.Map;
 @RequestMapping("/api/v1/scpi")
 public class ScpiIndexResource {
 
-    private final ScpiIndexService scpiSearchService;
+        private final ScpiIndexService scpiSearchService;
 
-    public ScpiIndexResource(ScpiIndexService scpiSearchService) {
-        this.scpiSearchService = scpiSearchService;
-    }
+        public ScpiIndexResource(ScpiIndexService scpiSearchService) {
+                this.scpiSearchService = scpiSearchService;
+        }
 
 
     @Operation(
@@ -110,4 +111,11 @@ public class ScpiIndexResource {
         }
     }
 
+
+        @PostMapping("/ScoreSearch")
+        public ResponseEntity<List<ScpiDocumentDTO>> searchScpi(@RequestBody List<CriteriaIn> criteria)
+                        throws IOException {
+                List<ScpiDocumentDTO> result = scpiSearchService.searchScoredScpi(criteria);
+                return ResponseEntity.ok(result);
+        }
 }
