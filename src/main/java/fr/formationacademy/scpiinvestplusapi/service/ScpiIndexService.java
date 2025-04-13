@@ -210,160 +210,170 @@ public class ScpiIndexService {
 
         /* Service de scoring */
 
-        public void createScpiIndex(ElasticsearchClient client) throws IOException {
-                client.indices().create(req -> req
-                                .index("scpi")
-                                .settings(s -> s
-                                                .numberOfShards("1")
-                                                .numberOfReplicas("0")
-                                                .analysis(a -> a
-                                                                .analyzer("folding_analyzer", c -> c
-                                                                                .custom(ca -> ca
-                                                                                                .tokenizer("standard")
-                                                                                                .filter("lowercase",
-                                                                                                                "asciifolding")))))
-                                .mappings(m -> m
-                                                .properties("id", Property.of(p -> p.keyword(k -> k)))
-                                                .properties("name", Property.of(p -> p
-                                                                .text(t -> t
-                                                                                .analyzer("folding_analyzer")
-                                                                                .fields("keyword", f -> f
-                                                                                                .keyword(k -> k)))))
-                                                .properties("scpiId", Property.of(p -> p.long_(l -> l)))
-                                                .properties("distributionRate", Property.of(p -> p.float_(f -> f)))
-                                                .properties("subscriptionFeesBigDecimal",
-                                                                Property.of(p -> p.float_(f -> f)))
-                                                .properties("managementCosts", Property.of(p -> p.float_(f -> f)))
-                                                .properties("capitalization", Property.of(p -> p.long_(l -> l)))
-                                                .properties("enjoymentDelay", Property.of(p -> p.integer(i -> i)))
-                                                .properties("frequencyPayment", Property.of(p -> p
-                                                                .text(t -> t.fields("keyword",
-                                                                                f -> f.keyword(k -> k)))))
-                                                .properties("minimumSubscription", Property.of(p -> p.integer(i -> i)))
-                                                .properties("mashedScore", Property.of(p -> p.float_(f -> f)))
+        // public void createScpiIndex(ElasticsearchClient client) throws IOException {
+        // client.indices().create(req -> req
+        // .index("scpi")
+        // .settings(s -> s
+        // .numberOfShards("1")
+        // .numberOfReplicas("0")
+        // .analysis(a -> a
+        // .analyzer("folding_analyzer", c -> c
+        // .custom(ca -> ca
+        // .tokenizer("standard")
+        // .filter("lowercase",
+        // "asciifolding")))))
+        // .mappings(m -> m
+        // .properties("id", Property.of(p -> p.keyword(k -> k)))
+        // .properties("name", Property.of(p -> p
+        // .text(t -> t
+        // .analyzer("folding_analyzer")
+        // .fields("keyword", f -> f
+        // .keyword(k -> k)))))
+        // .properties("scpiId", Property.of(p -> p.long_(l -> l)))
+        // .properties("distributionRate", Property.of(p -> p.float_(f -> f)))
+        // .properties("subscriptionFeesBigDecimal",
+        // Property.of(p -> p.float_(f -> f)))
+        // .properties("managementCosts", Property.of(p -> p.float_(f -> f)))
+        // .properties("capitalization", Property.of(p -> p.long_(l -> l)))
+        // .properties("enjoymentDelay", Property.of(p -> p.integer(i -> i)))
+        // .properties("frequencyPayment", Property.of(p -> p
+        // .text(t -> t.fields("keyword",
+        // f -> f.keyword(k -> k)))))
+        // .properties("minimumSubscription", Property.of(p -> p.integer(i -> i)))
+        // .properties("mashedScore", Property.of(p -> p.float_(f -> f)))
 
-                                                .properties("countryDominant", Property.of(p -> p
-                                                                .object(o -> o
-                                                                                .properties("country",
-                                                                                                Property.of(p2 -> p2
-                                                                                                                .text(t -> t
-                                                                                                                                .analyzer("folding_analyzer")
-                                                                                                                                .fields("keyword",
-                                                                                                                                                f -> f.keyword(k -> k)))))
-                                                                                .properties("countryPercentage",
-                                                                                                Property.of(p2 -> p2
-                                                                                                                .float_(f -> f))))))
+        // // Définition du champ countryDominant en tant qu'objet
+        // .properties("countryDominant", Property.of(p -> p
+        // .object(o -> o
+        // .properties("country",
+        // Property.of(p2 -> p2
+        // .text(t -> t
+        // .analyzer("folding_analyzer")
+        // .fields("keyword",
+        // f -> f.keyword(k -> k)))))
+        // .properties("countryPercentage",
+        // Property.of(p2 -> p2
+        // .float_(f -> f))))))
 
-                                                .properties("sectorDominant", Property.of(p -> p
-                                                                .object(o -> o
-                                                                                .properties("name", Property.of(p2 -> p2
-                                                                                                .text(t -> t
-                                                                                                                .analyzer("folding_analyzer")
-                                                                                                                .fields("keyword",
-                                                                                                                                f -> f.keyword(k -> k)))))
-                                                                                .properties("sectorPercentage", Property
-                                                                                                .of(p2 -> p2.float_(
-                                                                                                                f -> f))))))
+        // // Définition du champ sectorDominant en tant qu'objet
+        // .properties("sectorDominant", Property.of(p -> p
+        // .object(o -> o
+        // .properties("name", Property.of(p2 -> p2
+        // .text(t -> t
+        // .analyzer("folding_analyzer")
+        // .fields("keyword",
+        // f -> f.keyword(k -> k)))))
+        // .properties("sectorPercentage", Property
+        // .of(p2 -> p2.float_(
+        // f -> f))))))
 
-                                                .properties("locations", Property.of(p -> p
-                                                                .nested(n -> n
-                                                                                .properties("country",
-                                                                                                Property.of(p2 -> p2
-                                                                                                                .text(t -> t
-                                                                                                                                .analyzer("folding_analyzer")
-                                                                                                                                .fields("keyword",
-                                                                                                                                                f -> f.keyword(k -> k)))))
-                                                                                .properties("countryPercentage",
-                                                                                                Property.of(p2 -> p2
-                                                                                                                .float_(f -> f))))))
+        // // Définition des locations en tant que champ nested
+        // .properties("locations", Property.of(p -> p
+        // .nested(n -> n
+        // .properties("country",
+        // Property.of(p2 -> p2
+        // .text(t -> t
+        // .analyzer("folding_analyzer")
+        // .fields("keyword",
+        // f -> f.keyword(k -> k)))))
+        // .properties("countryPercentage",
+        // Property.of(p2 -> p2
+        // .float_(f -> f))))))
 
-                                                .properties("sectors", Property.of(p -> p
-                                                                .nested(n -> n
-                                                                                .properties("name", Property.of(p2 -> p2
-                                                                                                .text(t -> t
-                                                                                                                .analyzer("folding_analyzer")
-                                                                                                                .fields("keyword",
-                                                                                                                                f -> f.keyword(k -> k)))))
-                                                                                .properties("sectorPercentage", Property
-                                                                                                .of(p2 -> p2.float_(
-                                                                                                                f -> f))))))));
+        // // Définition des sectors en tant que champ nested
+        // .properties("sectors", Property.of(p -> p
+        // .nested(n -> n
+        // .properties("name", Property.of(p2 -> p2
+        // .text(t -> t
+        // .analyzer("folding_analyzer")
+        // .fields("keyword",
+        // f -> f.keyword(k -> k)))))
+        // .properties("sectorPercentage", Property
+        // .of(p2 -> p2.float_(
+        // f -> f))))))));
+        // }
+
+        public void initOtimalValueMap() {
+                optimalValuesMap.put("distributionRate", 8.35);
+                optimalValuesMap.put("enjoymentDelay", 0.0);
+                optimalValuesMap.put("managementCosts", 7.2);
+                optimalValuesMap.put("subscriptionFees", 0.0);
+                optimalValuesMap.put("capitalization", 6200000000.0);
         }
 
-    public void initOtimalValueMap() {
-        optimalValuesMap.put("distributionRate", 8.35);
-        optimalValuesMap.put("enjoymentDelay", 0.0);
-        optimalValuesMap.put("managementCosts", 7.2);
-        optimalValuesMap.put("subscriptionFees", 0.0);
-        optimalValuesMap.put("capitalization", 6200000000.0);
-    }
-
-    public void initCriteriaMap() {
-        CriteriaMap.put("distributionRate", CriteriaPoperties.builder().ScoringType("FunctionScore")
-                .modifier(FieldValueFactorModifier.Sqrt).factor(2.0).build());
-        CriteriaMap.put("enjoymentDelay",
-                CriteriaPoperties.builder().ScoringType("DecayFunctionScore").scale(4).decay(0.5)
-                        .build());
-        CriteriaMap.put("managementCosts",
-                CriteriaPoperties.builder().ScoringType("DecayFunctionScore").scale(10).decay(0.5)
-                        .build());
-        CriteriaMap.put("subscriptionFees",
-                CriteriaPoperties.builder().ScoringType("DecayFunctionScore").scale(5).decay(0.5)
-                        .build());
-        CriteriaMap.put("capitalization",
-                CriteriaPoperties.builder().ScoringType("RangeBonus").weight(1.5).limit(740000000L)
-                        .build());
-    }
-
-    @PostConstruct
-    public void initData() {
-        initCriteriaMap();
-        initOtimalValueMap();
-        log.info(("Le service est bien executé"));
-        try {
-            if (!indexExists("scpi")) {
-                createScpiIndex(elasticsearchClient);
-                log.info("L'index SCPI a ete cree avec succes !");
-            } else {
-                log.info("L'index SCPI existe deja, aucune creation necessaire.");
-            }
-        } catch (IOException e) {
-            log.error("Erreur lors de la verification ou creation de l'index SCPI", e);
+        public void initCriteriaMap() {
+                CriteriaMap.put("distributionRate", CriteriaPoperties.builder().ScoringType("FunctionScore")
+                                .modifier(FieldValueFactorModifier.Sqrt).factor(2.0).build());
+                CriteriaMap.put("enjoymentDelay",
+                                CriteriaPoperties.builder().ScoringType("DecayFunctionScore").scale(4).decay(0.5)
+                                                .build());
+                CriteriaMap.put("managementCosts",
+                                CriteriaPoperties.builder().ScoringType("DecayFunctionScore").scale(10).decay(0.5)
+                                                .build());
+                CriteriaMap.put("subscriptionFees",
+                                CriteriaPoperties.builder().ScoringType("DecayFunctionScore").scale(5).decay(0.5)
+                                                .build());
+                CriteriaMap.put("capitalization",
+                                CriteriaPoperties.builder().ScoringType("RangeBonus").weight(1.5).limit(740000000L)
+                                                .build());
         }
 
-                if (getAllScpi().isEmpty()) {
-                        List<ScpiDocumentDTO> scpiIndexes = InitIndexDataForTest();
-                        scpiIndexes.forEach(scpi -> {
-                                try {
-                                        saveScpi(scpi);
-                                } catch (IOException e) {
-                                        log.error("Erreur lors de l'indexation de la SCPI : " + scpi.getName(),
-                                                        e);
-                                }
-                        });
-                        log.info("Donnees SCPI indexees avec succes !");
-                } else {
-                        log.info("Les donnees SCPI existent deja, aucune insertion necessaire.");
-                }
+        @PostConstruct
+        public void initData() {
+                initCriteriaMap();
+                initOtimalValueMap();
+                // log.info(("Le service est bien executé"));
+                // try {
+                // if (!indexExists("scpi")) {
+                // createScpiIndex(elasticsearchClient);
+                // log.info("L'index SCPI a ete cree avec succes !");
+                // } else {
+                // log.info("L'index SCPI existe deja, aucune creation necessaire.");
+                // }
+                // } catch (IOException e) {
+                // log.error("Erreur lors de la verification ou creation de l'index SCPI", e);
+                // }
+
+                // if (getAllScpi().isEmpty()) {
+                // List<ScpiDocumentDTO> scpiIndexes = InitIndexDataForTest();
+                // scpiIndexes.forEach(scpi -> {
+                // try {
+                // saveScpi(scpi);
+                // } catch (IOException e) {
+                // log.error("Erreur lors de l'indexation de la SCPI : " + scpi.getName(),
+                // e);
+                // }
+                // });
+                // log.info("Donnees SCPI indexees avec succes !");
+                // } else {
+                // log.info("Les donnees SCPI existent deja, aucune insertion necessaire.");
+                // }
         }
 
-    public boolean indexExists(String indexName) throws IOException {
-        return elasticsearchClient.indices().exists(e -> e.index(indexName)).value();
-    }
+        // public boolean indexExists(String indexName) throws IOException {
+        // return elasticsearchClient.indices().exists(e -> e.index(indexName)).value();
+        // }
 
-    public void saveScpi(ScpiDocumentDTO scpi) throws IOException {
-        IndexResponse response = elasticsearchClient.index(i -> i
-                .index("scpi")
-                .id(scpi.getId())
-                .document(scpi));
-        log.info("SCPI indexé : " + response.id());
-    }
+        // public void saveScpi(ScpiDocumentDTO scpi) throws IOException {
+        // IndexResponse response = elasticsearchClient.index(i -> i
+        // .index("scpi")
+        // .id(scpi.getId())
+        // .document(scpi));
+        // log.info("SCPI indexé : " + response.id());
+        // }
 
         public List<ScpiDocumentDTO> searchScoredScpi(List<CriteriaIn> criterias) throws IOException {
+                for (CriteriaIn criteria : criterias) {
+                        System.err.println("ouiiiiii" + criteria.getName());
+                }
+
                 SearchRequest searchRequest = buildSearchRequest(criterias);
+                log.info("Resultats de searchRequest : " + searchRequest.toString());
+
                 SearchResponse<ScpiDocumentDTO> searchResponse = elasticsearchClient.search(searchRequest,
                                 ScpiDocumentDTO.class);
+                log.info("Resultats de searchResponse : " + searchResponse.toString());
 
-                log.info("Resultats de recherche obtenus : " + searchResponse.hits());
                 return extractScpiFromResponse(searchResponse, criterias);
         }
 
@@ -383,8 +393,10 @@ public class ScpiIndexService {
         }
 
         private List<FunctionScore> getFunctionScores(List<CriteriaIn> criterias) {
+
                 List<FunctionScore> scores = new ArrayList<>();
                 for (CriteriaIn criteria : criterias) {
+                        System.out.println("voilaa" + criteria.getName());
                         switch (CriteriaMap.get(criteria.getName()).getScoringType()) {
                                 case "FunctionScore":
                                         scores.add(createFunctionScore(criteria.getName(),
@@ -457,6 +469,7 @@ public class ScpiIndexService {
 
         private List<ScpiDocumentDTO> extractScpiFromResponse(SearchResponse<ScpiDocumentDTO> searchResponse,
                         List<CriteriaIn> criteriaList) {
+                System.err.println(" Reponse de Elastic  " + searchResponse.hits().hits());
                 List<ScpiDocumentDTO> result = searchResponse.hits().hits().stream()
                                 .map(hit -> hit.source())
                                 .filter(Objects::nonNull)
@@ -509,123 +522,123 @@ public class ScpiIndexService {
                 }
         }
 
-        private List<ScpiDocumentDTO> InitIndexDataForTest() {
-                return List.of(
-                                ScpiDocumentDTO.builder()
-                                                .id(UUID.randomUUID().toString())
-                                                .scpiId(1L) // Identifiant pour SCPI
-                                                .name("Transitions Europe")
-                                                .distributionRate(8.35f)
-                                                .subscriptionFeesBigDecimal(10.00f)
-                                                .managementCosts(10.00f)
-                                                .capitalization(null)
-                                                .enjoymentDelay(null)
-                                                .frequencyPayment("Trimestrielle")
-                                                .minimumSubscription(5000)
-                                                .countryDominant(new ScpiDocumentDTO.CountryDominant("Pays-Bas", 47.0f))
-                                                .sectorDominant(new ScpiDocumentDTO.SectorDominant("Bureaux", 46.0f))
-                                                .locations(List.of(
-                                                                new ScpiDocumentDTO.Location("Pays-Bas", 47.0f),
-                                                                new ScpiDocumentDTO.Location("Espagne", 24.0f),
-                                                                new ScpiDocumentDTO.Location("Irlande", 12.0f),
-                                                                new ScpiDocumentDTO.Location("Pologne", 11.0f),
-                                                                new ScpiDocumentDTO.Location("Allemagne", 6.0f)))
-                                                .sectors(List.of(
-                                                                new ScpiDocumentDTO.Sector("Bureaux", 46.0f),
-                                                                new ScpiDocumentDTO.Sector("Hotels", 18.0f),
-                                                                new ScpiDocumentDTO.Sector("Logistique", 9.0f),
-                                                                new ScpiDocumentDTO.Sector("Sante", 18.0f),
-                                                                new ScpiDocumentDTO.Sector("Commerce", 9.0f)))
-                                                .build(),
+        // private List<ScpiDocumentDTO> InitIndexDataForTest() {
+        // return List.of(
+        // ScpiDocumentDTO.builder()
+        // .id(UUID.randomUUID().toString())
+        // .scpiId(1L) // Identifiant pour SCPI
+        // .name("Transitions Europe")
+        // .distributionRate(8.35f)
+        // .subscriptionFeesBigDecimal(10.00f)
+        // .managementCosts(10.00f)
+        // .capitalization(45000000L)
+        // .enjoymentDelay(4)
+        // .frequencyPayment("Trimestrielle")
+        // .minimumSubscription(5000)
+        // .countryDominant(new ScpiDocumentDTO.CountryDominant("Pays-Bas", 47.0f))
+        // .sectorDominant(new ScpiDocumentDTO.SectorDominant("Bureaux", 46.0f))
+        // .locations(List.of(
+        // new ScpiDocumentDTO.Location("Pays-Bas", 47.0f),
+        // new ScpiDocumentDTO.Location("Espagne", 24.0f),
+        // new ScpiDocumentDTO.Location("Irlande", 12.0f),
+        // new ScpiDocumentDTO.Location("Pologne", 11.0f),
+        // new ScpiDocumentDTO.Location("Allemagne", 6.0f)))
+        // .sectors(List.of(
+        // new ScpiDocumentDTO.Sector("Bureaux", 46.0f),
+        // new ScpiDocumentDTO.Sector("Hotels", 18.0f),
+        // new ScpiDocumentDTO.Sector("Logistique", 9.0f),
+        // new ScpiDocumentDTO.Sector("Sante", 18.0f),
+        // new ScpiDocumentDTO.Sector("Commerce", 9.0f)))
+        // .build(),
 
-                                ScpiDocumentDTO.builder()
-                                                .id(UUID.randomUUID().toString())
-                                                .scpiId(2L)
-                                                .name("Elevation Tertiom")
-                                                .distributionRate(8.00f)
-                                                .subscriptionFeesBigDecimal(24.00f)
-                                                .managementCosts(24.00f)
-                                                .capitalization(null)
-                                                .enjoymentDelay(null)
-                                                .frequencyPayment("Mensuelle")
-                                                .minimumSubscription(2850)
-                                                .countryDominant(new ScpiDocumentDTO.CountryDominant("France", 100.0f))
-                                                .sectorDominant(new ScpiDocumentDTO.SectorDominant("Autre", 100.0f))
-                                                .locations(List.of(new ScpiDocumentDTO.Location("France", 100.0f)))
-                                                .sectors(List.of(new ScpiDocumentDTO.Sector("Autre", 100.0f)))
-                                                .build(),
+        // ScpiDocumentDTO.builder()
+        // .id(UUID.randomUUID().toString())
+        // .scpiId(2L)
+        // .name("Elevation Tertiom")
+        // .distributionRate(8.00f)
+        // .subscriptionFeesBigDecimal(24.00f)
+        // .managementCosts(24.00f)
+        // .capitalization(45000000L)
+        // .enjoymentDelay(4)
+        // .frequencyPayment("Mensuelle")
+        // .minimumSubscription(2850)
+        // .countryDominant(new ScpiDocumentDTO.CountryDominant("France", 100.0f))
+        // .sectorDominant(new ScpiDocumentDTO.SectorDominant("Autre", 100.0f))
+        // .locations(List.of(new ScpiDocumentDTO.Location("France", 100.0f)))
+        // .sectors(List.of(new ScpiDocumentDTO.Sector("Autre", 100.0f)))
+        // .build(),
 
-                                ScpiDocumentDTO.builder()
-                                                .id(UUID.randomUUID().toString())
-                                                .scpiId(3L)
-                                                .name("Upéka")
-                                                .distributionRate(8.00f)
-                                                .subscriptionFeesBigDecimal(16.00f)
-                                                .managementCosts(16.00f)
-                                                .capitalization(null)
-                                                .enjoymentDelay(null)
-                                                .frequencyPayment("Trimestrielle")
-                                                .minimumSubscription(1000)
-                                                .countryDominant(new ScpiDocumentDTO.CountryDominant("Pays-Bas", 56.0f))
-                                                .sectorDominant(new ScpiDocumentDTO.SectorDominant("Commerces", 44.0f))
-                                                .locations(List.of(
-                                                                new ScpiDocumentDTO.Location("Pays-Bas", 56.0f),
-                                                                new ScpiDocumentDTO.Location("Espagne", 25.0f),
-                                                                new ScpiDocumentDTO.Location("France", 19.0f)))
-                                                .sectors(List.of(
-                                                                new ScpiDocumentDTO.Sector("Commerces", 44.0f),
-                                                                new ScpiDocumentDTO.Sector("Bureaux", 29.0f),
-                                                                new ScpiDocumentDTO.Sector("Logistique", 27.0f)))
-                                                .build(),
+        // ScpiDocumentDTO.builder()
+        // .id(UUID.randomUUID().toString())
+        // .scpiId(3L)
+        // .name("Upéka")
+        // .distributionRate(8.00f)
+        // .subscriptionFeesBigDecimal(16.00f)
+        // .managementCosts(16.00f)
+        // .capitalization(45000000L)
+        // .enjoymentDelay(4)
+        // .frequencyPayment("Trimestrielle")
+        // .minimumSubscription(1000)
+        // .countryDominant(new ScpiDocumentDTO.CountryDominant("Pays-Bas", 56.0f))
+        // .sectorDominant(new ScpiDocumentDTO.SectorDominant("Commerces", 44.0f))
+        // .locations(List.of(
+        // new ScpiDocumentDTO.Location("Pays-Bas", 56.0f),
+        // new ScpiDocumentDTO.Location("Espagne", 25.0f),
+        // new ScpiDocumentDTO.Location("France", 19.0f)))
+        // .sectors(List.of(
+        // new ScpiDocumentDTO.Sector("Commerces", 44.0f),
+        // new ScpiDocumentDTO.Sector("Bureaux", 29.0f),
+        // new ScpiDocumentDTO.Sector("Logistique", 27.0f)))
+        // .build(),
 
-                                ScpiDocumentDTO.builder()
-                                                .id(UUID.randomUUID().toString())
-                                                .scpiId(4L)
-                                                .name("Comète")
-                                                .distributionRate(8.00f)
-                                                .subscriptionFeesBigDecimal(11.00f)
-                                                .managementCosts(11.00f)
-                                                .capitalization(null)
-                                                .enjoymentDelay(null)
-                                                .frequencyPayment("Trimestrielle")
-                                                .minimumSubscription(5000)
-                                                .countryDominant(new ScpiDocumentDTO.CountryDominant("Italie", 44.0f))
-                                                .sectorDominant(new ScpiDocumentDTO.SectorDominant("Autre", 56.0f))
-                                                .locations(List.of(
-                                                                new ScpiDocumentDTO.Location("Italie", 44.0f),
-                                                                new ScpiDocumentDTO.Location("Pays-Bas", 44.0f),
-                                                                new ScpiDocumentDTO.Location("Espagne", 12.0f)))
-                                                .sectors(List.of(
-                                                                new ScpiDocumentDTO.Sector("Autre", 56.0f),
-                                                                new ScpiDocumentDTO.Sector("Bureaux", 44.0f)))
-                                                .build(),
+        // ScpiDocumentDTO.builder()
+        // .id(UUID.randomUUID().toString())
+        // .scpiId(4L)
+        // .name("Comète")
+        // .distributionRate(8.00f)
+        // .subscriptionFeesBigDecimal(11.00f)
+        // .managementCosts(11.00f)
+        // .capitalization(45000000L)
+        // .enjoymentDelay(4)
+        // .frequencyPayment("Trimestrielle")
+        // .minimumSubscription(5000)
+        // .countryDominant(new ScpiDocumentDTO.CountryDominant("Italie", 44.0f))
+        // .sectorDominant(new ScpiDocumentDTO.SectorDominant("Autre", 56.0f))
+        // .locations(List.of(
+        // new ScpiDocumentDTO.Location("Italie", 44.0f),
+        // new ScpiDocumentDTO.Location("Pays-Bas", 44.0f),
+        // new ScpiDocumentDTO.Location("Espagne", 12.0f)))
+        // .sectors(List.of(
+        // new ScpiDocumentDTO.Sector("Autre", 56.0f),
+        // new ScpiDocumentDTO.Sector("Bureaux", 44.0f)))
+        // .build(),
 
-                                // Ajoute ici d'autres documents comme nécessaire
-                                ScpiDocumentDTO.builder()
-                                                .id(UUID.randomUUID().toString())
-                                                .scpiId(5L)
-                                                .name("Remake Live")
-                                                .distributionRate(7.79f)
-                                                .subscriptionFeesBigDecimal(18.00f)
-                                                .managementCosts(18.00f)
-                                                .capitalization(null)
-                                                .enjoymentDelay(null)
-                                                .frequencyPayment("Mensuelle")
-                                                .minimumSubscription(1020)
-                                                .countryDominant(
-                                                                new ScpiDocumentDTO.CountryDominant("Allemagne", 43.0f))
-                                                .sectorDominant(new ScpiDocumentDTO.SectorDominant("Bureaux", 50.0f))
-                                                .locations(List.of(
-                                                                new ScpiDocumentDTO.Location("France", 37.0f),
-                                                                new ScpiDocumentDTO.Location("Espagne", 20.0f),
-                                                                new ScpiDocumentDTO.Location("Allemagne", 43.0f)))
-                                                .sectors(List.of(
-                                                                new ScpiDocumentDTO.Sector("Bureaux", 50.0f),
-                                                                new ScpiDocumentDTO.Sector("Logistique", 16.0f),
-                                                                new ScpiDocumentDTO.Sector("Sante", 15.0f),
-                                                                new ScpiDocumentDTO.Sector("Commerces", 12.0f),
-                                                                new ScpiDocumentDTO.Sector("Reste", 4.0f)))
-                                                .build());
-        }
+        // // Ajoute ici d'autres documents comme nécessaire
+        // ScpiDocumentDTO.builder()
+        // .id(UUID.randomUUID().toString())
+        // .scpiId(5L)
+        // .name("Remake Live")
+        // .distributionRate(7.79f)
+        // .subscriptionFeesBigDecimal(18.00f)
+        // .managementCosts(18.00f)
+        // .capitalization(45000000L)
+        // .enjoymentDelay(4)
+        // .frequencyPayment("Mensuelle")
+        // .minimumSubscription(1020)
+        // .countryDominant(
+        // new ScpiDocumentDTO.CountryDominant("Allemagne", 43.0f))
+        // .sectorDominant(new ScpiDocumentDTO.SectorDominant("Bureaux", 50.0f))
+        // .locations(List.of(
+        // new ScpiDocumentDTO.Location("France", 37.0f),
+        // new ScpiDocumentDTO.Location("Espagne", 20.0f),
+        // new ScpiDocumentDTO.Location("Allemagne", 43.0f)))
+        // .sectors(List.of(
+        // new ScpiDocumentDTO.Sector("Bureaux", 50.0f),
+        // new ScpiDocumentDTO.Sector("Logistique", 16.0f),
+        // new ScpiDocumentDTO.Sector("Sante", 15.0f),
+        // new ScpiDocumentDTO.Sector("Commerces", 12.0f),
+        // new ScpiDocumentDTO.Sector("Reste", 4.0f)))
+        // .build());
+        // }
 
 }
