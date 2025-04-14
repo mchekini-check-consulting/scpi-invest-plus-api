@@ -1,6 +1,5 @@
 package fr.formationacademy.scpiinvestplusapi.service;
 
-
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.Script;
 import co.elastic.clients.elasticsearch._types.SortOptions;
@@ -217,75 +216,72 @@ public class ScpiIndexService {
         // .numberOfShards("1")
         // .numberOfReplicas("0")
         // .analysis(a -> a
-        // .analyzer("folding_analyzer", c -> c
+        // .analyzer("edge_ngram_analyzer", c -> c
         // .custom(ca -> ca
         // .tokenizer("standard")
         // .filter("lowercase",
-        // "asciifolding")))))
+        // "asciifolding",
+        // "edge_ngram")))))
         // .mappings(m -> m
         // .properties("id", Property.of(p -> p.keyword(k -> k)))
         // .properties("name", Property.of(p -> p
         // .text(t -> t
-        // .analyzer("folding_analyzer")
+        // .analyzer("edge_ngram_analyzer")
         // .fields("keyword", f -> f
         // .keyword(k -> k)))))
-        // .properties("scpiId", Property.of(p -> p.long_(l -> l)))
-        // .properties("distributionRate", Property.of(p -> p.float_(f -> f)))
-        // .properties("subscriptionFeesBigDecimal",
-        // Property.of(p -> p.float_(f -> f)))
-        // .properties("managementCosts", Property.of(p -> p.float_(f -> f)))
+        // .properties("distributionRate", Property
+        // .of(p -> p.scaledFloat(sf -> sf.scalingFactor(100.0))))
+        // .properties("sharePrice", Property
+        // .of(p -> p.scaledFloat(sf -> sf.scalingFactor(100.0))))
+        // .properties("subscriptionFeesBigDecimal", Property
+        // .of(p -> p.scaledFloat(sf -> sf.scalingFactor(100.0))))
+        // .properties("managementCosts", Property
+        // .of(p -> p.scaledFloat(sf -> sf.scalingFactor(100.0))))
         // .properties("capitalization", Property.of(p -> p.long_(l -> l)))
         // .properties("enjoymentDelay", Property.of(p -> p.integer(i -> i)))
         // .properties("frequencyPayment", Property.of(p -> p
-        // .text(t -> t.fields("keyword",
-        // f -> f.keyword(k -> k)))))
+        // .text(t -> t
+        // .fields("keyword", f -> f
+        // .keyword(k -> k)))))
         // .properties("minimumSubscription", Property.of(p -> p.integer(i -> i)))
-        // .properties("mashedScore", Property.of(p -> p.float_(f -> f)))
 
-        // // Définition du champ countryDominant en tant qu'objet
         // .properties("countryDominant", Property.of(p -> p
         // .object(o -> o
         // .properties("country",
         // Property.of(p2 -> p2
         // .text(t -> t
-        // .analyzer("folding_analyzer")
         // .fields("keyword",
         // f -> f.keyword(k -> k)))))
         // .properties("countryPercentage",
         // Property.of(p2 -> p2
         // .float_(f -> f))))))
 
-        // // Définition du champ sectorDominant en tant qu'objet
         // .properties("sectorDominant", Property.of(p -> p
         // .object(o -> o
         // .properties("name", Property.of(p2 -> p2
         // .text(t -> t
-        // .analyzer("folding_analyzer")
         // .fields("keyword",
         // f -> f.keyword(k -> k)))))
         // .properties("sectorPercentage", Property
-        // .of(p2 -> p2.float_(
-        // f -> f))))))
+        // .of(p2 -> p2.scaledFloat(
+        // sf -> sf.scalingFactor(
+        // 100.0)))))))
 
-        // // Définition des locations en tant que champ nested
         // .properties("locations", Property.of(p -> p
         // .nested(n -> n
         // .properties("country",
         // Property.of(p2 -> p2
         // .text(t -> t
-        // .analyzer("folding_analyzer")
         // .fields("keyword",
         // f -> f.keyword(k -> k)))))
         // .properties("countryPercentage",
         // Property.of(p2 -> p2
         // .float_(f -> f))))))
 
-        // // Définition des sectors en tant que champ nested
         // .properties("sectors", Property.of(p -> p
         // .nested(n -> n
         // .properties("name", Property.of(p2 -> p2
         // .text(t -> t
-        // .analyzer("folding_analyzer")
         // .fields("keyword",
         // f -> f.keyword(k -> k)))))
         // .properties("sectorPercentage", Property
@@ -363,17 +359,10 @@ public class ScpiIndexService {
         // }
 
         public List<ScpiDocumentDTO> searchScoredScpi(List<CriteriaIn> criterias) throws IOException {
-                for (CriteriaIn criteria : criterias) {
-                        System.err.println("ouiiiiii" + criteria.getName());
-                }
 
                 SearchRequest searchRequest = buildSearchRequest(criterias);
-                log.info("Resultats de searchRequest : " + searchRequest.toString());
-
                 SearchResponse<ScpiDocumentDTO> searchResponse = elasticsearchClient.search(searchRequest,
                                 ScpiDocumentDTO.class);
-                log.info("Resultats de searchResponse : " + searchResponse.toString());
-
                 return extractScpiFromResponse(searchResponse, criterias);
         }
 
@@ -526,7 +515,6 @@ public class ScpiIndexService {
         // return List.of(
         // ScpiDocumentDTO.builder()
         // .id(UUID.randomUUID().toString())
-        // .scpiId(1L) // Identifiant pour SCPI
         // .name("Transitions Europe")
         // .distributionRate(8.35f)
         // .subscriptionFeesBigDecimal(10.00f)
@@ -553,7 +541,6 @@ public class ScpiIndexService {
 
         // ScpiDocumentDTO.builder()
         // .id(UUID.randomUUID().toString())
-        // .scpiId(2L)
         // .name("Elevation Tertiom")
         // .distributionRate(8.00f)
         // .subscriptionFeesBigDecimal(24.00f)
@@ -570,7 +557,6 @@ public class ScpiIndexService {
 
         // ScpiDocumentDTO.builder()
         // .id(UUID.randomUUID().toString())
-        // .scpiId(3L)
         // .name("Upéka")
         // .distributionRate(8.00f)
         // .subscriptionFeesBigDecimal(16.00f)
@@ -593,7 +579,6 @@ public class ScpiIndexService {
 
         // ScpiDocumentDTO.builder()
         // .id(UUID.randomUUID().toString())
-        // .scpiId(4L)
         // .name("Comète")
         // .distributionRate(8.00f)
         // .subscriptionFeesBigDecimal(11.00f)
@@ -613,10 +598,8 @@ public class ScpiIndexService {
         // new ScpiDocumentDTO.Sector("Bureaux", 44.0f)))
         // .build(),
 
-        // // Ajoute ici d'autres documents comme nécessaire
         // ScpiDocumentDTO.builder()
         // .id(UUID.randomUUID().toString())
-        // .scpiId(5L)
         // .name("Remake Live")
         // .distributionRate(7.79f)
         // .subscriptionFeesBigDecimal(18.00f)
