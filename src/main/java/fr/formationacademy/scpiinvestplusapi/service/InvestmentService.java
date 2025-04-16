@@ -1,15 +1,17 @@
 package fr.formationacademy.scpiinvestplusapi.service;
 
-import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDto;
-import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDtoOut;
-import fr.formationacademy.scpiinvestplusapi.dto.ScpiDtoOut;
-import fr.formationacademy.scpiinvestplusapi.dto.ScpiRequestDto;
+import fr.formationacademy.scpiinvestplusapi.dto.*;
 import fr.formationacademy.scpiinvestplusapi.entity.Investment;
 import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
+import fr.formationacademy.scpiinvestplusapi.enums.InvestmentState;
+import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.mapper.InvestmentMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.InvestmentRepository;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
+import fr.formationacademy.scpiinvestplusapi.dto.InvestmentStatisticsDtoOut;
+import fr.formationacademy.scpiinvestplusapi.dto.RefDismembermentDto;
+import fr.formationacademy.scpiinvestplusapi.utils.Statistics;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +30,7 @@ public class InvestmentService {
 
     private final InvestmentRepository investmentRepository;
     private final ScpiService scpiService;
+    private final RefDismembermentService refDismembermentService;
     private final InvestmentMapper investmentMapper;
     private final ScpiRepository scpiRepository;
     private final UserService userService;
@@ -36,13 +39,14 @@ public class InvestmentService {
 
     public InvestmentService(InvestmentRepository investmentRepository, ScpiService scpiService,
                              InvestmentMapper investmentMapper, ScpiRepository scpiRepository, UserService userService,
-                             KafkaTemplate<String, Object> kafkaTemplate) {
+                             KafkaTemplate<String, Object> kafkaTemplate, RefDismembermentService refDismembermentService) {
         this.investmentRepository = investmentRepository;
         this.scpiService = scpiService;
         this.investmentMapper = investmentMapper;
         this.scpiRepository = scpiRepository;
         this.userService = userService;
         this.kafkaTemplate = kafkaTemplate;
+        this.refDismembermentService = refDismembermentService;
     }
 
     public InvestmentDto saveInvestment(InvestmentDto investmentDto) throws GlobalException {
@@ -97,25 +101,44 @@ public class InvestmentService {
         return investmentMapper.toDTO(savedInvestment);
     }
 
+    public void sendInvestment(ScpiRequestDto scpiRequestDto) {
+        kafkaTemplate.send(SCPI_REQUEST_TOPIC, scpiRequestDto);
+    }
+
     public List<InvestmentDtoOut> getInvestments(String state) {
         return investmentMapper.toDtoOutList(investmentRepository.findByInvestorIdAndInvestmentState(userService.getEmail(), state));
     }
 
     public Page<InvestmentDtoOut> getPageableInvestments(Pageable pageable, String state) {
         Page<Investment> investments;
-    
-        if (state == null || state.isBlank()) {
-            investments = investmentRepository.findByInvestorId(userService.getEmail(), pageable);
-        } else {
-            investments = investmentRepository.findByInvestorIdAndInvestmentState(userService.getEmail(), pageable, state);
-        }
-    
+        investments = investmentRepository.findByInvestorIdAndInvestmentState(userService.getEmail(), pageable, state);
         return investmentMapper.toDtoOutPage(investments);
     }
-    
 
-    public void sendInvestment(ScpiRequestDto scpiRequestDto) {
-        kafkaTemplate.send(SCPI_REQUEST_TOPIC, scpiRequestDto);
+
+    public InvestmentStateDtoOut getPortfolio(Pageable pageable, String state) throws GlobalException {
+        int totalInvestments = investmentRepository.countByInvestorId(userService.getEmail());
+        Page<InvestmentDtoOut> investments = this.getPageableInvestments(pageable, state);
+
+        return InvestmentStateDtoOut.builder()
+                .totalInvesti(totalInvestments)
+                .investments(investments)
+                .build();
     }
 
+    public InvestmentStatisticsDtoOut getInvestmentStats() throws GlobalException {
+        List<InvestmentDtoOut> investmentsByState = this.getInvestments(InvestmentState.VALIDATED.toString());
+        List<ScpiDtoOut> scpis = this.scpiService.getAllScpis();
+        List<RefDismembermentDto> usuRefs = this.refDismembermentService.getByPropertyType(PropertyType.USUFRUIT);
+        List<RefDismembermentDto> nueRefs = this.refDismembermentService.getByPropertyType(PropertyType.NUE_PROPRIETE);
+
+        InvestmentStatisticsDtoOut statValues = Statistics.investmentPortfolioState(investmentsByState, scpis, usuRefs, nueRefs);
+
+        return InvestmentStatisticsDtoOut.builder()
+                .cashbackMontant(statValues.getCashbackMontant())
+                .revenuMensuel(statValues.getRevenuMensuel())
+                .rendementMoyen(statValues.getRendementMoyen())
+                .montantInvesti(statValues.getMontantInvesti())
+                .build();
+    }
 }

@@ -2,12 +2,12 @@ package fr.formationacademy.scpiinvestplusapi.resource;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDto;
-import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDtoOut;
+import fr.formationacademy.scpiinvestplusapi.dto.InvestmentStateDtoOut;
+import fr.formationacademy.scpiinvestplusapi.dto.InvestmentStatisticsDtoOut;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.service.InvestmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import java.util.List;
 
 import static fr.formationacademy.scpiinvestplusapi.utils.Constants.APP_ROOT;
 
@@ -49,21 +48,25 @@ public class InvestmentResource {
 
     }
 
-    @Operation(summary = "Recupérer la liste des investissements d'un investisseur authentifié", description = "Cette API permet d'obtenir la liste complète des investissements d'un investisseur actuellement authentifié.")
+    @Operation(summary = "Récupérer les investissements paginés selon l'état",
+            description = "Cette API permet de récupérer une liste paginée des investissements, filtrée par état et retourner aussi le nombre total d'investissements")
     @GetMapping
-    public ResponseEntity<List<InvestmentDtoOut>> getInvestments(
-            @RequestParam(required = false,defaultValue = "VALIDATED", value = "state") String state
-    ) {
-        return ResponseEntity.ok(investmentService.getInvestments(state));
-    }
-
-    @Operation(summary = "Récupérer les investissements paginés selon l'état", description = "Cette API permet de récupérer une liste paginée des investissements, filtrée optionnellement par état")
-    @GetMapping("/page")
-    public ResponseEntity<Page<InvestmentDtoOut>> getInvestments(
-            @PageableDefault(size = 10) Pageable pageable, @RequestParam(required = false, value = "state") String state
-
-    ) {
-        Page<InvestmentDtoOut> investments = investmentService.getPageableInvestments(pageable, state);
+    public ResponseEntity<InvestmentStateDtoOut> getInvestments(
+            @PageableDefault(size = 10) Pageable pageable,
+            @RequestParam(required = false, value = "state", defaultValue = "VALIDATED") String state
+    ) throws GlobalException {
+        InvestmentStateDtoOut investments = investmentService.getPortfolio(pageable, state);
         return ResponseEntity.ok(investments);
     }
+
+    @Operation(summary = "Récupérer les statistiques du portefeuille d'investissements",
+            description = "Cette API retourne uniquement les statistiques calculées des investissements selon leur état.")
+    @GetMapping("/stats")
+    public ResponseEntity<InvestmentStatisticsDtoOut> getInvestmentStats() throws GlobalException {
+
+        InvestmentStatisticsDtoOut stats = investmentService.getInvestmentStats();
+        return ResponseEntity.ok(stats);
+    }
+
+
 }
