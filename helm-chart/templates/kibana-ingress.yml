@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kibana-batch
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: {{ if .Values.ingressKibanaPrefix }}{{ .Values.ingressKibanaPrefix }}.{{ end }}kibana-batch.check-consulting.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kibana-batch
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - {{ if .Values.ingressKibanaPrefix }}{{ .Values.ingressKibanaPrefix }}.{{ end }}kibana-batch.check-consulting.net
+      secretName: kibana-batch-tls

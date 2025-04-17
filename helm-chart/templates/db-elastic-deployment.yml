@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch-batch
+  labels:
+    app: elasticsearch-batch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch-batch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch-batch
+    spec:
+      containers:
+        - name: elasticsearch-batch
+          image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
+          env:
+            - name: node.name
+              value: "es01"
+            - name: bootstrap.memory_lock
+              value: "true"
+            - name: discovery.type
+              value: "single-node"
+            - name: ES_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+            - name: xpack.security.enabled
+              value: "false"
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          securityContext:
+            capabilities:
+              add: ["ALL"]
+            privileged: true
+          ports:
+            - containerPort: 9200
+              name: http
+            - containerPort: 9300
+              name: transport

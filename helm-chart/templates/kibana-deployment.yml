@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana-batch
+  labels:
+    app: kibana-batch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana-batch
+  template:
+    metadata:
+      labels:
+        app: kibana-batch
+    spec:
+      containers:
+        - name: kibana-batch
+          image: docker.elastic.co/kibana/kibana:8.6.2
+          env:
+            - name: SERVER_NAME
+              value: "localhost"
+            - name: ELASTICSEARCH_HOSTS
+              value: "http://elasticsearch-batch:9200"
+          resources:
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          securityContext:
+            capabilities:
+              add: ["ALL"]
+          ports:
+            - containerPort: 5601
+              name: http
+          volumeMounts:
+            - name: kibana-data
+              mountPath: /usr/share/kibana/data
+      volumes:
+        - name: kibana-data
+          emptyDir: {}
