@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9094
 #  security:
 #    oauth2:
 #      resourceserver:
@@ -21,4 +21,6 @@ spring:
 #    bootstrap-servers: localhost:9092
 
   elasticsearch:
-      uris: http://localhost:9200
+    uris: http://elasticsearch:9200
+    hostname: localhost
+    port: 9200

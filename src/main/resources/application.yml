@@ -13,6 +13,8 @@ spring:
 
   elasticsearch:
     uris: http://elasticsearch:9200
+    hostname: elasticsearch-batch.logging
+    port: 9200
 
   jpa:
     database: postgresql
