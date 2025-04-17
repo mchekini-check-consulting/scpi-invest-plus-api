@@ -10,6 +10,12 @@ spring:
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
+
+  elasticsearch:
+    uris: http://elasticsearch:9200
+    hostname: elasticsearch-batch.logging
+    port: 9200
+
   jpa:
     database: postgresql
     hibernate:
@@ -22,6 +28,9 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+
+
   security:
     oauth2:
       resourceserver:
