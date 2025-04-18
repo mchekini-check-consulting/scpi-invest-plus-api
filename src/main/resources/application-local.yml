@@ -1,6 +1,26 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
   kafka:
     bootstrap-servers: localhost:9094
-
+  security:
+    oauth2:
+      resourceserver:
+       jwt:
+          issuer-uri: https://keycloak.check-consulting.net/realms/master
+          jwk-set-uri: https://keycloak.check-consulting.net/realms/master/protocol/openid-connect/certs
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+      group:
+        liveness:
+          include: customLiveness
+        readiness:
+          include: customReadiness
