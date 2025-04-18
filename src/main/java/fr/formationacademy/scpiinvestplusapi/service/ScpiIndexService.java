@@ -59,12 +59,21 @@ public class ScpiIndexService {
                                             .query(criteria.getName())
                                             .fields("name")
                                             .fuzziness("2")
-                                            .operator(Operator.Or)
+                                            .operator(Operator.And)
+                                    )
+                            )
+                            .should(sh -> sh
+                                    .wildcard(w -> w
+                                            .field("name.keyword")
+                                            .value("*" + criteria.getName() + "*")
+                                            .caseInsensitive(true)
                                     )
                             )
                     )
             );
         }
+
+
 
         if (criteria.getDistributionRate() != null) {
             log.info("Searching with distributionRate: {}", criteria.getDistributionRate());
@@ -90,6 +99,7 @@ public class ScpiIndexService {
                 boolQuery.filter(f -> f.range(r -> r
                         .term(t -> t.field("subscriptionFeesBigDecimal")
                                 .gt(String.valueOf(0))
+
                         )
                 ));
             } else {
