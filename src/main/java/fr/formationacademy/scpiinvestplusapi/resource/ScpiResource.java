@@ -46,6 +46,20 @@ public class ScpiResource {
         return ResponseEntity.ok(scpiService.getScpiWithFilter(searchScpiDto));
     }
 
+    @Operation(summary = "Retrieve SCPI details by Name",
+            description = "Returns SCPI details as a DTO based on the provided SCPI name.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success - SCPI details retrieved",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ScpiDtoOut.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "404", description = "SCPI not found")
+    })
+    @GetMapping("/detailsNames/{scpiName}")
+    public ResponseEntity<ScpiDtoOut> getDetailsByName(@PathVariable String scpiName) {
+        return ResponseEntity.ok(scpiService.getScpiDetailsByName(scpiName));
+    }
+
     @Operation(summary = "Retrieve SCPI details by ID",
             description = "Returns SCPI details as a DTO based on the provided ID.")
     @ApiResponses(value = {
@@ -80,4 +94,12 @@ public class ScpiResource {
         return scpiService.getScpisWithScheduledPayment();
     }
 
+    @Operation(
+            summary = "Récupérer les noms des scpis",
+            description = "Retourne la liste des noms des SCPIs pour les afficher dans le comparateur."
+    )
+    @GetMapping("/names")
+    public List<String> getNames() {
+        return scpiService.ListAllNames();
+    }
 }

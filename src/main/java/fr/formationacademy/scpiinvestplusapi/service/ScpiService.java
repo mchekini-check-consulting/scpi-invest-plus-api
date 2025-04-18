@@ -83,4 +83,11 @@ public class ScpiService {
         return scpiMapper.scpiToScpiDtoOut(scpiRepository.findByScheduledPaymentTrue());
     }
 
+    public List<String> ListAllNames() {
+        return scpiRepository.findAllNames();
+    }
+
+    public ScpiDtoOut getScpiDetailsByName(String scpiName) {
+        return scpiRepository.findByName(scpiName).map(scpiMapper::scpiToScpiDtoOut).orElse(null);
+    }
 }
