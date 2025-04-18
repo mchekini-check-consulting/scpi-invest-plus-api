@@ -13,7 +13,7 @@ spring:
 
   elasticsearch:
     uris: http://elasticsearch:9200
-    hostname: elasticsearch-batch.scpi-invest-plus-int
+    hostname: ${ELASTICSEARCH_HOSTNAME}
     port: 9200
 
   jpa:
