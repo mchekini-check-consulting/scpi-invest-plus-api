@@ -22,9 +22,9 @@ spec:
           env:
             - name: SPRING_PROFILES_ACTIVE
               value:  "{{.Values.application.environment }}"
-          envFrom:
-            - secretRef:
-                name: api-db-credentials
+          #envFrom:
+           # - secretRef:
+            #    name: api-db-credentials
           volumeMounts:
             - name: config-volume
               mountPath: /config/application.yml
