@@ -31,6 +31,7 @@ public class ScpiDocumentDTO {
     private Long capitalization;
     private Integer enjoymentDelay;
     private String frequencyPayment;
+    private Double matchedScore;
     private Integer minimumSubscription;
     private CountryDominant countryDominant;
     private SectorDominant sectorDominant;

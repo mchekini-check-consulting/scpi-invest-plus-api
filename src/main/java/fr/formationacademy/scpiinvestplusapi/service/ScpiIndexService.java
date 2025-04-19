@@ -9,12 +9,16 @@ import co.elastic.clients.elasticsearch._types.Script;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.mapping.Property;
 import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.FieldValueFactorModifier;
 import co.elastic.clients.elasticsearch._types.query_dsl.FunctionBoostMode;
 import co.elastic.clients.elasticsearch._types.query_dsl.FunctionScore;
+import co.elastic.clients.elasticsearch._types.query_dsl.Operator;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.json.JsonData;
 import fr.formationacademy.scpiinvestplusapi.dto.CriteriaIn;
 import fr.formationacademy.scpiinvestplusapi.dto.CriteriaPoperties;
@@ -213,7 +217,7 @@ public class ScpiIndexService {
                 optimalValuesMap.put("distributionRate", 8.35);
                 optimalValuesMap.put("enjoymentDelay", 0.0);
                 optimalValuesMap.put("managementCosts", 7.2);
-                optimalValuesMap.put("subscriptionFees", 0.0);
+                optimalValuesMap.put("subscriptionFeesBigDecimal", 0.0);
                 optimalValuesMap.put("capitalization", 6200000000.0);
         }
 
@@ -224,11 +228,11 @@ public class ScpiIndexService {
                                 CriteriaPoperties.builder().ScoringType("DecayFunctionScore").scale(4).decay(0.5)
                                                 .build());
                 CriteriaMap.put("managementCosts",
-                                CriteriaPoperties.builder().ScoringType("DecayFunctionScore").scale(10).decay(0.5)
-                                                .build());
-                CriteriaMap.put("subscriptionFees",
-                                CriteriaPoperties.builder().ScoringType("DecayFunctionScore").scale(5).decay(0.5)
-                                                .build());
+                                CriteriaPoperties.builder().ScoringType("FunctionScore")
+                                                .modifier(FieldValueFactorModifier.Reciprocal).factor(1.5).build());
+                CriteriaMap.put("subscriptionFeesBigDecimal",
+                                CriteriaPoperties.builder().ScoringType("FunctionScore")
+                                                .modifier(FieldValueFactorModifier.Reciprocal).factor(1.5).build());
                 CriteriaMap.put("capitalization",
                                 CriteriaPoperties.builder().ScoringType("RangeBonus").weight(1.5).limit(740000000L)
                                                 .build());
@@ -238,51 +242,17 @@ public class ScpiIndexService {
         public void initData() {
                 initCriteriaMap();
                 initOtimalValueMap();
-                // log.info(("Le service est bien executé"));
-                // try {
-                // if (!indexExists("scpi")) {
-                // createScpiIndex(elasticsearchClient);
-                // log.info("L'index SCPI a ete cree avec succes !");
-                // } else {
-                // log.info("L'index SCPI existe deja, aucune creation necessaire.");
-                // }
-                // } catch (IOException e) {
-                // log.error("Erreur lors de la verification ou creation de l'index SCPI", e);
-                // }
-
-                // if (getAllScpi().isEmpty()) {
-                // List<ScpiDocumentDTO> scpiIndexes = InitIndexDataForTest();
-                // scpiIndexes.forEach(scpi -> {
-                // try {
-                // saveScpi(scpi);
-                // } catch (IOException e) {
-                // log.error("Erreur lors de l'indexation de la SCPI : " + scpi.getName(),
-                // e);
-                // }
-                // });
-                // log.info("Donnees SCPI indexees avec succes !");
-                // } else {
-                // log.info("Les donnees SCPI existent deja, aucune insertion necessaire.");
-                // }
         }
-
-        // public boolean indexExists(String indexName) throws IOException {
-        // return elasticsearchClient.indices().exists(e -> e.index(indexName)).value();
-        // }
-
-        // public void saveScpi(ScpiDocumentDTO scpi) throws IOException {
-        // IndexResponse response = elasticsearchClient.index(i -> i
-        // .index("scpi")
-        // .id(scpi.getId())
-        // .document(scpi));
-        // log.info("SCPI indexé : " + response.id());
-        // }
 
         public List<ScpiDocumentDTO> searchScoredScpi(List<CriteriaIn> criterias) throws IOException {
 
                 SearchRequest searchRequest = buildSearchRequest(criterias);
+                System.out.println("la requete est : " + searchRequest.toString());
                 SearchResponse<ScpiDocumentDTO> searchResponse = elasticsearchClient.search(searchRequest,
                                 ScpiDocumentDTO.class);
+                System.out.println("la reponse est : " + searchResponse.toString());
+
+                System.out.println("je suis ici");
                 return extractScpiFromResponse(searchResponse, criterias);
         }
 
@@ -334,9 +304,6 @@ public class ScpiIndexService {
                                         break;
                         }
                 }
-                for (FunctionScore score : scores) {
-                        log.info("Leeeeeeeees scooores", score);
-                }
                 return scores;
         }
 
@@ -378,56 +345,109 @@ public class ScpiIndexService {
 
         private List<ScpiDocumentDTO> extractScpiFromResponse(SearchResponse<ScpiDocumentDTO> searchResponse,
                         List<CriteriaIn> criteriaList) {
-                System.err.println(" Reponse de Elastic  " + searchResponse.hits().hits());
-                List<ScpiDocumentDTO> result = searchResponse.hits().hits().stream()
-                                .map(hit -> hit.source())
-                                .filter(Objects::nonNull)
-                                .collect(Collectors.toList());
-                return calculateMashedScore(result, criteriaList);
+                List<ScpiDocumentDTO> result = new ArrayList<>();
+                List<Double> scores = new ArrayList<>();
+
+                for (Hit<ScpiDocumentDTO> hit : searchResponse.hits().hits()) {
+                        ScpiDocumentDTO scpi = hit.source();
+                        if (scpi != null) {
+                                result.add(scpi);
+                                System.out.println("le score ajoue : " + hit.score());
+                                scores.add(hit.score());
+                        }
+                }
+
+                return calculateMashedScore(result, scores, criteriaList);
         }
 
         public List<ScpiDocumentDTO> calculateMashedScore(List<ScpiDocumentDTO> scpiList,
+                        List<Double> elasticScores,
                         List<CriteriaIn> criteriaList) {
-                for (ScpiDocumentDTO scpi : scpiList) {
-                        double totalScore = 0.0;
+                System.out.println("je suis dans calculatedmashedscore : ");
+                double optimalScore = calculateElasticLikeScore(criteriaList);
 
-                        for (CriteriaIn criteria : criteriaList) {
-                                String criteriaName = criteria.getName();
-                                double factor = criteria.getFactor();
+                for (int i = 0; i < scpiList.size(); i++) {
+                        ScpiDocumentDTO scpi = scpiList.get(i);
+                        double score = elasticScores.get(i);
 
-                                double attributeValue = getAttributeValue(scpi, criteriaName);
-
-                                Double optimalValue = optimalValuesMap.get(criteriaName);
-
-                                if (optimalValue != null) {
-                                        double rate = attributeValue / optimalValue;
-                                        totalScore += rate * factor;
-                                } else {
-                                        log.warn("No optimal value found for criteria: {}", criteriaName);
-                                }
-                        }
-
-                        // scpi.setMashedScore((float) totalScore);
+                        double mashedScore = optimalScore != 0 ? Math.min(score / optimalScore, 1.0) : 0.0;
+                        System.out.println("mashedScore : " + mashedScore);
+                        scpi.setMatchedScore(mashedScore);
                 }
+
                 return scpiList;
         }
 
-        private double getAttributeValue(ScpiDocumentDTO scpi, String criteriaName) {
-                switch (criteriaName) {
-                        case "distributionRate":
-                                return scpi.getDistributionRate();
-                        case "subscriptionFees":
-                                return scpi.getSubscriptionFeesBigDecimal().doubleValue();
-                        case "capitalization":
-                                return scpi.getCapitalization().doubleValue();
-                        case "enjoymentDelay":
-                                return scpi.getEnjoymentDelay().doubleValue();
-                        case "managementCosts":
-                                return scpi.getManagementCosts().doubleValue();
-                        case "minimumSubscription":
-                                return scpi.getMinimumSubscription();
-                        default:
-                                throw new IllegalArgumentException("Unknown criteria name: " + criteriaName);
+        // private double getAttributeValue(ScpiDocumentDTO scpi, String criteriaName) {
+        // switch (criteriaName) {
+        // case "distributionRate":
+        // return scpi.getDistributionRate();
+        // case "subscriptionFees":
+        // return scpi.getSubscriptionFeesBigDecimal().doubleValue();
+        // case "capitalization":
+        // return scpi.getCapitalization().doubleValue();
+        // case "enjoymentDelay":
+        // return scpi.getEnjoymentDelay().doubleValue();
+        // case "managementCosts":
+        // return scpi.getManagementCosts().doubleValue();
+        // case "minimumSubscription":
+        // return scpi.getMinimumSubscription();
+        // default:
+        // throw new IllegalArgumentException("Unknown criteria name: " + criteriaName);
+        // }
+        // }
+
+        public double calculateElasticLikeScore(List<CriteriaIn> criteriaList) {
+                System.out.println("je suis dans calculated elastic like score");
+                double totalScore = 0.0;
+
+                for (CriteriaIn criteria : criteriaList) {
+                        String criteriaName = criteria.getName();
+                        double userFactor = criteria.getFactor();
+
+                        Double optimalValue = optimalValuesMap.get(criteriaName);
+                        CriteriaPoperties properties = CriteriaMap.get(criteriaName);
+
+                        if (optimalValue != null && properties != null) {
+                                double modifiedValue = optimalValue;
+
+                                switch (properties.getScoringType()) {
+                                        case "FunctionScore":
+                                                // Seulement sqrt est utilisé
+                                                modifiedValue = Math.sqrt(optimalValue);
+                                                modifiedValue *= properties.getFactor() * userFactor;
+                                                break;
+
+                                        case "DecayFunctionScore":
+                                                // Reproduction d’une decay function d’Elasticsearch
+                                                double decay = properties.getDecay();
+                                                double scale = properties.getScale();
+                                                double decayScore = Math
+                                                                .exp(-Math.pow(optimalValue / scale, 2 * decay));
+                                                modifiedValue = decayScore * userFactor;
+                                                break;
+
+                                        case "RangeBonus":
+                                                if (optimalValue >= properties.getLimit()) {
+                                                        modifiedValue = properties.getWeight() * userFactor;
+                                                } else {
+                                                        modifiedValue = userFactor;
+                                                }
+                                                break;
+
+                                        default:
+                                                // Au cas où un scoringType inconnu arrive
+                                                modifiedValue = userFactor;
+                                                break;
+                                }
+
+                                totalScore += modifiedValue;
+                        } else {
+                                log.warn("Missing optimal value or properties for criteria: {}", criteriaName);
+                        }
                 }
+
+                return totalScore;
         }
+
 }
