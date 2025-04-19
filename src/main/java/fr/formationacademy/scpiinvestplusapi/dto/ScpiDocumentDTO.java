@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
 @Builder
@@ -17,9 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ScpiDocumentDTO {
-    @JsonIgnore
     private String _class;
-    @JsonIgnore
     private String id;
     private Long scpiId;
     private String name;
@@ -37,7 +33,6 @@ public class ScpiDocumentDTO {
     private SectorDominant sectorDominant;
     private List<Location> locations;
     private List<Sector> sectors;
-    private Float mashedScore;
 
     @Data
     @AllArgsConstructor
