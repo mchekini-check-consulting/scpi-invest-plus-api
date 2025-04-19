@@ -115,6 +115,9 @@ public class ScpiIndexResource {
         @PostMapping("/ScoreSearch")
         public ResponseEntity<List<ScpiDocumentDTO>> searchScpi(@RequestBody List<CriteriaIn> criteria)
                         throws IOException {
+                for (CriteriaIn criteriaIn : criteria) {
+                        System.out.println("critere X : " + criteriaIn.getName());
+                }
                 List<ScpiDocumentDTO> result = scpiSearchService.searchScoredScpi(criteria);
                 return ResponseEntity.ok(result);
         }
