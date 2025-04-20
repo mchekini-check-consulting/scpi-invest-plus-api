@@ -39,11 +39,8 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/*").permitAll()
                         .requestMatchers("/api/v1/plans").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwt -> jwt.decoder(jwtDecoder))
-                );
+                        .anyRequest().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder)));
 
         return http.build();
     }
@@ -70,8 +67,7 @@ public class SecurityConfig {
                 User.withUsername(webhookUsername)
                         .password(passwordEncoder().encode(webhookPassword))
                         .roles("WEBHOOK")
-                        .build()
-        );
+                        .build());
     }
 
     @Bean
