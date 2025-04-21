@@ -78,32 +78,6 @@ public class SimulationService {
         return simulationMapper.toDTO(simulation);
     }
 
-    public SimulationDToOut addScpiToSimulation(Integer simulationId, ScpiSimulationInDTO scpiSimulationInDTO) throws GlobalException {
-        Simulation simulation = simulationRepository.findById(simulationId).orElseThrow(
-                () -> new GlobalException(HttpStatus.NOT_FOUND, "No simulation found with id: " + simulationId)
-        );
-        ScpiSimulation scpiSimulation = scpiSimulationMapper.toEntity(scpiSimulationInDTO, simulation);
-        Scpi scpi = scpiRepository.findById(scpiSimulationInDTO.getScpiId()).orElseThrow(
-                () -> new GlobalException(HttpStatus.NOT_FOUND, "No Scpi found with id : " + simulationId)
-        );
-        scpiSimulation.setScpi(scpi);
-        log.info("AddScpiToSimulation - Scpi found: {}", scpi);
-        scpiSimulation.setSimulation(simulation);
-        scpiSimulation.setNumberPart(scpiSimulationInDTO.getNumberPart());
-        scpiSimulation.setPartPrice(scpiSimulationInDTO.getPartPrice());
-        scpiSimulation.setRising(scpiSimulationInDTO.getRising());
-        scpiSimulation.setDuree(scpiSimulationInDTO.getDuree());
-        scpiSimulation.setDureePercentage(scpiSimulationInDTO.getDureePercentage());
-        scpiSimulation.setPropertyType(scpiSimulationInDTO.getPropertyType());
-        log.info("AddScpiToSimulation - New Scpi created: {}", scpiSimulation);
-        simulation.getScpiSimulations().add(scpiSimulation);
-
-        log.info("AddScpiToSimulation - The scpi has been added simulation");
-        simulationRepository.save(simulation);
-
-        log.info("AddScpiToSimulation - New Scpi  {} added to {} :", scpiSimulation, simulation);
-        return simulationMapper.toDTO(simulation);
-    }
 
     public SimulationDToOut deleteSimulation(Integer simulationId) throws GlobalException {
         Simulation simulation = simulationRepository.findById(simulationId)

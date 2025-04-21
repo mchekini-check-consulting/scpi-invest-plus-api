@@ -16,6 +16,7 @@ public interface ScpiSimulationMapper {
     @Mapping(target = "scpiName", source = "scpiSimulation.scpi.name")
     @Mapping(target = "locations", source = "scpiSimulation.scpi.locations")
     @Mapping(target = "sectors", source = "scpiSimulation.scpi.sectors")
+    @Mapping(target = "statYears", source = "scpiSimulation.scpi.statYears")
     ScpiSimulationDToOut toDTO(ScpiSimulation scpiSimulation);
 
     List<ScpiSimulationDToOut> toDTO(List<ScpiSimulation> scpiSimulations);
