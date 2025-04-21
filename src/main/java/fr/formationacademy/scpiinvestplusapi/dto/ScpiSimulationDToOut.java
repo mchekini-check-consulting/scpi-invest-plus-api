@@ -27,4 +27,5 @@ public class ScpiSimulationDToOut {
     private String scpiName;
     private List<LocationDtoOut> locations;
     private List<SectorDtoOut> sectors;
+    private List<StatYearDtoOut> statYears;
 }
