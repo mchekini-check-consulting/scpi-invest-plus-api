@@ -4,21 +4,26 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Objects;
-import java.util.OptionalDouble;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 import fr.formationacademy.scpiinvestplusapi.dto.InvestmentDtoOut;
 import fr.formationacademy.scpiinvestplusapi.dto.InvestmentStatisticsDtoOut;
 import fr.formationacademy.scpiinvestplusapi.dto.RefDismembermentDto;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiDtoOut;
+import fr.formationacademy.scpiinvestplusapi.entity.Location;
+import fr.formationacademy.scpiinvestplusapi.entity.Sector;
+import fr.formationacademy.scpiinvestplusapi.entity.StatYear;
 import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 
 public class Statistics {
     public static InvestmentStatisticsDtoOut investmentPortfolioState(List<InvestmentDtoOut> investments,
                                                                       List<ScpiDtoOut> scpis,
-                                                                      List<RefDismembermentDto> usuRefs, List<RefDismembermentDto> nueRefs) {
+                                                                      List<RefDismembermentDto> usuRefs, List<RefDismembermentDto> nueRefs,
+                                                                      List<Location> locations,
+                                                                      List<Sector> sectors,
+                                                                      List<StatYear> statYears) {
 
         InvestmentStatisticsDtoOut result = InvestmentStatisticsDtoOut.builder().build();
 
@@ -26,6 +31,9 @@ public class Statistics {
         double rendementMoyen = 0.0;
         int revenueMensuel = 0;
         double cashbackMontant = 0.0;
+        Map<String, Double> repGeographique = new HashMap<>();
+        Map<String, Double> repSectoriel = new HashMap<>();
+        Map<String, Double> distributionHistory = new HashMap<>();
 
         //Caclul du Montant Investi
         montantInvesti = investments.stream()
@@ -47,7 +55,7 @@ public class Statistics {
         rendementMoyen = moyenneOptional.isPresent() ?
                 BigDecimal.valueOf(moyenneOptional.getAsDouble()).setScale(2, RoundingMode.HALF_UP).doubleValue() : 0.0;
 
-        //Calcul des revenues mensuels
+        //Calcul des Revenues Mensuels
         for (InvestmentDtoOut inv : investments) {
             ScpiDtoOut scpi = scpis.stream()
                     .filter(sc -> sc.getName().equals(inv.getScpiName()))
@@ -104,10 +112,105 @@ public class Statistics {
             }
         }
 
+        // Rep goographique
+        Map<String, Double> repartitionGeo = new HashMap<>();
+
+        for (Location location : locations) {
+            String country = location.getId().getCountry();
+            String scpiName = location.getScpi().getName();
+            BigDecimal countryPercentage = location.getCountryPercentage();
+
+            investments.stream()
+                    .filter(investment -> investment.getScpiName().equals(scpiName))
+                    .findFirst()
+                    .ifPresent(investment -> {
+                        BigDecimal totalAmount = investment.getTotalAmount();
+                        double totalInvestiParPays = countryPercentage.doubleValue() * totalAmount.doubleValue() / 100;
+
+                        repartitionGeo.merge(country, totalInvestiParPays, Double::sum);
+                    });
+        }
+
+        Map<String, Double> repartitionPourcent = new HashMap<>();
+        for (Map.Entry<String, Double> entry : repartitionGeo.entrySet()) {
+            double pourcentage = (entry.getValue() / montantInvesti) * 100.0;
+            double arrondi = Math.round(pourcentage * 100.0) / 100.0;
+            repartitionPourcent.put(entry.getKey(), arrondi);
+        }
+        repGeographique = repartitionPourcent;
+
+
+        //Rep Sectoriel:
+        Map<String, Double> repartitionSectorielle = new HashMap<>();
+
+        for (Sector sector : sectors) {
+            String secteur = sector.getId().getName();
+            String scpiName = sector.getScpi().getName();
+            BigDecimal sectorPercentage = sector.getSectorPercentage();
+
+            investments.stream()
+                    .filter(investment -> investment.getScpiName().equals(scpiName))
+                    .findFirst()
+                    .ifPresent(investment -> {
+                        BigDecimal totalAmount = investment.getTotalAmount();
+                        double montantInvestiDansSecteur = sectorPercentage.doubleValue() * totalAmount.doubleValue() / 100.0;
+
+                        repartitionSectorielle.merge(secteur, montantInvestiDansSecteur, Double::sum);
+                    });
+        }
+
+        Map<String, Double> repartitionPourcentSectorielle = new HashMap<>();
+        for (Map.Entry<String, Double> entry : repartitionSectorielle.entrySet()) {
+            double pourcentage = (entry.getValue() / montantInvesti) * 100.0;
+            double arrondi = Math.round(pourcentage * 100.0) / 100.0;
+            repartitionPourcentSectorielle.put(entry.getKey(), arrondi);
+        }
+        repSectoriel = repartitionPourcentSectorielle;
+
+
+        // TotalDistribution
+        Map<String, Double> totalDistribution = new HashMap<>();
+
+        Map<Integer, List<StatYear>> statYearsByYear = statYears.stream()
+                .filter(stat -> investments.stream().anyMatch(inv -> inv.getScpiName().equals(stat.getScpi().getName())))
+                .collect(Collectors.groupingBy(stat -> stat.getYearStat().getYearStat()));
+
+
+        for (Map.Entry<Integer, List<StatYear>> entry : statYearsByYear.entrySet()) {
+            int year = entry.getKey();
+            List<StatYear> stats = entry.getValue();
+
+            double totalDistribueAnnee = 0.0;
+
+            for (StatYear stat : stats) {
+                String scpiName = stat.getScpi().getName();
+
+                Optional<InvestmentDtoOut> matchedInvestment = investments.stream()
+                        .filter(investment -> investment.getScpiName().equals(scpiName))
+                        .findFirst();
+
+                if (matchedInvestment.isPresent() && stat.getDistributionRate() != null) {
+                    double taux = stat.getDistributionRate().doubleValue();
+                    double montantInvestiScpi = matchedInvestment.get().getTotalAmount().doubleValue();
+
+                    totalDistribueAnnee += (taux * montantInvestiScpi) / 100.0;
+                }
+            }
+
+            double tauxPondere = (totalDistribueAnnee / montantInvesti) * 100.0;
+            double tauxArrondi = Math.round(tauxPondere * 100.0) / 100.0;
+
+            totalDistribution.put(String.valueOf(year), tauxArrondi);
+        }
+        distributionHistory = totalDistribution;
+
         result.setMontantInvesti(montantInvesti);
         result.setRendementMoyen(rendementMoyen);
         result.setRevenuMensuel(revenueMensuel);
         result.setCashbackMontant(cashbackMontant);
+        result.setRepGeographique(repGeographique);
+        result.setRepSectoriel(repSectoriel);
+        result.setDistributionHistory(distributionHistory);
 
         return result;
     }
