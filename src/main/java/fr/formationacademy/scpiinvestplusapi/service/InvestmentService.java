@@ -1,16 +1,17 @@
 package fr.formationacademy.scpiinvestplusapi.service;
 
 import fr.formationacademy.scpiinvestplusapi.dto.*;
-import fr.formationacademy.scpiinvestplusapi.entity.Investment;
-import fr.formationacademy.scpiinvestplusapi.entity.Scpi;
+import fr.formationacademy.scpiinvestplusapi.entity.*;
 import fr.formationacademy.scpiinvestplusapi.enums.InvestmentState;
 import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.mapper.InvestmentMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.InvestmentRepository;
+import fr.formationacademy.scpiinvestplusapi.repository.LocationRepository;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
 import fr.formationacademy.scpiinvestplusapi.dto.InvestmentStatisticsDtoOut;
 import fr.formationacademy.scpiinvestplusapi.dto.RefDismembermentDto;
+import fr.formationacademy.scpiinvestplusapi.repository.StatYearRepository;
 import fr.formationacademy.scpiinvestplusapi.utils.Statistics;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static fr.formationacademy.scpiinvestplusapi.utils.Constants.SCPI_REQUEST_TOPIC;
 
@@ -35,11 +37,14 @@ public class InvestmentService {
     private final ScpiRepository scpiRepository;
     private final UserService userService;
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final LocationService locationService;
+    private final SectorService sectorService;
+    private final StatYearService statYearService;
 
 
     public InvestmentService(InvestmentRepository investmentRepository, ScpiService scpiService,
                              InvestmentMapper investmentMapper, ScpiRepository scpiRepository, UserService userService,
-                             KafkaTemplate<String, Object> kafkaTemplate, RefDismembermentService refDismembermentService) {
+                             KafkaTemplate<String, Object> kafkaTemplate, RefDismembermentService refDismembermentService, LocationService locationService, SectorService sectorService, StatYearService statYearService) {
         this.investmentRepository = investmentRepository;
         this.scpiService = scpiService;
         this.investmentMapper = investmentMapper;
@@ -47,6 +52,10 @@ public class InvestmentService {
         this.userService = userService;
         this.kafkaTemplate = kafkaTemplate;
         this.refDismembermentService = refDismembermentService;
+        this.locationService = locationService;
+        this.sectorService = sectorService;
+        this.statYearService = statYearService;
+
     }
 
     public InvestmentDto saveInvestment(InvestmentDto investmentDto) throws GlobalException {
@@ -132,13 +141,25 @@ public class InvestmentService {
         List<RefDismembermentDto> usuRefs = this.refDismembermentService.getByPropertyType(PropertyType.USUFRUIT);
         List<RefDismembermentDto> nueRefs = this.refDismembermentService.getByPropertyType(PropertyType.NUE_PROPRIETE);
 
-        InvestmentStatisticsDtoOut statValues = Statistics.investmentPortfolioState(investmentsByState, scpis, usuRefs, nueRefs);
+        List<String> scpiNames = investmentsByState.stream()
+                .map(InvestmentDtoOut::getScpiName)
+                .distinct()
+                .collect(Collectors.toList());
+        List<Location> locations = this.locationService.getLocationsByScpiNames(scpiNames);
+        List<Sector> sectors = this.sectorService.getSectorsByScpiNames(scpiNames);
+        List<StatYear> statYears = this.statYearService.getStatYearsByScpiNames(scpiNames);
+
+
+        InvestmentStatisticsDtoOut statValues = Statistics.investmentPortfolioState(investmentsByState, scpis, usuRefs, nueRefs, locations, sectors, statYears);
 
         return InvestmentStatisticsDtoOut.builder()
                 .cashbackMontant(statValues.getCashbackMontant())
                 .revenuMensuel(statValues.getRevenuMensuel())
                 .rendementMoyen(statValues.getRendementMoyen())
                 .montantInvesti(statValues.getMontantInvesti())
+                .repGeographique(statValues.getRepGeographique())
+                .repSectoriel(statValues.getRepSectoriel())
+                .distributionHistory(statValues.getDistributionHistory())
                 .build();
     }
 }
