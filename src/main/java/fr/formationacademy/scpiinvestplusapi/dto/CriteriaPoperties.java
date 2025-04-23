@@ -13,10 +13,10 @@ import lombok.NoArgsConstructor;
 public class CriteriaPoperties {
     private String ScoringType;
     private FieldValueFactorModifier modifier;
-    private double factor;
-    private double scale;
-    private double decay;
-    private double weight;
-    private long limit;
+    private Double factor;
+    private Double scale;
+    private Double decay;
+    private Double weight;
+    private Long limit;
 
 }

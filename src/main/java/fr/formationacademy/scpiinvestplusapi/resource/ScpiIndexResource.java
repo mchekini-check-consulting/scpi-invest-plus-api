@@ -3,6 +3,7 @@ package fr.formationacademy.scpiinvestplusapi.resource;
 import fr.formationacademy.scpiinvestplusapi.dto.CriteriaIn;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiDocumentDTO;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiSearchCriteriaDto;
+import fr.formationacademy.scpiinvestplusapi.service.ScoringScpiService;
 import fr.formationacademy.scpiinvestplusapi.service.ScpiIndexService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,9 +25,11 @@ import java.util.Map;
 public class ScpiIndexResource {
 
         private final ScpiIndexService scpiSearchService;
+        private final ScoringScpiService scoringScpiService;
 
-        public ScpiIndexResource(ScpiIndexService scpiSearchService) {
+        public ScpiIndexResource(ScpiIndexService scpiSearchService, ScoringScpiService scoringScpiService) {
                 this.scpiSearchService = scpiSearchService;
+                this.scoringScpiService = scoringScpiService;
         }
 
         @Operation(summary = "Recherche de SCPI", description = "Recherche des SCPI par nom (approximatif) et/ou montant minimum de souscription (exact)")
@@ -95,14 +98,25 @@ public class ScpiIndexResource {
                 }
         }
 
+        @Operation(summary = "Recherche de SCPI avec score", description = "Effectue une recherche des SCPI à l'aide d'une liste de critères, et retourne les résultats avec un score de matching.")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Résultats de la recherche retournés avec succès"),
+                        @ApiResponse(responseCode = "400", description = "Requête invalide"),
+                        @ApiResponse(responseCode = "500", description = "Erreur serveur lors de la recherche")
+        })
         @PostMapping("/ScoreSearch")
-        public ResponseEntity<List<ScpiDocumentDTO>> searchScpi(@RequestBody List<CriteriaIn> criteria)
-                        throws IOException {
-                for (CriteriaIn criteriaIn : criteria) {
-                        System.out.println("critere X : " + criteriaIn.getName());
+        public ResponseEntity<?> searchScpi(@RequestBody List<CriteriaIn> criteria) {
+                try {
+                        List<ScpiDocumentDTO> result = scoringScpiService.searchScoredScpi(criteria);
+                        return ResponseEntity.ok(result);
+                } catch (IOException e) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                        .body(Map.of(
+                                                        "status", "error",
+                                                        "message", "Erreur lors de la recherche",
+                                                        "details", e.getMessage()));
+
                 }
-                List<ScpiDocumentDTO> result = scpiSearchService.searchScoredScpi(criteria);
-                return ResponseEntity.ok(result);
         }
 
 }

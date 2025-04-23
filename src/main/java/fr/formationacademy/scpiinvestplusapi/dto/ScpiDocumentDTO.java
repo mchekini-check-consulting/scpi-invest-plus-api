@@ -65,4 +65,42 @@ public class ScpiDocumentDTO {
         private String name;
         private Float sectorPercentage;
     }
+
+    public ScpiDocumentDTO cloneScpi(ScpiDocumentDTO scpi) {
+        return ScpiDocumentDTO.builder()
+                ._class(scpi.get_class())
+                .id(scpi.getId())
+                .scpiId(scpi.getScpiId())
+                .name(scpi.getName())
+                .distributionRate(scpi.getDistributionRate())
+                .sharePrice(scpi.getSharePrice())
+                .scheduledPayment(scpi.getScheduledPayment())
+                .subscriptionFeesBigDecimal(scpi.getSubscriptionFeesBigDecimal())
+                .managementCosts(scpi.getManagementCosts())
+                .capitalization(scpi.getCapitalization())
+                .enjoymentDelay(scpi.getEnjoymentDelay())
+                .frequencyPayment(scpi.getFrequencyPayment())
+                .matchedScore(scpi.getMatchedScore())
+                .minimumSubscription(scpi.getMinimumSubscription())
+                .countryDominant(scpi.getCountryDominant() != null
+                        ? new ScpiDocumentDTO.CountryDominant(scpi.getCountryDominant().getCountry(),
+                                scpi.getCountryDominant().getCountryPercentage())
+                        : null)
+                .sectorDominant(scpi.getSectorDominant() != null
+                        ? new ScpiDocumentDTO.SectorDominant(scpi.getSectorDominant().getName(),
+                                scpi.getSectorDominant().getSectorPercentage())
+                        : null)
+                .locations(scpi.getLocations() != null
+                        ? scpi.getLocations().stream()
+                                .map(loc -> new ScpiDocumentDTO.Location(loc.getCountry(), loc.getCountryPercentage()))
+                                .toList()
+                        : null)
+                .sectors(scpi.getSectors() != null
+                        ? scpi.getSectors().stream()
+                                .map(sec -> new ScpiDocumentDTO.Sector(sec.getName(), sec.getSectorPercentage()))
+                                .toList()
+                        : null)
+                .build();
+    }
+
 }
