@@ -1,7 +1,8 @@
 package fr.formationacademy.scpiinvestplusapi.service;
 
 import fr.formationacademy.scpiinvestplusapi.dto.InvestorDTO;
-import fr.formationacademy.scpiinvestplusapi.dto.KeycloakWebhookRequest;
+import fr.formationacademy.scpiinvestplusapi.dto.KeycloakUserDto;
+import fr.formationacademy.scpiinvestplusapi.dto.KeycloakWebhookDto;
 import fr.formationacademy.scpiinvestplusapi.entity.Investor;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.mapper.InvestorMapper;
@@ -18,11 +19,12 @@ public class InvestorService {
 
     private final InvestorRepository investorRepository;
     private final InvestorMapper investorMapper;
+    private final KeycloakAdminService keycloakAdminService;
 
-
-    public InvestorService(InvestorRepository investorRepository, InvestorMapper investorMapper) {
+    public InvestorService(InvestorRepository investorRepository, InvestorMapper investorMapper, KeycloakAdminService keycloakAdminService) {
         this.investorRepository = investorRepository;
         this.investorMapper = investorMapper;
+        this.keycloakAdminService = keycloakAdminService;
     }
 
 
@@ -57,23 +59,14 @@ public class InvestorService {
     }
 
 
-    public void createInvestorFromKeycloak(KeycloakWebhookRequest body) throws GlobalException {
+    public void createInvestorFromKeycloak(KeycloakWebhookDto body) throws GlobalException {
+        KeycloakUserDto keycloakUser = keycloakAdminService.getUserFromKeycloak(body.getUserId());
 
-        if (body.getDetails() == null) {
-            throw new GlobalException(HttpStatus.BAD_REQUEST, "Webhook payload missing 'details' section");
+        if (investorRepository.findByEmail(keycloakUser.getEmail()).isPresent()) {
+            throw new GlobalException(HttpStatus.CONFLICT, "Investor with this email already exists.");
         }
 
-        Investor investor = Investor.builder()
-                .email(body.getDetails().getEmail())
-                .firstName(body.getDetails().getFirstName())
-                .lastName(body.getDetails().getLastName())
-                .maritalStatus("single")
-                .numberOfChildren("0")
-                .annualIncome(0)
-                .build();
-
-        log.info("Saving investor: {}", investor);
-        investorRepository.save(investor);
+        log.info("Creating Investor from Keycloak {}", keycloakUser);
+        investorRepository.save(investorMapper.KeycloakUserToInvestor(keycloakUser));
     }
-
 }

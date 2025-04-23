@@ -6,21 +6,26 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
   kafka:
     bootstrap-servers: localhost:9094
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          issuer-uri: http://localhost:9100/realms/master
-#          jwk-set-uri: http://localhost:9100/realms/master/protocol/openid-connect/certs
-
-#logging:
-#  level:
-#    org.apache.kafka: ERROR
-#    kafka: ERROR
-#    org.springframework.kafka: ERROR
-#    bootstrap-servers: localhost:9092
-
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9100/realms/master
+          jwk-set-uri: http://localhost:9100/realms/master/protocol/openid-connect/certs
   elasticsearch:
     uris: http://elasticsearch:9200
     hostname: localhost
     port: 9200
+
+keycloak:
+  serverUrl: http://localhost:9100
+  realm: master
+  clientId: scpi-invest-plus
+  adminUsername: admin
+  adminPassword: admin
+
+logging:
+  level:
+    org.apache.kafka: ERROR
+    kafka: ERROR
+    org.springframework.kafka: ERROR
