@@ -15,7 +15,7 @@ node("ci-node"){
                 "  -Dsonar.projectKey=scpi-invest-plus-api \\\n" +
                 "  -Dsonar.projectName='scpi-invest-plus-api' \\\n" +
                 "  -Dsonar.host.url=https://sonar.check-consulting.net \\\n" +
-                "  -Dsonar.token=sqb_b9f747ea71cf70e59e834f7b2a7de7f79fb5b47b"
+                "  -Dsonar.token=squ_172db7cd93144a9b96e321012b2667d1fca60359"
     }
 
     stage("Build Jar file"){
