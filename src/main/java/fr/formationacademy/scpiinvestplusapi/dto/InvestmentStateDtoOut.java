@@ -7,6 +7,6 @@ import org.springframework.data.domain.Page;
 @Data
 @Builder
 public class InvestmentStateDtoOut {
-    public int totalInvesti;
+    public double totalInvesti;
     public Page<InvestmentDtoOut> investments;
 }
