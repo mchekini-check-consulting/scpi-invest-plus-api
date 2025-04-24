@@ -27,9 +27,9 @@ public class Statistics {
 
         InvestmentStatisticsDtoOut result = InvestmentStatisticsDtoOut.builder().build();
 
-        int montantInvesti = 0;
+        double montantInvesti = 0.0;
         double rendementMoyen = 0.0;
-        int revenueMensuel = 0;
+        double revenueMensuel = 0.0;
         double cashbackMontant = 0.0;
         Map<String, Double> repGeographique = new HashMap<>();
         Map<String, Double> repSectoriel = new HashMap<>();
@@ -37,8 +37,11 @@ public class Statistics {
 
         //Caclul du Montant Investi
         montantInvesti = investments.stream()
-                .mapToInt(inv -> inv.getTotalAmount().intValue())
+                .mapToDouble(inv -> inv.getTotalAmount().doubleValue())
                 .sum();
+        montantInvesti = BigDecimal.valueOf(montantInvesti)
+                .setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
 
         //Calucul du Rendement Moyen
         DoubleStream tauxDistributionStream = investments.stream()
@@ -63,8 +66,8 @@ public class Statistics {
                     .orElse(null);
 
             if (scpi != null && scpi.getStatYear() != null) {
-                int sharePrice = scpi.getStatYear().getSharePrice().intValue();
-                int distributionRate = scpi.getStatYear().getDistributionRate().intValue();
+                double sharePrice = scpi.getStatYear().getSharePrice().doubleValue();
+                double distributionRate = scpi.getStatYear().getDistributionRate().doubleValue();
 
                 if (inv.getTypeProperty().equals(PropertyType.PLEINE_PROPRIETE.toString())) {
                     revenueMensuel += (inv.getNumberShares() * sharePrice * distributionRate) / 12;
@@ -104,6 +107,10 @@ public class Statistics {
                     }
                 }
             }
+            revenueMensuel = BigDecimal.valueOf(revenueMensuel)
+                    .setScale(2, RoundingMode.HALF_UP)
+                    .doubleValue();
+
             // Cashback
             if (scpi != null && scpi.getCashback() != null) {
                 double cashbackPourcent = scpi.getCashback().doubleValue();
