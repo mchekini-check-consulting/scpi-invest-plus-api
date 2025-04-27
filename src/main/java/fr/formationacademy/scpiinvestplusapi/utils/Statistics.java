@@ -67,7 +67,7 @@ public class Statistics {
 
             if (scpi != null && scpi.getStatYear() != null) {
                 double sharePrice = scpi.getStatYear().getSharePrice().doubleValue();
-                double distributionRate = scpi.getStatYear().getDistributionRate().doubleValue();
+                double distributionRate = scpi.getStatYear().getDistributionRate().doubleValue() / 100 ;
 
                 if (inv.getTypeProperty().equals(PropertyType.PLEINE_PROPRIETE.toString())) {
                     revenueMensuel += (inv.getNumberShares() * sharePrice * distributionRate) / 12;
@@ -82,9 +82,10 @@ public class Statistics {
                                 .findFirst()
                                 .orElse(null);
 
+
                         if (ref != null) {
                             revenueMensuel += (inv.getNumberShares()
-                                    * ((sharePrice * 100) / ref.getRateDismemberment().doubleValue())
+                                    * ((sharePrice * 100) / (ref.getRateDismemberment().doubleValue() / 100))
                                     * distributionRate) / 12;
                         }
                     }
@@ -101,7 +102,7 @@ public class Statistics {
 
                         if (ref != null) {
                             revenueMensuel += (inv.getNumberShares()
-                                    * ((sharePrice * ref.getRateDismemberment().doubleValue())) / 100
+                                    * ((sharePrice * (ref.getRateDismemberment().doubleValue() / 100)) / 100 )
                                     * distributionRate) / 12;
                         }
                     }
@@ -113,7 +114,7 @@ public class Statistics {
 
             // Cashback
             if (scpi != null && scpi.getCashback() != null) {
-                double cashbackPourcent = scpi.getCashback().doubleValue();
+                double cashbackPourcent = scpi.getCashback().doubleValue() / 100;
                 double cashback = (inv.getTotalAmount().doubleValue() * cashbackPourcent) / 100;
                 cashbackMontant += cashback;
             }
