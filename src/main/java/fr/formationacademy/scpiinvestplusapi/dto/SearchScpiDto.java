@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 
+
 public class SearchScpiDto {
     @Nullable
     private String searchTerm;

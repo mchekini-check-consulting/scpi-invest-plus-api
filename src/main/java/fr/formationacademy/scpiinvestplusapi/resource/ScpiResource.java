@@ -1,7 +1,6 @@
 package fr.formationacademy.scpiinvestplusapi.resource;
 
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiDtoOut;
-import fr.formationacademy.scpiinvestplusapi.dto.SearchScpiDto;
 import fr.formationacademy.scpiinvestplusapi.service.ScpiService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,9 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
 import static fr.formationacademy.scpiinvestplusapi.utils.Constants.APP_ROOT;
 
 @RestController
@@ -30,21 +27,6 @@ public class ScpiResource {
         return ResponseEntity.ok(scpiService.getScpis());
     }
 
-    @Operation(
-            summary = "Recherche des SCPI avec filtres",
-            description = "Permet de rechercher des SCPI en appliquant des filtres spécifiques.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Liste des SCPI trouvées",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = ScpiDtoOut.class))),
-                    @ApiResponse(responseCode = "400", description = "Requête invalide"),
-                    @ApiResponse(responseCode = "500", description = "Erreur serveur")
-            }
-    )
-    @PostMapping("/search")
-    public ResponseEntity<List<ScpiDtoOut>> getScpiWithFilter(@RequestBody SearchScpiDto searchScpiDto) {
-        return ResponseEntity.ok(scpiService.getScpiWithFilter(searchScpiDto));
-    }
 
     @Operation(summary = "Retrieve SCPI details by Name",
             description = "Returns SCPI details as a DTO based on the provided SCPI name.")
@@ -85,14 +67,6 @@ public class ScpiResource {
         return scpiService.getAllScpis();
     }
 
-    @Operation(
-            summary = "Récupérer les SCPI avec versement programmé",
-            description = "Retourne la liste des SCPI pour lesquelles le versement programmé est activé."
-    )
-    @GetMapping("/scheduled")
-    public List<ScpiDtoOut> getScpisWithScheduledPayment() {
-        return scpiService.getScpisWithScheduledPayment();
-    }
 
     @Operation(
             summary = "Récupérer les noms des scpis",
