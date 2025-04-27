@@ -120,7 +120,7 @@ public class Statistics {
             }
         }
 
-        // Rep goographique
+        // Rep geographique
         Map<String, Double> repartitionGeo = new HashMap<>();
 
         for (Location location : locations) {
