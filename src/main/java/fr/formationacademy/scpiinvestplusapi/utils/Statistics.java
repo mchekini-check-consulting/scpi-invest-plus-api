@@ -114,13 +114,13 @@ public class Statistics {
 
             // Cashback
             if (scpi != null && scpi.getCashback() != null) {
-                double cashbackPourcent = scpi.getCashback().doubleValue() / 100;
+                double cashbackPourcent = scpi.getCashback().doubleValue();
                 double cashback = (inv.getTotalAmount().doubleValue() * cashbackPourcent) / 100;
                 cashbackMontant += cashback;
             }
         }
 
-        // Rep goographique
+        // Rep geographique
         Map<String, Double> repartitionGeo = new HashMap<>();
 
         for (Location location : locations) {
