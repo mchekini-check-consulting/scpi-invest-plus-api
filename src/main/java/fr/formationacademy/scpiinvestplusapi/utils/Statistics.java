@@ -101,7 +101,7 @@ public class Statistics {
 
                         if (ref != null) {
                             revenueMensuel += (inv.getNumberShares()
-                                    * ((sharePrice * 100) / ref.getRateDismemberment().doubleValue())
+                                    * ((sharePrice * ref.getRateDismemberment().doubleValue())) / 100
                                     * distributionRate) / 12;
                         }
                     }
