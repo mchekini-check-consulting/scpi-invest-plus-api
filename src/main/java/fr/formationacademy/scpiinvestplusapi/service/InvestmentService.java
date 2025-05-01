@@ -7,12 +7,9 @@ import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 import fr.formationacademy.scpiinvestplusapi.globalExceptionHandler.GlobalException;
 import fr.formationacademy.scpiinvestplusapi.mapper.InvestmentMapper;
 import fr.formationacademy.scpiinvestplusapi.repository.InvestmentRepository;
-import fr.formationacademy.scpiinvestplusapi.repository.LocationRepository;
 import fr.formationacademy.scpiinvestplusapi.repository.ScpiRepository;
-import fr.formationacademy.scpiinvestplusapi.dto.InvestmentStatisticsDtoOut;
-import fr.formationacademy.scpiinvestplusapi.dto.RefDismembermentDto;
-import fr.formationacademy.scpiinvestplusapi.repository.StatYearRepository;
 import fr.formationacademy.scpiinvestplusapi.utils.Statistics;
+import fr.formationacademy.scpiinvestplusapi.utils.TopicNameProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,8 +20,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static fr.formationacademy.scpiinvestplusapi.utils.Constants.SCPI_REQUEST_TOPIC;
 
 @Service
 @Slf4j
@@ -40,11 +35,13 @@ public class InvestmentService {
     private final LocationService locationService;
     private final SectorService sectorService;
     private final StatYearService statYearService;
-
+    private final TopicNameProvider topicNameProvider;
 
     public InvestmentService(InvestmentRepository investmentRepository, ScpiService scpiService,
                              InvestmentMapper investmentMapper, ScpiRepository scpiRepository, UserService userService,
-                             KafkaTemplate<String, Object> kafkaTemplate, RefDismembermentService refDismembermentService, LocationService locationService, SectorService sectorService, StatYearService statYearService) {
+                             KafkaTemplate<String, Object> kafkaTemplate, RefDismembermentService refDismembermentService,
+                             LocationService locationService, SectorService sectorService, StatYearService statYearService,
+                             TopicNameProvider topicNameProvider) {
         this.investmentRepository = investmentRepository;
         this.scpiService = scpiService;
         this.investmentMapper = investmentMapper;
@@ -55,7 +52,7 @@ public class InvestmentService {
         this.locationService = locationService;
         this.sectorService = sectorService;
         this.statYearService = statYearService;
-
+        this.topicNameProvider = topicNameProvider;
     }
 
     public InvestmentDto saveInvestment(InvestmentDto investmentDto) throws GlobalException {
@@ -111,7 +108,7 @@ public class InvestmentService {
     }
 
     public void sendInvestment(ScpiRequestDto scpiRequestDto) {
-        kafkaTemplate.send(SCPI_REQUEST_TOPIC, scpiRequestDto);
+        kafkaTemplate.send(topicNameProvider.getScpiInvestRequestTopic(), scpiRequestDto);
     }
 
     public List<InvestmentDtoOut> getInvestments(String state) {
