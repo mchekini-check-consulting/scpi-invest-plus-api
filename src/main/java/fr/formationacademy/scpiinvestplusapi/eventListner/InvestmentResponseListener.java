@@ -35,11 +35,12 @@ public class InvestmentResponseListener {
     }
 
     private void processResponse(InvestmentResponse response) {
+        log.info("Modification de l'état de la demande dans postgresql : {}", response);
         investmentRepository.findById(response.getInvestmentId()).ifPresent(investment -> {
             investment.setInvestmentState(response.getInvestmentState().toString());
             investment.setRejectedReason(response.getRejectionReason());
             investmentRepository.save(investment);
         });
-
+        log.info("New investment : {}", investmentRepository.findById(response.getInvestmentId()));
     }
 }
