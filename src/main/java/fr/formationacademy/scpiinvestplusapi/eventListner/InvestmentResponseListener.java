@@ -38,8 +38,8 @@ public class InvestmentResponseListener {
         investmentRepository.findById(response.getInvestmentId()).ifPresent(investment -> {
             investment.setInvestmentState(response.getInvestmentState().toString());
             investment.setRejectedReason(response.getRejectionReason());
-            log.info("The new State is assigned to {}  with value : {}", investment.getId(), investment.getInvestmentState());
             investmentRepository.save(investment);
         });
+
     }
 }
