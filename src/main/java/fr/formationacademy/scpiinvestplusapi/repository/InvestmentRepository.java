@@ -14,6 +14,5 @@ public interface InvestmentRepository extends JpaRepository<Investment, Integer>
     int countByInvestorId(String investmentEmail);
     List<Investment> findByInvestorIdAndInvestmentState(String investmentEmail, String state);
     Page<Investment> findByInvestorIdAndInvestmentState(String investorId, Pageable pageable, String investmentState);
-    Page<Investment> findByInvestorId(String investorId, Pageable pageable);
 }
 
