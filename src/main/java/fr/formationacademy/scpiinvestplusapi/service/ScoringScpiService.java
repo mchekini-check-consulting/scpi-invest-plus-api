@@ -5,7 +5,6 @@ import co.elastic.clients.elasticsearch._types.Refresh;
 import co.elastic.clients.elasticsearch._types.Script;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
-import co.elastic.clients.elasticsearch._types.query_dsl.FieldValueFactorModifier;
 import co.elastic.clients.elasticsearch._types.query_dsl.FunctionBoostMode;
 import co.elastic.clients.elasticsearch._types.query_dsl.FunctionScore;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
@@ -15,10 +14,10 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.CreateIndexResponse;
 import co.elastic.clients.json.JsonData;
 import fr.formationacademy.scpiinvestplusapi.dto.CriteriaIn;
-import fr.formationacademy.scpiinvestplusapi.dto.CriteriaPoperties;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiDocumentDTO;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,15 +36,12 @@ public class ScoringScpiService {
     private static final String INDEX_NAME = "scpi";
     private static final String INDEX_SCORING_NAME = "scpi_optimal";
     private static final String MAPPING_FILE_PATH = "src/main/resources/mappings/scpi-optimal-mapping.json";
-
     private final ElasticsearchClient elasticsearchClient;
     private final Map<String, Double> optimalValuesMap;
-    private final Map<String, CriteriaPoperties> criteriaMap;
 
     public ScoringScpiService(ElasticsearchClient elasticsearchClient) {
         this.elasticsearchClient = elasticsearchClient;
         this.optimalValuesMap = initOptimalValueMap();
-        this.criteriaMap = initCriteriaMap();
     }
 
     private Map<String, Double> initOptimalValueMap() {
@@ -54,37 +50,7 @@ public class ScoringScpiService {
         map.put("enjoymentDelay", 0.0);
         map.put("managementCosts", 7.2);
         map.put("subscriptionFeesBigDecimal", 0.0);
-        map.put("capitalization", 6200000000.0);
-        return map;
-    }
-
-    private Map<String, CriteriaPoperties> initCriteriaMap() {
-        Map<String, CriteriaPoperties> map = new HashMap<>();
-        map.put("distributionRate", CriteriaPoperties.builder()
-                .ScoringType("DistributionRateBonus")
-                .modifier(FieldValueFactorModifier.Sqrt)
-                .factor(2.0)
-                .build());
-        map.put("enjoymentDelay", CriteriaPoperties.builder()
-                .ScoringType("EnjoymentDelayBonus")
-                .scale(4.0)
-                .decay(0.5)
-                .build());
-        map.put("managementCosts", CriteriaPoperties.builder()
-                .ScoringType("ManagementCostsBonus")
-                .modifier(FieldValueFactorModifier.Reciprocal)
-                .factor(1.5)
-                .build());
-        map.put("subscriptionFeesBigDecimal", CriteriaPoperties.builder()
-                .ScoringType("SubscriptionFeesBonus")
-                .modifier(FieldValueFactorModifier.Reciprocal)
-                .factor(1.5)
-                .build());
-        map.put("capitalization", CriteriaPoperties.builder()
-                .ScoringType("RangeBonus")
-                .weight(1.5)
-                .limit(740000000L)
-                .build());
+        map.put("capitalization", 6294000000.0);
         return map;
     }
 
@@ -142,31 +108,31 @@ public class ScoringScpiService {
 
         List<FunctionScore> scores = new ArrayList<>();
         for (CriteriaIn criteria : criterias) {
-            switch (criteriaMap.get(criteria.getName()).getScoringType()) {
+            switch (criteria.getName()) {
 
-                case "RangeBonus":
+                case "capitalization":
                     scores.add(createScoringFunction(criteria.getName(), 9.261e-11, 0.6845, criteria.getFactor(),
                             "(params.a * doc[params.field].value + params.b) * params.multiplier"));
                     break;
-                case "DistributionRateBonus":
+                case "distributionRate":
                     scores.add(createScoringFunction(criteria.getName(), 0.1478, -0.233, criteria.getFactor(),
                             "(params.a * doc[params.field].value + params.b) * params.multiplier"));
                     break;
-                case "ManagementCostsBonus":
+                case "managementCosts":
                     scores.add(createScoringFunction(criteria.getName(), 164.67, 0.085, criteria.getFactor(),
                             "(params.a / doc[params.field].value + params.b) * params.multiplier"));
                     break;
-                case "EnjoymentDelayBonus":
+                case "enjoymentDelay":
                     scores.add(createScoringFunction(criteria.getName(), 1.05, -0.05, criteria.getFactor(),
                             "(params.a / (doc[params.field].value + 1) + params.b) * params.multiplier"));
                     break;
-                case "SubscriptionFeesBonus":
+                case "subscriptionFeesBigDecimal":
                     scores.add(createScoringFunction(criteria.getName(), 15.66, -0.08, criteria.getFactor(),
                             "(params.a / (doc[params.field].value +1 ) + params.b) * params.multiplier"));
                     break;
                 default:
-                    log.warn("Scoring type non pris en charge : "
-                            + criteriaMap.get(criteria.getName()).getScoringType());
+                    log.warn("Critere non pris en charge : "
+                            + criteria.getName());
                     break;
             }
         }
