@@ -17,6 +17,7 @@ import fr.formationacademy.scpiinvestplusapi.entity.Sector;
 import fr.formationacademy.scpiinvestplusapi.entity.StatYear;
 import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 
+@Slf4j
 public class Statistics {
     public static InvestmentStatisticsDtoOut investmentPortfolioState(List<InvestmentDtoOut> investments,
                                                                       List<ScpiDtoOut> scpis,
@@ -55,11 +56,12 @@ public class Statistics {
                             .orElse(BigDecimal.ZERO);
                     double investmentAmount = inv.getTotalAmount().doubleValue();
                     double tauxReel = distributionRate.doubleValue() / 100;
-                    return (tauxReel * investmentAmount) / montantInvestiFinal;
+                    return tauxReel * investmentAmount;
                 })
                 .sum();
 
-        rendementMoyen = BigDecimal.valueOf(rendementotalponderee)
+
+        rendementMoyen = BigDecimal.valueOf(rendementotalponderee/montantInvestiFinal * 100)
                 .setScale(2, RoundingMode.HALF_UP)
                 .doubleValue();
 
