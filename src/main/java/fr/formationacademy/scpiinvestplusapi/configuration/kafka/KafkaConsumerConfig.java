@@ -1,8 +1,10 @@
 package fr.formationacademy.scpiinvestplusapi.configuration.kafka;
 
 import fr.formationacademy.scpiinvestplusapi.dto.InvestmentResponse;
+import fr.formationacademy.scpiinvestplusapi.utils.TopicNameProvider;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,11 +24,17 @@ public class KafkaConsumerConfig {
     @Value("${spring.kafka.bootstrap-servers}")
     public String bootstrapServers;
 
+    private final TopicNameProvider topicNameProvider;
+
+    public KafkaConsumerConfig(TopicNameProvider topicNameProvider) {
+        this.topicNameProvider = topicNameProvider;
+    }
+
     @Bean
     public ConsumerFactory<String, InvestmentResponse> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "groupe-1");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, topicNameProvider.getGroupTopic());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, InvestmentResponse.class);
