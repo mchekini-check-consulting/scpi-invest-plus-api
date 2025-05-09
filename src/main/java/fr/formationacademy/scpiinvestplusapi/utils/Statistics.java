@@ -17,7 +17,6 @@ import fr.formationacademy.scpiinvestplusapi.entity.Sector;
 import fr.formationacademy.scpiinvestplusapi.entity.StatYear;
 import fr.formationacademy.scpiinvestplusapi.enums.PropertyType;
 
-@Slf4j
 public class Statistics {
     public static InvestmentStatisticsDtoOut investmentPortfolioState(List<InvestmentDtoOut> investments,
                                                                       List<ScpiDtoOut> scpis,
