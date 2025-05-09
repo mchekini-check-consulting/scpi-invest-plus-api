@@ -43,20 +43,26 @@ public class Statistics {
                 .setScale(2, RoundingMode.HALF_UP)
                 .doubleValue();
 
-        //Calucul du Rendement Moyen
-        DoubleStream tauxDistributionStream = investments.stream()
-                .map(inv -> scpis.stream()
-                        .filter(scpi -> scpi.getName().equals(inv.getScpiName()))
-                        .findFirst()
-                        .map(scpi -> scpi.getStatYear() != null ? scpi.getStatYear().getDistributionRate() : null)
-                        .orElse(null)
-                )
-                .filter(Objects::nonNull)
-                .mapToDouble(BigDecimal::doubleValue);
+        final double montantInvestiFinal = montantInvesti;
 
-        OptionalDouble moyenneOptional = tauxDistributionStream.average();
-        rendementMoyen = moyenneOptional.isPresent() ?
-                BigDecimal.valueOf(moyenneOptional.getAsDouble()).setScale(2, RoundingMode.HALF_UP).doubleValue() : 0.0;
+        //Calucul du Rendement Moyen
+        double rendementotalponderee = investments.stream()
+                .mapToDouble(inv -> {
+                    BigDecimal distributionRate = scpis.stream()
+                            .filter(scpi -> scpi.getName().equals(inv.getScpiName()))
+                            .findFirst()
+                            .map(scpi -> scpi.getStatYear() != null ? scpi.getStatYear().getDistributionRate() : null)
+                            .orElse(BigDecimal.ZERO);
+                    double investmentAmount = inv.getTotalAmount().doubleValue();
+                    double tauxReel = distributionRate.doubleValue() / 100;
+                    return tauxReel * investmentAmount;
+                })
+                .sum();
+
+
+        rendementMoyen = BigDecimal.valueOf(rendementotalponderee/montantInvestiFinal * 100)
+                .setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
 
         //Calcul des Revenues Mensuels
         for (InvestmentDtoOut inv : investments) {
