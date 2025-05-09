@@ -15,9 +15,7 @@ import co.elastic.clients.elasticsearch.indices.CreateIndexResponse;
 import co.elastic.clients.json.JsonData;
 import fr.formationacademy.scpiinvestplusapi.dto.CriteriaIn;
 import fr.formationacademy.scpiinvestplusapi.dto.ScpiDocumentDTO;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +36,7 @@ public class ScoringScpiService {
     private static final String MAPPING_FILE_PATH = "src/main/resources/mappings/scpi-optimal-mapping.json";
     private final ElasticsearchClient elasticsearchClient;
     private final Map<String, Double> optimalValuesMap;
-
+    private boolean InitDone = true;
     public ScoringScpiService(ElasticsearchClient elasticsearchClient) {
         this.elasticsearchClient = elasticsearchClient;
         this.optimalValuesMap = initOptimalValueMap();
@@ -52,13 +50,6 @@ public class ScoringScpiService {
         map.put("subscriptionFeesBigDecimal", 0.0);
         map.put("capitalization", 6294000000.0);
         return map;
-    }
-
-    @PostConstruct
-    public void init() throws IOException {
-        if (!indexExists(INDEX_SCORING_NAME)) {
-            createOptimalIndex();
-        }
     }
 
     private boolean indexExists(String indexName) throws IOException {
@@ -169,6 +160,13 @@ public class ScoringScpiService {
     public List<ScpiDocumentDTO> calculateMatchedScore(List<ScpiDocumentDTO> scpiList,
             List<Double> elasticScores,
             List<CriteriaIn> criteriaList) throws IOException {
+        if(InitDone){
+            if (!indexExists(INDEX_SCORING_NAME)) {
+                createOptimalIndex();
+                InitDone = false;
+            }
+        }
+
 
         for (int i = 0; i < scpiList.size(); i++) {
             ScpiDocumentDTO scpi = scpiList.get(i);
