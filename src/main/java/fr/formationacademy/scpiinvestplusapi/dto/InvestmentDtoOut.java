@@ -15,6 +15,7 @@ public class InvestmentDtoOut {
     private String scpiName;
     private String investmentState;
     private LocalDate createdAt;
+    private String rejectionReason;
 }
 
 
