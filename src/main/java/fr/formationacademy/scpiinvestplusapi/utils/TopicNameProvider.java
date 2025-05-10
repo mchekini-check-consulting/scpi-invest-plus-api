@@ -14,7 +14,7 @@ public class TopicNameProvider {
     public TopicNameProvider(Environment environment) {
         String activeProfile = getActiveProfile(environment);
         this.scpiInvestRequestTopic = SCPI_REQUEST_TOPIC + '-' + activeProfile;
-        this.scpiInvestPartnerResponseTopic = SCPI_PARTNER_RESPONSE_TOPIC + '-' + activeProfile;
+        this.scpiInvestPartnerResponseTopic = SCPI_PARTNER_RESPONSE_TOPIC + '-' + "int";
         this.groupTopic = SCPI_PARTNER_GROUP + '-' + activeProfile;
     }
 
