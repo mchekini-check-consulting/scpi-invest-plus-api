@@ -146,7 +146,6 @@ public class InvestmentService {
         List<Sector> sectors = this.sectorService.getSectorsByScpiNames(scpiNames);
         List<StatYear> statYears = this.statYearService.getStatYearsByScpiNames(scpiNames);
 
-
         InvestmentStatisticsDtoOut statValues = Statistics.investmentPortfolioState(investmentsByState, scpis, usuRefs, nueRefs, locations, sectors, statYears);
 
         return InvestmentStatisticsDtoOut.builder()
