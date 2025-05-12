@@ -2,13 +2,15 @@ spring:
   application:
     name: scpi-invest-plus-api
     version: 1.0.0
+
   webhook:
-    username: admin
-    password: admin
+    username: ${SPRING_WEBHOOK_USERNAME}
+    password: ${SPRING_WEBHOOK_PASSWORD}
+
   datasource:
-    url: jdbc:postgresql://scpi-invest-db:5432/postgres
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   elasticsearch:
@@ -23,17 +25,20 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
   kafka:
     bootstrap-servers: kafka-svc.kafka:9094
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: https://keycloak.check-consulting.net/realms/master
           jwk-set-uri: https://keycloak.check-consulting.net/realms/master/protocol/openid-connect/certs
+
 management:
   endpoints:
     web:
@@ -46,9 +51,10 @@ management:
     metrics:
       export:
         enabled: true
+
 keycloak:
   serverUrl: https://keycloak.check-consulting.net
   realm: master
   clientId: scpi-invest-plus
-  adminUsername: admin
-  adminPassword: admin
+  adminUsername: ${KEYCLOAK_ADMINUSERNAME}
+  adminPassword: ${ADMINPASSWORD}
