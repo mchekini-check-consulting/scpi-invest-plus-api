@@ -26,4 +26,4 @@ spec:
               value: "{{ .Values.elasticsearch.hostname }}"
           envFrom:
             - secretRef:
-                name: api-db-credentials
+                name: scpi-invest-plus-api-secret
