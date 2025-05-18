@@ -33,13 +33,14 @@ public class ScoringScpiService {
 
     private static final String INDEX_NAME = "scpi";
     private static final String INDEX_SCORING_NAME = "scpi_optimal";
-    private static final String MAPPING_FILE_PATH = "src/main/resources/mappings/scpi-optimal-mapping.json";
+    private static final InputStream MAPPING_STREAM = ScoringScpiService.class.getClassLoader().getResourceAsStream("mappings/scpi-optimal-mapping.json");
     private final ElasticsearchClient elasticsearchClient;
     private final Map<String, Double> optimalValuesMap;
     private boolean InitDone = true;
     public ScoringScpiService(ElasticsearchClient elasticsearchClient) {
         this.elasticsearchClient = elasticsearchClient;
         this.optimalValuesMap = initOptimalValueMap();
+
     }
 
     private Map<String, Double> initOptimalValueMap() {
@@ -57,18 +58,17 @@ public class ScoringScpiService {
     }
 
     private void createOptimalIndex() throws IOException {
-        try (InputStream mappingStream = Files.newInputStream(Paths.get(MAPPING_FILE_PATH))) {
-            CreateIndexResponse response = elasticsearchClient.indices()
-                    .create(c -> c.index(INDEX_SCORING_NAME).withJson(mappingStream));
+        if (MAPPING_STREAM == null) {
+            throw new IOException("Mapping file not found in resources");
+        }
 
-            if (response.acknowledged()) {
-                log.info("Index '{}' created successfully", INDEX_SCORING_NAME);
-            } else {
-                log.error("Error creating index '{}'", INDEX_SCORING_NAME);
-            }
-        } catch (IOException e) {
-            log.error("Error reading mapping file '{}'", MAPPING_FILE_PATH, e);
-            throw e;
+        CreateIndexResponse response = elasticsearchClient.indices()
+                .create(c -> c.index(INDEX_SCORING_NAME).withJson(MAPPING_STREAM));
+
+        if (response.acknowledged()) {
+            log.info("Index '{}' created successfully", INDEX_SCORING_NAME);
+        } else {
+            log.error("Error creating index '{}'", INDEX_SCORING_NAME);
         }
     }
 
